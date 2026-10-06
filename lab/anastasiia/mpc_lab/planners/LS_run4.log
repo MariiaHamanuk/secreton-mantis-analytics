@@ -1,0 +1,20 @@
+# planner_LS: local search over planner_H's played actions (root 111, small, episodes 0..3, everything known)
+# MILP per episode: planner_H.solve_lazy rules=base,fuel,lots tl=60 gap=1e-3 (prepare; log outputs/planner_LS/prepare*.log)
+ep 0: claimed J 220859305556515 played J 226077354785477 (437s)
+ep 1: claimed J 390762308971925 played J 393778102026263 (417s)
+ep 3: claimed J 321033950090941 played J 322118421541690 (495s)
+ep 2: claimed J 295115916280856 played J 293275848005305 (313s)
+# search: uv run python lab/anastasiia/mpc_lab/planners/planner_LS.py search --episodes=4 --budget=6000 --n_jobs=2
+local search: budget 6000 replays, 900s cap, order=kind, sweeps<=3, repeat 3  (365s wall)
+ ep        claimed J    played before     played after  gain %  acc replays   weeks   secs    cpu  rep/s
+  0  220859305556515  226077354785477  224520632035958   0.689   81    6000  173565    178    172   34.9
+  1  390762308971925  393778102026263  391253949565517   0.641  216    6000  169648    170    165   36.4
+  2  295115916280856  293275848005305  292719864305446   0.190  119    6000  173101    170    166   36.2
+  3  321033950090941  322118421541690  320288737430923   0.568  193    6000  176769    187    182   33.0
+  ep 0: dispatches 1659 slots {'wafer': 25, 'fuel': 12, 'other': 71} sweeps 1; moves x1.5 17/647 6.93e+09$, drop 11/629 2.32e+08$, shift-1 15/608 2.97e+09$, shift+1 10/597 2.02e+09$, half 8/593 1.2e+08$, x2 0/585 0$, half-1 3/576 3.3e+07$, half+1 10/576 2.63e+09$, shift+2 3/558 6.2e+08$, shift-2 4/549 5.89e+06$; by kind wafer 44 6.48e+09$, fuel 33 7.7e+09$, other 4 1.39e+09$
+  ep 1: dispatches 1149 slots {'fuel': 12, 'other': 71, 'wafer': 25} sweeps 1; moves x1.5 28/725 1.5e+10$, drop 70/697 5.96e+08$, shift-1 34/615 1.6e+09$, shift+1 35/589 5.71e+08$, half 17/557 2.39e+09$, x2 0/540 0$, half-1 11/530 2.84e+09$, half+1 12/526 2.21e+09$, shift+2 0/507 0$, shift-2 9/497 4.49e+05$; by kind wafer 77 1.56e+10$, fuel 93 7.27e+09$, other 46 2.35e+09$
+  ep 2: dispatches 1183 slots {'fuel': 12, 'other': 71, 'wafer': 25} sweeps 1; moves x1.5 19/680 1.12e+09$, drop 48/661 1.98e+09$, shift-1 18/593 4.24e+08$, shift+1 12/589 2.03e+09$, half 5/583 2.1e+06$, x2 0/577 0$, half-1 8/557 7.15e+05$, half+1 7/563 38.5$, shift+2 1/546 0.01$, shift-2 1/531 0.01$; by kind wafer 2 1.69e+06$, fuel 98 3.4e+09$, other 19 2.16e+09$
+  ep 3: dispatches 1271 slots {'wafer': 25, 'fuel': 12, 'other': 71} sweeps 1; moves x1.5 27/722 5.4e+08$, drop 109/695 1.14e+10$, shift-1 5/571 4.84e+09$, shift+1 11/577 4.92e+08$, half 13/569 1.56e+08$, x2 1/556 1.74e+08$, half-1 6/541 8.62e+05$, half+1 18/546 7.32e+08$, shift+2 2/522 2.22e+05$, shift-2 1/507 2.22e+04$; by kind wafer 48 5.92e+09$, fuel 130 1.24e+10$, other 15 2.02e+07$
+RSS claimed        0.9011  per episode 0.9643 0.9305 0.9129 0.8024
+RSS played before  0.8824  per episode 0.9317 0.8600 0.9261 0.7931
+RSS played after   0.8957  per episode 0.9414 0.9190 0.9301 0.8087
