@@ -68,6 +68,12 @@ target-version = "py312"
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]
 
+[tool.ruff.lint.per-file-ignores]
+# models kept byte for byte as they were scored (the zip's sha256 is in hub/FORMAL_RESULTS.md): one comment is 121 wide
+"agents/anastasiia_rules_v3/chip_part.py" = ["E501"]
+"agents/anastasiia_hybrid_chiplp/chip_part.py" = ["E501"]
+"lab/anastasiia/heur_lab4/agents/rules_v3/chip_part.py" = ["E501"]
+
 [tool.ruff.lint.isort]
 lines-after-imports = 2
 known-first-party = ["sbf_starter"]

@@ -191,6 +191,9 @@ def table(header: list[str], rows: list[list]) -> str:
 
 
 def report(task: str, entropy: int, z: dict, refs: list[dict], replay: bool, skipped: list[int]) -> str:
+    import sys
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "mpc_lab"))  # package_baselines lives there
     from package_baselines import rss
     from shockbench_flow.hosting.tasks import task_generator
 
