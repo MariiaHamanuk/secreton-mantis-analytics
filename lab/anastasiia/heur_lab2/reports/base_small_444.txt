@@ -1,0 +1,80 @@
+anastasiia_rules_fuelchip: small, root 444, episodes 0..39
+
+1. Cost per episode, USD bn: freight 1.0, war_risk 0.0, tariff 7.2, holding 6.8, queue_holding 0.4, shortage 905.2, disposal 4.4, shed 1810.6; total J 2734.9
+
+2. Fabs, millions of units per episode (energy in GWh)
+   fab               capacity x T  lots  in process at reset  raw shipped  raw disposed  wafers disposed  energy  energy of the disposed
+   fab_tw_leading_1          7.19  2.09                 1.00         2.79          0.26             0.00   4,182                     524
+   fab_tw_mature_1           6.12  1.44                 0.64         1.87          0.22             0.04   1,298                     198
+   fab_kr_memory_1          15.86  4.95                 2.20         6.26          0.80             0.12   6,233                   1,003
+   fab_jp_memory_1           7.48  0.94                 1.04         1.36          0.60             0.17   1,180                     754
+   fab_eu_leading_1          1.28  0.10                 0.18         0.13          0.13             0.02     209                     268
+   fab_eu_mature_1           9.37  0.79                 0.97         1.12          0.65             0.07     711                     585
+
+3. Why lots were not started, weeks 1..38, share of nominal capacity
+   fab               started  no wafers  no power: grid short of base load  no power: sliver partly there  lots / capacity in weeks without shed
+   fab_tw_leading_1     0.38       0.37                               0.22                           0.03                                   0.56
+   fab_tw_mature_1      0.31       0.52                               0.15                           0.02                                   0.45
+   fab_kr_memory_1      0.41       0.32                               0.25                           0.02                                   0.60
+   fab_jp_memory_1      0.17       0.32                               0.50                           0.01                                   0.78
+   fab_eu_leading_1     0.11       0.33                               0.56                           0.00                                   0.45
+   fab_eu_mature_1      0.11       0.34                               0.55                           0.00                                   0.46
+
+4. Grids, weeks 1..38 (GWh per week; fuels: burned over the segment's cap)
+   grid     weeks without shed %  shed   fabs' energy / need  free segment lost  lng   crude  nucfuel
+   grid_tw                 67.83    497                 0.36              54.49  0.71   0.56  -      
+   grid_kr                 68.36    679                 0.41              38.22  0.75   0.78     0.99
+   grid_jp                 21.51  2,489                 0.17               3.74  0.61   0.50     1.00
+   grid_eu                 24.74  4,493                 0.11              15.98  0.55   0.47     1.00
+   fuel disposed of (storage full) and left at the end, units per episode:
+     term_tw      lng      disposed     3,169   left at the end       981
+     term_tw      crude    disposed         0   left at the end        32
+     term_kr      lng      disposed     4,571   left at the end       941
+     term_kr      crude    disposed       480   left at the end        75
+     term_jp      lng      disposed       615   left at the end     1,703
+     term_jp      crude    disposed       589   left at the end       269
+     term_eu      lng      disposed         0   left at the end     2,485
+     term_eu      crude    disposed       113   left at the end        52
+     grid_tw      lng      disposed         0   left at the end     1,587
+     grid_tw      crude    disposed         0   left at the end        15
+     grid_kr      lng      disposed         0   left at the end     1,826
+     grid_kr      crude    disposed         0   left at the end        47
+     grid_kr      nucfuel  disposed         0   left at the end    29,947
+     grid_jp      lng      disposed         0   left at the end     3,788
+     grid_jp      crude    disposed         0   left at the end        63
+     grid_jp      nucfuel  disposed         0   left at the end    11,986
+     grid_eu      lng      disposed         0   left at the end     5,576
+     grid_eu      crude    disposed         0   left at the end       223
+     grid_eu      nucfuel  disposed         0   left at the end    99,201
+     fuel waiting at straits at the end: 6,065
+
+5. Chips and wafers disposed of, by stock slot (units per episode; sales value if they were sellable)
+     fab_kr_memory_1      chip_le_raw        796,081      40.2 bn   (storage 1,097,982)
+     fab_jp_memory_1      chip_le_raw        598,422      30.2 bn   (storage 518,018)
+     fab_tw_leading_1     chip_le_raw        261,817      13.2 bn   (storage 497,740)
+     fab_eu_leading_1     chip_le_raw        133,996       6.8 bn   (storage 88,513)
+     fab_eu_mature_1      chip_mat_raw       650,116       6.8 bn   (storage 648,680)
+     osat_my              chip_le             57,121       2.9 bn   (storage 1,189,375)
+     fab_tw_mature_1      chip_mat_raw       219,445       2.3 bn   (storage 423,891)
+     osat_kr              chip_le             38,448       1.9 bn   (storage 617,614)
+     osat_my              chip_mat           120,306       1.3 bn   (storage 648,680)
+     osat_tw              chip_mat            24,570       0.3 bn   (storage 423,891)
+     osat_tw              chip_le              4,777       0.2 bn   (storage 395,264)
+
+   Demand served per week, thousands: sink_us chip_le 156.8 (47%); sink_us chip_mat 40.5 (43%); sink_eu chip_le 45.0 (37%); sink_eu chip_mat 6.9 (20%); sink_cn chip_mat 36.2 (32%); sink_jp chip_le 43.0 (45%); sink_jp chip_mat 6.6 (25%)
+
+6. Gap to the best plan's own cost, USD bn per episode: total 141.6 = chips 66.3 + shed 68.0 + other 7.3
+   (the plan replayed blindly in the simulator is itself 87.2 above its own cost)
+   chips by market: sink_us chip_le 55.3; sink_us chip_mat 8.3; sink_eu chip_le 24.3; sink_eu chip_mat 3.3; sink_cn chip_le 0.0; sink_cn chip_mat -6.9; sink_jp chip_le -18.6; sink_jp chip_mat 0.6
+   shed by grid: grid_tw 12.3; grid_kr 23.0; grid_jp 10.9; grid_eu 21.8
+   fab               lots, agent  lots, plan  where the plan starts more  worth, bn  where the plan starts fewer  GWh those cost
+   fab_tw_leading_1         2.00        1.72                        0.19       9.45                         0.47             941
+   fab_tw_mature_1          1.37        1.12                        0.12       1.24                         0.36             328
+   fab_kr_memory_1          4.77        3.75                        0.26      12.87                         1.28           1,610
+   fab_jp_memory_1          0.92        1.00                        0.39      19.44                         0.30             383
+   fab_eu_leading_1         0.10        0.06                        0.01       0.76                         0.06             118
+   fab_eu_mature_1          0.78        0.49                        0.07       0.74                         0.36             326
+   energy to fabs, GWh per episode: agent 13,813, plan 11,043
+   free segment lost by the agent: 6,193 GWh per episode (the plan: 0); 1,000 GWh is 4.1 bn
+   episodes by gap (bn): 6:276, 27:264, 3:236, 30:236, 24:210, 36:207, 8:203, 35:189, 7:187, 38:181, 33:178, 23:176 ...
+.venv/bin/python lab/anastasiia/heur_lab2/tools/account.py  --entropy=444     98.62s user 3.85s system 120% cpu 1:24.80 total

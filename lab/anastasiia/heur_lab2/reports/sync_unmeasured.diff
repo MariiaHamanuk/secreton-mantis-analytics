@@ -1,0 +1,265 @@
+--- /Users/anastasiiamazur/Projects/secreton-mantis-analytics/agents/anastasiia_rules_fuelchip/fuel_part.py	2026-10-06 11:22:40
++++ /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a61e3649d9567ac14/agents/sync/fuel_part.py	2026-10-06 15:07:05
+@@ -29,6 +29,15 @@
+    a top-up level from what is left, so a grid's buffer never takes supply another grid needs to burn.
+ 5. Nuclear fuel (stocked at the grid, no terminal) is shipped only if stock plus cargo in transit will not last the
+    weeks that remain (or the lanes run out of time to carry the shortfall): right on 52 and on 104 weeks.
++6. Sync (every switch ``sync_*`` is off by default): a grid's fabs get energy only in the weeks ALL its fuels are
++   complete, and a fuel whose weekly burn is several times the grid's sliver (JP's crude: 900 against 181 GWh) removes
++   the whole sliver when it is a few percent short. The convexity that makes the rationed fuel come in full and empty
++   weeks holds for such a fuel too. ``_stretch`` does that for a fuel that is not rationed (hold at the terminal;
++   run, one week's burn a week, once terminal + grid stock cover ``sync_start_weeks``, while a full week can leave
++   the terminal; its modes are ``chold`` and ``crun``, never ``on``); ``_gates`` makes the rationed fuel's stretch
++   wait for such a fuel and end with it; ``sync_orders`` orders such a fuel first, up to a week's burn, where the
++   other fuels are there; ``sync_slack`` stays 'on' only at an inflow above 1 - slack x sliver / burn (JP's lng: 0.97,
++   not 0.9).
+ """
+ 
+ import json
+@@ -69,6 +78,17 @@
+     "overflow_frac": 0.92,  # a terminal this full starts a stretch whatever it holds (overflow is disposed of)
+     "bank_crude": True,  # hold the grid's other fuels at the terminal while it holds, if their inflow is scarce
+     "bank_ratio": 0.9,  # ... scarce: inflow below this share of their full burn
++    # sync: complete in all fuels in the same weeks (FuelRules._stretch, _gates, _on_ratio, stage 0 of the orders)
++    "sync_crude": False,  # time concentration of a fuel that is not rationed and gates its grid (JP, EU crude on Small)
++    "sync_wait": False,  # the rationed fuel's stretch starts only when the gating fuels, if short, cover it too
++    "sync_stop": False,  # ... and it ends when a short gating fuel cannot give a full week
++    "sync_orders": False,  # first stage of the orders: those fuels, up to a week's burn, where the rest is there
++    "sync_slack": 0.0,  # > 0: 'on' needs an inflow above 1 - slack x sliver / burn (and on_ratio) of the rationed fuel
++    "sync_margin": 1.5,  # a fuel gates its grid when its weekly burn is at least this many slivers
++    "sync_on_ratio": 1.0,  # a gating fuel whose inflow reaches this share of its burn is fed steadily (on)
++    "sync_start_weeks": 2.0,  # a stretch starts once terminal + grid stock (+ landing) cover this many weeks of burn
++    "sync_tol": 0.97,  # a week counts as full when the terminal can give this share of what the grid needs to burn
++    "sync_end_cover": 0.05,  # weeks of burn a gating fuel keeps at the grid when it runs (grid_cover_weeks: 0.5)
+     "trace": False,  # keep a per-week record in FuelRules.trace (diagnostics)
+ }
+ if (HERE / "params.json").is_file():  # a params.json beside this file replaces any of the numbers above
+@@ -191,6 +211,25 @@
+             chip = worth[g] / need[g] if need[g] > 0 else 0.0  # USD per GWh the fabs turn into chips
+             self.premium[g] = sliver * max(chip - grid["voll"], 0.0) / max(burn[g] * grid["voll"], EPS)
+ 
++        # ---- sync: a fuel that burns several slivers a week gates its grid (the sliver is all the fabs get) --------
++        # self.sliver: per grid, the output above the base load (at most what its fabs ask); self.gated: the
++        # (grid, fuel) pairs of a fuel that is not rationed, comes through a terminal, and burns at least sync_margin
++        # slivers a week at a grid worth completing (the premium test of the pulse); self._run: a stretch is on
++        self.sliver, self.gated, self.gated_of, self._run = {}, set(), defaultdict(list), {}
++        for g, gd in self.grids.items():
++            grid = nodes_by_id[ids[g]]["grid"]
++            self.sliver[g] = min(max(grid["deliverable"] - grid["base_load"], 0.0), need[g])
++            for k, share in sorted(gd["fuels"].items()):
++                if (
++                    k != gd["rationed"]
++                    and (g, k) in self.tg
++                    and self.sliver[g] > 0.0
++                    and self.premium[g] >= self.P["pulse_min"]
++                    and share * gd["deliverable"] >= self.P["sync_margin"] * self.sliver[g]
++                ):
++                    self.gated.add((g, k))
++                    self.gated_of[g].append(k)
++
+         # ---- fleet slack (7): extra weeks per unit sent on a sea duplicate lane or edge ------------------------------
+         self.dtau = {}
+         e_alt, l_alt = ed["alt_of"], ln["alt_of"]
+@@ -224,7 +263,7 @@
+         self.trace = []
+ 
+     # ------------------------------------------------------------------------------------------------------------
+-    def _hold(self, g, k, move, s0, landed, thr, b_nom, left_weeks, rate, stock, landing):
++    def _hold(self, g, k, move, s0, landed, thr, b_nom, left_weeks, rate, stock, landing, gate=(True, True)):
+         """Time concentration of the rationed fuel at a grid with fabs: (fuel to move this week, mode).
+ 
+         The grid burns whatever it holds, and its output of the rationed fuel is share x G_bar x min(1, last week's
+@@ -238,24 +277,114 @@
+         - hold: not primed and too little upstream: move nothing, the fuel piles up at the terminal;
+         - prime: not primed and terminal + grid stock cover the threshold plus ``prime_weeks`` weeks of burn: move up to
+           the threshold (the week still produces by last week's low stock; the next one runs).
++
++        ``gate`` = (start, run) from ``_gates`` (sync_wait, sync_stop): False in run means a gating fuel cannot give a
++        full week, so the run ends (hold); False in start means one is not covered, so no prime unless the terminal
++        is nearly full. (True, True), the default, is the rule above.
+         """
+         P = self.P
+         feeders = self.feeders.get((g, k), ())
+         inflow = rate[(g, k)] + sum(rate[(f, k)] for f in feeders)
+         useful = left_weeks - P["end_weeks"]  # weeks in which a lot started now is still sold
+-        if useful <= 1.0 or inflow >= P["on_ratio"] * b_nom:
++        if useful <= 1.0 or inflow >= self._on_ratio(g, b_nom) * b_nom:
+             return move, "on"
+         if s0 >= P["run_band"] * thr:
+-            return move, "run"
++            return (move, "run") if gate[1] else (0.0, "hold")
+         upstream = sum(stock(f, k) for f in feeders)
+         if P["prime_arrivals"]:  # cargo landing at the terminal this week can be moved from next week on
+             upstream += sum(landing[(f, k)] for f in feeders)
+         weeks = P["prime_weeks"] if useful > P["prime_weeks"] + 2.0 else 1.0
+         store = sum(self.storage.get((f, k), np.inf) for f in feeders)
+-        if upstream + s0 + landed >= thr + weeks * b_nom or upstream >= P["overflow_frac"] * store:
++        if (upstream + s0 + landed >= thr + weeks * b_nom and gate[0]) or upstream >= P["overflow_frac"] * store:
+             return max(0.0, thr + P["ss_weeks"] * b_nom - s0 - landed), "prime"
+         return 0.0, "hold"
++
++    def _on_ratio(self, g, b_nom):
++        """Inflow share of its burn from which the rationed fuel is fed steadily (on): ``on_ratio``, and with
++        ``sync_slack`` > 0 at least 1 - slack x sliver / burn. A steady shortfall within the grid's sliver leaves the
++        fabs part of their energy; a larger one (JP's lng: 3.4% of its burn is the whole sliver) leaves them none."""
++        r = self.P["on_ratio"]
++        if self.P["sync_slack"] > 0.0 and b_nom > 0.0:
++            r = max(r, 1.0 - self.P["sync_slack"] * self.sliver[g] / b_nom)
++        return r
++
++    def _gates(self, g, G, rate, stock, landing):
++        """(start, run): whether the grid's gating fuels let the rationed fuel's stretch start / go on this week.
++
++        A gating fuel (not rationed, burn above the sliver; see ``self.gated``) that is short (inflow below
++        ``sync_on_ratio`` of its burn with sync_crude on, below ``bank_ratio`` otherwise: as it is held back) leaves
++        the fabs nothing in a week it is dry, so a stretch of the rationed fuel in that week only serves the base
++        load. start: every short gating fuel covers ``sync_start_weeks`` of burn (terminal and grid stock, cargo
++        landing this week) or its terminals are nearly full; run: every one can give a full week now (the terminal's
++        stock plus what the grid holds reaches ``sync_tol`` of the week's burn).
++        """
++        P, gd = self.P, self.grids[g]
++        start = run = True
++        ratio = P["sync_on_ratio"] if P["sync_crude"] else P["bank_ratio"]  # as the fuel is held back (_stretch, bank)
++        for k in self.gated_of.get(g, ()):
++            b_nom = gd["fuels"][k] * gd["deliverable"]
++            feeders = self.feeders.get((g, k), ())
++            if rate[(g, k)] + sum(rate[(f, k)] for f in feeders) >= ratio * b_nom:
++                continue  # plentiful: it does not hold the grid back
++            up = sum(stock(f, k) for f in feeders)
++            here = stock(g, k) + landing[(g, k)]
++            store = sum(self.storage.get((f, k), np.inf) for f in feeders)
++            cover = up + sum(landing[(f, k)] for f in feeders) + here
++            start = start and (cover >= P["sync_start_weeks"] * b_nom or up >= P["overflow_frac"] * store)
++            run = run and up + here >= P["sync_tol"] * gd["fuels"][k] * float(G[self.grid_row[g]])
++        return start, run
++
++    def _stretch(self, g, k, grid_mode, mode, move, s0, landed, b_now, b_nom, left_weeks, rate, stock, landing, avail):
++        """Time concentration of a fuel that is not rationed but gates its grid (``sync_crude``): (fuel to move, mode).
++
++        The fabs get clip(sliver - sum of the fuels' shortfalls, 0, what they ask). A fuel whose burn is several
++        slivers makes the whole sliver disappear when it is a few percent short, so as for the rationed fuel the same
++        quantity does better in full weeks and empty weeks than as a steady partial flow (each GWh of fab energy gained
++        costs one GWh of shed, worth a sixth to a tenth of a GWh of chips). It has no memory (the simulator rations only
++        the rationed fuel by last week's stock), so there is no prime week:
++
++        - ``crun``: one week's burn (plus ``sync_end_cover`` of it) moves to the grid, as long as a full week can leave
++          the terminals (``avail`` >= ``sync_tol`` of what the grid still needs to burn); a stretch starts once terminal
++          + grid stock + cargo landing this week cover ``sync_start_weeks`` of burn, or the terminals are nearly full;
++        - ``chold``: nothing moves, the fuel piles up at the terminal.
++        While the rationed fuel pulses the grid the stretch follows it: held (like the bank rule, but for any inflow
++        below ``sync_on_ratio`` of the burn) while it is off, moving in its run weeks without a buffer left at the
++        grid. Not in the last ``end_weeks`` weeks, nor when the inflow reaches ``sync_on_ratio`` of the burn: the
++        base rule (``move``, ``mode``) stands.
++        """
++        P = self.P
++        key = (g, k)
++        feeders = self.feeders.get(key, ())
++        up = sum(stock(f, k) for f in feeders)
++        store = sum(self.storage.get((f, k), np.inf) for f in feeders)
++        inflow = rate[key] + sum(rate[(f, k)] for f in feeders)
++        short = left_weeks - P["end_weeks"] > 1.0 and inflow < P["sync_on_ratio"] * b_nom
++        small = max(0.0, P["sync_end_cover"] * b_nom + b_now - s0 - landed)  # a week's burn, nothing parked at the grid
++        if mode == "bank" or grid_mode in ("hold", "prime"):  # the rationed fuel's grid is off: a short fuel waits
++            self._run[key] = False
++            if mode != "bank" and short and up < P["overflow_frac"] * store:
++                return 0.0, "chold"
++            return move, mode
++        if not short:  # plentiful, or the last weeks: the base rule
++            self._run[key] = False
++            return move, mode
++        if grid_mode == "run":  # the rationed fuel runs: so does this one (not 'on': no surplus is moved to the grid)
++            self._run[key] = True
++            return small, "crun"
++        cover = up + sum(landing[(f, k)] for f in feeders) + s0 + landed
++        full = avail >= P["sync_tol"] * max(0.0, b_now - s0 - landed) - EPS
++        covered = cover >= P["sync_start_weeks"] * b_nom or up >= P["overflow_frac"] * store
++        if full and (covered or self._run.get(key, False)):  # a stretch that is on goes on while a full week can leave
++            self._run[key] = True
++            return small, "crun"
++        self._run[key] = False
++        return 0.0, "chold"
+ 
++    def _others_there(self, plan, g):
++        """Whether the grid's rationed fuel is fed this week (on, run, prime): a gating fuel then completes the grid."""
++        rationed = self.grids[g]["rationed"]
++        return rationed is None or plan.get((g, rationed), {}).get("mode", "on") in ("on", "run", "prime")
++
+     def _lots(self, obs):
+         """(strait node, k, lane, next edge, quantity) of every group of cargo waiting at a strait."""
+         if self.lot_keys:  # small and full: a dense block, one row per key, one column per arrival week
+@@ -371,6 +500,13 @@
+             wait = sum(queue_at.get((c, d["pool"]), 0.0) / max(float(kappa[d["pool"]][c]), 1.0) for c in d["chk"])
+             return d["lead"] + wait + (1.0 if d["dest"] not in self.grids else 0.0)
+ 
++        # ---- sync: what the grid's gating fuels allow the rationed fuel's stretch (start, run) ---------------------
++        gates = {}
++        if P["sync_wait"] or P["sync_stop"]:
++            for g in self.gated_of:
++                start, run = self._gates(g, G, rate, stock, landing)
++                gates[g] = (start or not P["sync_wait"], run or not P["sync_stop"])
++
+         # ---- terminal -> grid: close the week at the level --------------------------------------------------------
+         plan = {}
+         for g in self.priority:
+@@ -393,7 +529,8 @@
+                 move = max(0.0, end + burn - s0 - landing[(g, k)])
+                 if thr and k == gd["rationed"] and P["pulse"] and self.premium[g] >= P["pulse_min"]:
+                     move, grid_mode = self._hold(
+-                        g, k, move, s0, landing[(g, k)], thr, b_nom, left_weeks, rate, stock, landing
++                        g, k, move, s0, landing[(g, k)], thr, b_nom, left_weeks, rate, stock, landing,
++                        gates.get(g, (True, True)),
+                     )
+                     plan[(g, k)]["mode"] = grid_mode
+                 elif P["bank_crude"] and grid_mode in ("hold", "prime") and k != gd["rationed"]:
+@@ -405,6 +542,11 @@
+                     held = sum(stock(f, k) for f in feeders)
+                     if inflow < P["bank_ratio"] * b_nom and held < P["overflow_frac"] * full:
+                         move, plan[(g, k)]["mode"] = 0.0, "bank"
++                if P["sync_crude"] and (g, k) in self.gated:  # time concentration of a gating fuel (modes chold, crun)
++                    move, plan[(g, k)]["mode"] = self._stretch(
++                        g, k, grid_mode, plan[(g, k)]["mode"], move, s0, landing[(g, k)], b_now, b_nom, left_weeks,
++                        rate, stock, landing, sum(room(s) for s in self.tg[(g, k)] if mask[s]),
++                    )
+                 move = min(move, max(0.0, store_g - s0 - landing[(g, k)] + burn))
+                 for s in self.tg[(g, k)]:
+                     if not mask[s] or move <= 0:
+@@ -428,17 +570,25 @@
+             )
+         rank = {g: i for i, g in enumerate(self.priority)}
+         # stages: share_first of every grid's essential need, the rest of it (strict priority), then the top-up level
+-        stages = [
+-            (P["cover_weeks"], P["share_first"]),
+-            (P["cover_weeks"], 1.0),
+-            (max(P["top_weeks"], P["cover_weeks"]), 1.0),
++        stages = [  # (cover, share of the need, only these (grid, fuel) pairs: None = all)
++            (P["cover_weeks"], P["share_first"], None),
++            (P["cover_weeks"], 1.0, None),
++            (max(P["top_weeks"], P["cover_weeks"]), 1.0, None),
+         ]
+-        for cover, frac in stages if P["share_first"] < 1.0 else stages[1:]:
++        if P["share_first"] >= 1.0:
++            stages = stages[1:]
++        if P["sync_orders"]:  # first of all: the gating fuels of the grids whose other fuels are there
++            first = {gk for gk in plan if gk in self.gated and self._others_there(plan, gk[0])}
++            if first:
++                stages.insert(0, (P["cover_weeks"], 1.0, first))
++        for cover, frac, only in stages:
+             # the rationed fuel first inside a grid, or (crude_first) every grid's other fuels before the rationed ones
+             if P["crude_first"]:
+                 turns = sorted(plan, key=lambda gk: (gk[1] == self.grids[gk[0]]["rationed"], rank[gk[0]], gk[1]))
+             else:
+                 turns = sorted(plan, key=lambda gk: (rank[gk[0]], gk[1] != self.grids[gk[0]]["rationed"], gk[1]))
++            if only is not None:
++                turns = [gk for gk in turns if gk in only]
+             for g, k in turns:
+                 pl = plan[(g, k)]
+                 stocked = (g, k) in self.stocked
+@@ -460,6 +610,8 @@
+                     )
+                     need = base + pl["b_nom"] * min(float(left_weeks), lead + cover) - position[(g, k)]
+                 need = max(need, 0.0) * frac
++                if only is not None:  # the first stage orders at most a week's burn: more only piles up at the terminal
++                    need = min(need, pl["b_nom"])
+                 for s in sorted(usable, key=lambda s: (round(eff_lead(s), 3), lane_cost(s))):  # fastest lane first
+                     if need <= EPS:
+                         break
