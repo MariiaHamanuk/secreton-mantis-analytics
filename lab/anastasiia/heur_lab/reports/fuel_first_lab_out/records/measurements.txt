@@ -1,0 +1,28 @@
+== observed capacity (graph_now) vs the simulator's week value, 12 episodes of root 111
+edge-weeks where observed u differs from the simulator's week value by more than 1% of nominal: 0.73%  (more than 10%: 0.28%)
+  of which the observed capacity is HIGHER than the simulator's: 0.41% of edge-weeks, LOWER: 0.32%
+  week 1: 1.72%   later weeks: 0.71%
+strait-weeks (tanker/bulk pool) where observed kappa differs by more than 1% of its largest value: 0.60%
+sum over fuel edges of observed u / simulator u, all weeks: 1.0000
+
+== fuel waiting at straits, pull (12 episodes)
+624 weeks: mean fuel waiting at straits 110,196 GWh (mean fuel dispatched per week 32,688); ratio of the means 3.37 weeks of dispatch; weeks with more than half a week of dispatch waiting: 93%
+
+== fuel waiting at straits, fuel_first (12 episodes)
+624 weeks: mean fuel waiting at straits 7,190 GWh (mean fuel dispatched per week 20,256); ratio of the means 0.35 weeks of dispatch; weeks with more than half a week of dispatch waiting: 33%
+
+== throttled / contested strait-weeks, pull
+4368 strait-weeks: throttled 55.5% (mean fuel above one week's throughput 24,747 GWh), contested (cargo for 2+ grids) 28.4% (mean excess 37,441 GWh)
+
+== throttled / contested strait-weeks, fuel_first
+4368 strait-weeks: throttled 11.1% (mean fuel above one week's throughput 2,382 GWh), contested (cargo for 2+ grids) 10.0% (mean excess 2,518 GWh)
+
+== fuel stuck behind a prohibited next edge, fuel_first (16 episodes; last line is the mean)
+mean over episodes: stuck 0 GWh = 0.00 weeks of dispatch
+
+== non-fuel entries of flows equal pull's, Small
+small: 208 weeks, 73 non-fuel slots of 108; largest difference to pull on a non-fuel slot: 0.0
+
+== non-fuel entries of flows equal pull's, Full
+full: 104 weeks, 325 non-fuel slots of 395; largest difference to pull on a non-fuel slot: 0.0
+

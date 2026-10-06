@@ -1,0 +1,28 @@
+weeks 1-40 of episodes 0..23 of root 111; lots/cap = lots started that week as a share of the fab's nominal capacity; 'grid mode' is the lng valve mode of the fab's grid that week (on/run = fed, hold/prime = held back)
+fab                grid mode   shed?    weeks lots/cap mean  share >=90%  wafers/cap mean  wafers<cap share
+fab_eu_leading_1   on          noshed     393          0.64         0.23             0.50              0.85
+fab_eu_leading_1   on          shed       567          0.00         0.00             2.87              0.18
+fab_eu_mature_1    on          noshed     393          0.59         0.21             0.19              0.94
+fab_eu_mature_1    on          shed       567          0.00         0.00             2.83              0.16
+fab_jp_memory_1    hold/prime  shed       405          0.00         0.00             2.66              0.25
+fab_jp_memory_1    on          noshed     105          0.74         0.70             2.23              0.38
+fab_jp_memory_1    on          shed       256          0.00         0.00             2.87              0.21
+fab_jp_memory_1    run         noshed      94          0.66         0.61             0.98              0.73
+fab_jp_memory_1    run         shed       100          0.00         0.00             2.14              0.30
+fab_kr_memory_1    hold/prime  shed       357          0.00         0.00             1.95              0.34
+fab_kr_memory_1    on          noshed     295          0.59         0.41             0.51              0.82
+fab_kr_memory_1    on          shed        68          0.00         0.00             2.20              0.32
+fab_kr_memory_1    run         noshed     231          0.69         0.55             1.44              0.51
+fab_kr_memory_1    run         shed         9          0.00         0.00             0.81              0.78
+fab_tw_leading_1   hold/prime  noshed       1          0.08         0.00             0.00              1.00
+fab_tw_leading_1   hold/prime  shed       199          0.00         0.00             1.04              0.67
+fab_tw_leading_1   on          noshed     372          0.66         0.37             0.80              0.77
+fab_tw_leading_1   on          shed        54          0.00         0.00             1.18              0.65
+fab_tw_leading_1   run         noshed     312          0.46         0.21             0.72              0.73
+fab_tw_leading_1   run         shed        22          0.00         0.00             3.15              0.05
+fab_tw_mature_1    hold/prime  noshed       1          0.09         0.00             0.00              1.00
+fab_tw_mature_1    hold/prime  shed       199          0.00         0.00             0.88              0.73
+fab_tw_mature_1    on          noshed     372          0.26         0.10             0.42              0.87
+fab_tw_mature_1    on          shed        54          0.00         0.00             1.04              0.70
+fab_tw_mature_1    run         noshed     312          0.31         0.17             0.58              0.82
+fab_tw_mature_1    run         shed        22          0.00         0.00             3.17              0.14

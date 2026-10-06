@@ -1,0 +1,162 @@
+## 2026-10-06 (first run, run by hand with compare.py) episodes=32 src=agents/strait_wise v0 (lane_bottleneck on, queue_w1=3, queue_w2=8)
+  score 0.5994  diff +0.1216  interval +0.0855 to +0.1654  levels 0.507 0.690 0.702 0.575  naive weeks 0   [pull 0.4779]
+
+## 2026-10-06 01:03 episodes=32 src=agents/strait_wise tag=a_ (151s)
+small, 32 episodes of root 111
+  score   vs base   90% interval of the difference         by harm level 1..4 naive weeks  agent
+ 0.4779                                               0.369 0.571 0.604 0.535           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/agents/pull (base)
+ 0.5994   +0.1216               +0.0855 to +0.1654    0.507 0.690 0.702 0.575           0  a_off   params={"lane_bottleneck": "false"}
+ 0.5985   +0.1207               +0.0848 to +0.1641    0.507 0.690 0.700 0.572           0  a_noq   params={"queue_w1": 1000000000, "queue_w2": 2000000000}
+ 0.5728   +0.0950               +0.0597 to +0.1373    0.473 0.676 0.675 0.543           0  a_q1_3   params={"queue_w1": 1, "queue_w2": 3}
+ 0.5969   +0.1191               +0.0832 to +0.1629    0.504 0.690 0.697 0.569           0  a_q2_6   params={"queue_w1": 2, "queue_w2": 6}
+ 0.5992   +0.1213               +0.0854 to +0.1650    0.507 0.690 0.703 0.576           0  a_q4_12   params={"queue_w1": 4, "queue_w2": 12}
+ 0.5993   +0.1215               +0.0855 to +0.1652    0.506 0.690 0.703 0.576           0  a_q6_18   params={"queue_w1": 6, "queue_w2": 18}
+
+NOTE: the a_off line above is NOT a real "rule off" run: fire turned the JSON false into the string "false", which is truthy, so it ran the default (same numbers as v0). Real off run below (variants_file).
+
+## 2026-10-06 01:06 episodes=32 src=agents/strait_wise tag=b_ (83s)
+small, 32 episodes of root 111
+  score   vs base   90% interval of the difference         by harm level 1..4 naive weeks  agent
+ 0.4779                                               0.369 0.571 0.604 0.535           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/agents/pull (base)
+ 0.4779   +0.0000               +0.0000 to +0.0000    0.369 0.571 0.604 0.535           0  b_off   params={"lane_bottleneck": false}
+
+## 2026-10-06 01:18 episodes=32 src=agents/strait_wise tag=c_ (201s)
+small, 32 episodes of root 111
+  score   vs base   90% interval of the difference         by harm level 1..4 naive weeks  agent
+ 0.4779                                               0.369 0.571 0.604 0.535           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/agents/pull (base)
+ 0.5994   +0.1216               +0.0855 to +0.1654    0.507 0.690 0.702 0.575           0  c_base   params={}
+ 0.6309   +0.1530               +0.1108 to +0.2047    0.540 0.718 0.735 0.607           0  c_osat   params={"balance_osat": true}
+ 0.5997   +0.1218               +0.0871 to +0.1648    0.509 0.684 0.706 0.583           0  c_fab2   params={"balance_fab": true, "fab_buffer": 2.0}
+ 0.6040   +0.1262               +0.0906 to +0.1699    0.514 0.690 0.707 0.583           0  c_fabS   params={"balance_fab": true, "fab_buffer": null}
+ 0.6326   +0.1547               +0.1121 to +0.2074    0.544 0.713 0.739 0.615           0  c_both   params={"balance_osat": true, "balance_fab": true, "fab_buffer": 2.0}
+
+## 2026-10-06 01:24 episodes=32 src=agents/strait_wise tag=d_ (222s)
+small, 32 episodes of root 111
+  score   vs base   90% interval of the difference         by harm level 1..4 naive weeks  agent
+ 0.6309                                               0.540 0.718 0.735 0.607           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/c_osat (base)
+ 0.6309   +0.0000               +0.0000 to +0.0000    0.540 0.718 0.735 0.607           0  d_osat   params={"balance_osat": true}
+ 0.6202   -0.0107               -0.0152 to -0.0070    0.526 0.707 0.733 0.608           0  d_fill   params={"balance_osat": true, "osat_fill": true}
+ 0.6309   +0.0000               -0.0010 to +0.0010    0.540 0.718 0.737 0.607           0  d_stock   params={"balance_osat": true, "stock_rows": true}
+ 0.6351   +0.0042               +0.0020 to +0.0064    0.544 0.722 0.740 0.609           0  d_rr1   params={"balance_osat": true, "stock_rows": true, "reroute": 1}
+ 0.6351   +0.0042               +0.0020 to +0.0064    0.544 0.722 0.740 0.609           0  d_rr2   params={"balance_osat": true, "stock_rows": true, "reroute": 2}
+ 0.6358   +0.0049               +0.0028 to +0.0068    0.548 0.718 0.740 0.615           0  d_fabS   params={"balance_osat": true, "balance_fab": true, "fab_buffer": null}
+ 0.6277   -0.0032               -0.0055 to -0.0009    0.538 0.716 0.728 0.598           0  d_last0   params={"balance_osat": true, "last_weeks": true, "last_margin": 0}
+ 0.6181   -0.0128               -0.0165 to -0.0091    0.530 0.705 0.718 0.583           0  d_last1   params={"balance_osat": true, "last_weeks": true, "last_margin": 1}
+ 0.4833   -0.1476               -0.1726 to -0.1237    0.396 0.543 0.611 0.520           0  d_cover   params={"balance_osat": true, "fuel_cover": true}
+
+NOTE on the d_ batch: d_cover and d_last were run with the first version of those rules, which scaled the REQUESTS of a group down to the group total (the requests of send-the-maximum are far above what the routes carry, so the scaling cut the feasible flows too: d_cover -0.148). d_last also cut the fuel slots (shed +10 bn). Both are rewritten (totals are now rows of the allocation; last_weeks only on chip-chain commodities) and re-run in batch e_.
+
+## 2026-10-06 01:31 episodes=32 src=agents/strait_wise tag=e_ (160s)
+small, 32 episodes of root 111
+  score   vs base   90% interval of the difference         by harm level 1..4 naive weeks  agent
+ 0.6309                                               0.540 0.718 0.735 0.607           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/c_osat (base)
+ 0.6311   +0.0002               -0.0001 to +0.0005    0.540 0.718 0.735 0.607           0  e_grp   params={"balance_osat": true}
+ 0.6387   +0.0078               +0.0064 to +0.0095    0.550 0.723 0.741 0.615           0  e_grpFab   params={"balance_osat": true, "balance_fab": true, "fab_buffer": null}
+ 0.6345   +0.0036               +0.0014 to +0.0057    0.544 0.721 0.740 0.609           0  e_grpRR   params={"balance_osat": true, "stock_rows": true, "reroute": 1}
+ 0.6421   +0.0112               +0.0087 to +0.0139    0.554 0.726 0.745 0.617           0  e_grpRRFab   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null}
+ 0.4859   -0.1450               -0.1704 to -0.1208    0.396 0.546 0.617 0.528           0  e_cover   params={"balance_osat": true, "fuel_cover": true}
+ 0.6373   +0.0064               +0.0049 to +0.0081    0.549 0.723 0.738 0.610           0  e_lastc   params={"balance_osat": true, "last_weeks": true, "last_margin": 0}
+ 0.6252   -0.0056               -0.0089 to -0.0031    0.537 0.708 0.731 0.599           0  e_weeks6   params={"balance_osat": true, "osat_weeks": 6}
+ 0.6290   -0.0019               -0.0039 to -0.0006    0.538 0.715 0.735 0.607           0  e_weeks12   params={"balance_osat": true, "osat_weeks": 12}
+ 0.6310   +0.0002               -0.0002 to +0.0005    0.541 0.718 0.735 0.607           0  e_margin2   params={"balance_osat": true, "osat_margin": 2.0}
+ 0.6312   +0.0003               +0.0000 to +0.0006    0.541 0.718 0.735 0.607           0  e_margin1   params={"balance_osat": true, "osat_margin": 1.0}
+ 0.5843   -0.0466               -0.0579 to -0.0360    0.478 0.695 0.697 0.531           0  e_split   params={"balance_osat": true, "lane_split": true}
+
+NOTE on the e_ batch (all paired against c_osat): e_cover was still -0.145: the group total ignored that a grid must keep lng above psi x ibar to avoid rationing, so the grids ran dry in the last 12 weeks (shed up to 8,400 GWh/week in week 52); fixed (the threshold is added to the usable total) and re-run in batch g_. e_split (lane_split) changed the destination split of FUEL (weights follow lane capacity: TW/KR lose lng), which is the fuel agent's decision; it is now restricted to the sold goods (chips). e_lastc: last_weeks restricted to chip-chain goods = +0.0064, the fuel cut of d_last was the harm.
+
+## 2026-10-06 01:35 episodes=32 src=agents/strait_wise tag=g_ (131s)
+small, 32 episodes of root 111
+  score   vs base   90% interval of the difference         by harm level 1..4 naive weeks  agent
+ 0.6421                                               0.554 0.726 0.745 0.617           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/e_grpRRFab (base)
+ 0.6421   +0.0000               +0.0000 to +0.0000    0.554 0.726 0.745 0.617           0  g_base   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null}
+ 0.6451   +0.0030               +0.0018 to +0.0044    0.558 0.729 0.745 0.615           0  g_last   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null, "last_weeks": true}
+ 0.5406   -0.1015               -0.1196 to -0.0844    0.454 0.604 0.663 0.570           0  g_cover   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null, "fuel_cover": true}
+ 0.6410   -0.0011               -0.0019 to -0.0004    0.553 0.724 0.744 0.615           0  g_split   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null, "lane_split": true}
+ 0.6457   +0.0036               +0.0011 to +0.0065    0.557 0.729 0.752 0.619           0  g_pf   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null, "priority_fill": true}
+ 0.6100   -0.0321               -0.0449 to -0.0199    0.511 0.700 0.733 0.574           0  g_tar02   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null, "tariff_pref": true, "tariff_scale": 0.02}
+ 0.6375   -0.0046               -0.0081 to -0.0014    0.546 0.722 0.746 0.611           0  g_tar10   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null, "tariff_pref": true, "tariff_scale": 0.1}
+ 0.6105   -0.0316               -0.0422 to -0.0219    0.514 0.691 0.736 0.610           0  g_rel   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null, "release_override": true}
+ 0.5454   -0.0967               -0.1140 to -0.0802    0.461 0.609 0.663 0.568           0  g_lastcover   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null, "last_weeks": true, "fuel_cover": true}
+
+NOTE on the g_ batch (paired against e_grpRRFab = 0.6421): g_cover was -0.10 again: the fuel total counted the lead time twice (weeks of burn after arrival, but the stock and cargo already on hand cover the weeks BEFORE the arrival), so the grids ran dry in the last weeks; the horizon is now the weeks from now to the end (batch h_). g_rel (override release) and g_tar* (tariff preference) are worse and are dropped. g_pf and g_last help.
+
+## 2026-10-06 01:38 episodes=32 src=agents/strait_wise tag=h_ (132s)
+small, 32 episodes of root 111
+  score   vs base   90% interval of the difference         by harm level 1..4 naive weeks  agent
+ 0.6421                                               0.554 0.726 0.745 0.617           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/e_grpRRFab (base)
+ 0.6474   +0.0053               +0.0037 to +0.0071    0.559 0.732 0.748 0.625           0  h_cover   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null, "fuel_cover": true}
+ 0.6409   -0.0012               -0.0037 to +0.0013    0.553 0.725 0.741 0.617           0  h_fleet   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null, "fleet": true}
+ 0.6492   +0.0072               +0.0044 to +0.0102    0.562 0.732 0.752 0.620           0  h_pfLast   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null, "priority_fill": true, "last_weeks": true}
+ 0.6481   +0.0060               +0.0027 to +0.0096    0.561 0.732 0.748 0.620           0  h_pfLastFleet   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null, "priority_fill": true, "last_weeks": true, "fleet": true}
+ 0.6093   -0.0328               -0.0431 to -0.0238    0.521 0.687 0.718 0.597           0  h_store2   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null, "osat_store": 2.0}
+ 0.6084   -0.0337               -0.0443 to -0.0243    0.520 0.686 0.718 0.591           0  h_store4   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null, "osat_store": 4.0}
+
+## 2026-10-06 01:40 episodes=32 src=agents/strait_wise tag=i_ (108s)
+small, 32 episodes of root 111
+  score   vs base   90% interval of the difference         by harm level 1..4 naive weeks  agent
+ 0.6421                                               0.554 0.726 0.745 0.617           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/e_grpRRFab (base)
+ 0.6547   +0.0126               +0.0094 to +0.0160    0.567 0.739 0.755 0.627           0  i_all   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null, "priority_fill": true, "last_weeks": true, "fuel_cover": true}
+ 0.6512   +0.0092               +0.0055 to +0.0129    0.565 0.734 0.752 0.623           0  i_store08   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null, "priority_fill": true, "last_weeks": true, "fuel_cover": true, "osat_store": 0.8}
+ 0.6502   +0.0081               +0.0043 to +0.0119    0.563 0.732 0.753 0.624           0  i_store12   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null, "priority_fill": true, "last_weeks": true, "fuel_cover": true, "osat_store": 1.2}
+ 0.6546   +0.0125               +0.0093 to +0.0159    0.567 0.739 0.756 0.629           0  i_q412   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null, "priority_fill": true, "last_weeks": true, "fuel_cover": true, "queue_w1": 4.0, "queue_w2": 12.0}
+ 0.6519   +0.0098               +0.0067 to +0.0131    0.565 0.735 0.752 0.629           0  i_sink10   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null, "priority_fill": true, "last_weeks": true, "fuel_cover": true, "sink_pull": 1.0}
+ 0.6549   +0.0128               +0.0097 to +0.0162    0.568 0.739 0.756 0.627           0  i_sink16   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": null, "priority_fill": true, "last_weeks": true, "fuel_cover": true, "sink_pull": 1.6}
+ 0.6547   +0.0126               +0.0094 to +0.0160    0.567 0.739 0.755 0.627           0  i_fab4   params={"balance_osat": true, "stock_rows": true, "reroute": 1, "balance_fab": true, "fab_buffer": 4.0, "priority_fill": true, "last_weeks": true, "fuel_cover": true}
+
+NOTE on the h_ and i_ batches (paired against e_grpRRFab = 0.6421): h_cover (fuel cover with the horizon from now to the end) +0.0053; h_fleet (fleet-slack rows) -0.0012, not significant, dropped; h_pfLast +0.0072; h_store2/4 (a plant may fill 2x/4x its storage) -0.033: the storage is the right limit. i_all = balance_osat + stock_rows + reroute 1 + balance_fab (storage) + priority_fill + last_weeks (chips) + fuel_cover = 0.6547 (+0.0126); i_store08 / i_store12 -0.0035 / -0.0045; i_q412 = i_all; i_sink10 -0.0028, i_sink16 +0.0002; i_fab4 = i_all.
+
+## 2026-10-06 01:44 episodes=32 src=agents/strait_wise tag=j_ (59s)
+small, 32 episodes of root 111
+  score   vs base   90% interval of the difference         by harm level 1..4 naive weeks  agent
+ 0.6547                                               0.567 0.739 0.755 0.627           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/i_all (base)
+ 0.6547   +0.0000               +0.0000 to +0.0000    0.567 0.739 0.755 0.627           0  j_all   params={}
+ 0.6512   -0.0035               -0.0068 to -0.0006    0.563 0.737 0.750 0.628           0  j_fillp   params={"osat_fill": "priority"}
+ 0.6512   -0.0035               -0.0068 to -0.0006    0.563 0.737 0.750 0.628           0  j_fillpM   params={"osat_fill": "priority", "osat_margin": 1.0}
+
+NOTE on j_: osat_fill=priority (a plant sizes its outflow with the commodity order on shared edges) -0.0035, left off. Final defaults = i_all; 64 episodes of root 111: pull 0.4968, lane bottleneck only (c_base) 0.6011, + plant balance (c_osat) 0.6323, final 0.6523 (+0.1554, 90% interval +0.1300 to +0.1819).
+
+## 2026-10-06 01:56 episodes=32 src=agents/strait_wise tag=k_ (120s)
+small, 32 episodes of root 111
+  score   vs base   90% interval of the difference         by harm level 1..4 naive weeks  agent
+ 0.6547                                               0.567 0.739 0.755 0.627           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/i_all (base)
+ 0.6547   +0.0000               +0.0000 to +0.0000    0.567 0.739 0.755 0.627           0  k_all   params={}
+ 0.6548   +0.0001               -0.0010 to +0.0012    0.567 0.740 0.754 0.629           0  k_blocked   params={"release_override": "blocked"}
+
+## 2026-10-06 01:58 episodes=32 src=agents/strait_wise tag=l_ (122s)
+small, 32 episodes of root 111
+  score   vs base   90% interval of the difference         by harm level 1..4 naive weeks  agent
+ 0.3979                                               0.273 0.480 0.574 0.511           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/agents/template (base)
+ 0.6051   +0.2072               +0.1681 to +0.2536    0.506 0.691 0.725 0.617           0  l_ontemplate   params={"sink_pull": null, "priority_fill": false, "value_first": false}
+ 0.6549   +0.2570               +0.2088 to +0.3135    0.568 0.738 0.756 0.627           0  l_ontemplate_pf   params={"sink_pull": null}
+
+## 2026-10-06 02:02 episodes=32 src=agents/strait_wise tag=m_ (241s)
+small, 32 episodes of root 111
+  score   vs base   90% interval of the difference         by harm level 1..4 naive weeks  agent
+ 0.6547                                               0.567 0.739 0.755 0.627           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/i_all (base)
+ 0.6547   +0.0000               +0.0000 to +0.0000    0.567 0.739 0.755 0.627           0  m_all   params={}
+ 0.6229   -0.0317               -0.0444 to -0.0205    0.534 0.711 0.721 0.596           0  m_noOsat   params={"balance_osat": false}
+ 0.6496   -0.0050               -0.0062 to -0.0041    0.561 0.735 0.752 0.622           0  m_noFab   params={"balance_fab": false}
+ 0.6477   -0.0069               -0.0116 to -0.0027    0.561 0.733 0.744 0.623           0  m_noRR   params={"stock_rows": false, "reroute": 0, "priority_fill": false}
+ 0.6505   -0.0042               -0.0072 to -0.0015    0.564 0.735 0.748 0.623           0  m_noPF   params={"priority_fill": false}
+ 0.6510   -0.0037               -0.0050 to -0.0025    0.562 0.735 0.755 0.627           0  m_noLast   params={"last_weeks": false}
+ 0.6492   -0.0054               -0.0072 to -0.0038    0.562 0.732 0.752 0.620           0  m_noCover   params={"fuel_cover": false}
+ 0.6532   -0.0014               -0.0045 to +0.0011    0.566 0.738 0.752 0.623           0  m_noQueue   params={"queue_w1": 1000000000, "queue_w2": 2000000000}
+ 0.3877   -0.2670               -0.3132 to -0.2275    0.359 0.397 0.434 0.467           0  m_noLane   params={"lane_bottleneck": false}
+
+## 2026-10-06 02:14 episodes=32 src=agents/strait_wise tag=n_ (153s)
+small, 32 episodes of root 111
+  score   vs base   90% interval of the difference         by harm level 1..4 naive weeks  agent
+ 0.6547                                               0.567 0.739 0.755 0.627           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/i_all (base)
+ 0.0042   -0.6505               -0.6931 to -0.6076    0.002 0.005 0.009 0.006        1504  n_all   params={}
+ 0.0042   -0.6505               -0.6931 to -0.6076    0.002 0.005 0.009 0.006        1504  n_w1   params={"osat_weight": 1.0}
+ 0.0042   -0.6505               -0.6931 to -0.6076    0.002 0.005 0.009 0.006        1504  n_w2   params={"osat_weight": 2.0}
+
+NOTE: the first n_ run (naive weeks 1504, score 0.004) is void: an edit of mine had deleted a line (NameError in act, every week played by the naive rule). Fixed and re-run below. Every earlier batch showed 0 naive weeks.
+
+## 2026-10-06 02:17 episodes=32 src=agents/strait_wise tag=n2_ (141s)
+small, 32 episodes of root 111
+  score   vs base   90% interval of the difference         by harm level 1..4 naive weeks  agent
+ 0.6547                                               0.567 0.739 0.755 0.627           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/i_all (base)
+ 0.6547   +0.0000               +0.0000 to +0.0000    0.567 0.739 0.755 0.627           0  n2_all   params={}
+ 0.6555   +0.0008               -0.0004 to +0.0022    0.570 0.737 0.755 0.627           0  n2_w1   params={"osat_weight": 1.0}
+ 0.6551   +0.0005               -0.0010 to +0.0021    0.570 0.736 0.756 0.627           0  n2_w2   params={"osat_weight": 2.0}

@@ -1,0 +1,32 @@
+/Users/anastasiiamazur/Projects/secreton-mantis-analytics/outputs/heur_lab/agents/strait_wise: small, episodes 0..7 of root 111; millions of units per episode
+
+== chip_le_raw -> chip_le ==
+fab -> plants: asked, shipped; raw stock at the fab at reset -> mean -> end
+  fab_tw_leading_1   asked    1.71  shipped   1.71  osat_my 0.12, osat_tw 1.59                   stock 0.12 -> 0.21 -> 0.26
+  fab_kr_memory_1    asked    3.93  shipped   3.93  osat_my 1.63, osat_kr 2.30                   stock 0.27 -> 0.26 -> 0.24
+  fab_jp_memory_1    asked    0.92  shipped   0.92  osat_my 0.92                                 stock 0.13 -> 0.21 -> 0.14
+  fab_eu_leading_1   asked    0.16  shipped   0.16  osat_my 0.16                                 stock 0.02 -> 0.04 -> 0.02
+plant -> markets: raw received, packaged chips shipped; chip stock at the plant at reset -> mean -> end; raw stock mean
+  osat_my    received   2.83  shipped   4.14 (sink_us 1.59, sink_eu 1.53, sink_cn 0.00, sink_jp 1.03)  stock 0.30 -> 0.52 -> 0.15  raw 0.00
+  osat_tw    received   1.59  shipped   1.90 (sink_us 1.13, sink_eu 0.60, sink_cn 0.00, sink_jp 0.18)  stock 0.10 -> 0.18 -> 0.08  raw 0.00
+  osat_kr    received   2.30  shipped   2.85 (sink_us 2.07, sink_eu 0.49, sink_cn 0.00, sink_jp 0.29)  stock 0.15 -> 0.24 -> 0.07  raw 0.00
+markets: demand, shipped to it, served, stock at reset -> end, shipped but neither served nor in stock (disposed or on the way)
+  sink_us  demand  17.33  shipped   4.78  served   5.12 ( 30%)  stock 0.00 -> 0.00  unaccounted  -0.34
+  sink_eu  demand   6.36  shipped   2.62  served   2.74 ( 43%)  stock 0.00 -> 0.00  unaccounted  -0.12
+  sink_cn  demand   0.00  shipped   0.00  served   0.00 (  0%)  stock 0.00 -> 0.00  unaccounted   0.00
+  sink_jp  demand   4.90  shipped   1.49  served   1.59 ( 32%)  stock 0.00 -> 0.00  unaccounted  -0.09
+  all      demand  28.59  shipped   8.90  served   9.45 ( 33%)  unaccounted  -0.55
+
+== chip_mat_raw -> chip_mat ==
+fab -> plants: asked, shipped; raw stock at the fab at reset -> mean -> end
+  fab_tw_mature_1    asked    1.16  shipped   1.16  osat_tw 1.16                                 stock 0.11 -> 0.07 -> 0.09
+  fab_eu_mature_1    asked    1.39  shipped   1.39  osat_my 1.39                                 stock 0.16 -> 0.16 -> 0.01
+plant -> markets: raw received, packaged chips shipped; chip stock at the plant at reset -> mean -> end; raw stock mean
+  osat_my    received   1.39  shipped   2.01 (sink_eu 0.20, sink_cn 0.78, sink_jp 0.15, sink_us 0.88)  stock 0.16 -> 0.22 -> 0.01  raw 0.00
+  osat_tw    received   1.16  shipped   1.34 (sink_eu 0.03, sink_us 0.70, sink_cn 0.44, sink_jp 0.16)  stock 0.11 -> 0.15 -> 0.02  raw 0.00
+markets: demand, shipped to it, served, stock at reset -> end, shipped but neither served nor in stock (disposed or on the way)
+  sink_us  demand   5.04  shipped   1.59  served   1.83 ( 36%)  stock 0.00 -> 0.00  unaccounted  -0.25
+  sink_eu  demand   1.77  shipped   0.23  served   0.34 ( 19%)  stock 0.00 -> 0.00  unaccounted  -0.11
+  sink_cn  demand   5.99  shipped   1.23  served   1.41 ( 23%)  stock 0.00 -> 0.00  unaccounted  -0.18
+  sink_jp  demand   1.39  shipped   0.31  served   0.35 ( 25%)  stock 0.00 -> 0.00  unaccounted  -0.04
+  all      demand  14.20  shipped   3.35  served   3.93 ( 28%)  unaccounted  -0.57

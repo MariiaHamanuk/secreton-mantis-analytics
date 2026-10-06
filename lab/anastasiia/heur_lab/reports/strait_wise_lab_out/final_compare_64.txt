@@ -1,0 +1,4 @@
+small, 64 episodes of root 111
+  score   vs base   90% interval of the difference         by harm level 1..4 naive weeks  agent
+ 0.4968                                               0.388 0.578 0.624 0.612           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/agents/pull (base)
+ 0.6523   +0.1554               +0.1300 to +0.1819    0.560 0.726 0.762 0.717           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/agents/strait_wise

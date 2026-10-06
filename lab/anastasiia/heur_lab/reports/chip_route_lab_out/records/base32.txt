@@ -1,0 +1,5 @@
+small, 32 episodes of root 111
+  score   vs base   90% interval of the difference         by harm level 1..4 naive weeks  agent
+ 0.4779                                               0.369 0.571 0.604 0.535           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/agents/pull (base)
+ 0.4779   +0.0000               +0.0000 to +0.0000    0.369 0.571 0.604 0.535           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a9fc6562ebf34a489/agents/chip_route
+/Users/anastasiiamazur/Projects/secreton-mantis-analytics/.venv/bin/python     95.21s user 2.86s system 232% cpu 42.154 total

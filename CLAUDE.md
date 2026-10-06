@@ -1,99 +1,149 @@
 @AGENTS.md
-Single source of truth for how we measure, what we already know, and what we do. If something here contradicts your assumptions, update this file first, then work.
 
-Goal
-Build agents/<name>/agent.py (Agent(config) once per episode, act(obs) once per week) that minimises supply-network cost. Metric: RSS = (naive − yours) / (naive − clairvoyant), weighted over harm levels with p = (0.50, 0.30, 0.15, 0.05). Negative RSS is kept.
+# Команда: як ми працюємо в цьому репозиторії
 
-Dev (public board): Small-v0, 200 hidden episodes, until 10 Oct 23:59 (Kyiv).
-Final: Full-v0, 400 hidden episodes, 11 Oct 00:00–13:00. The submission that sits on the board is the one re-run.
-CPU per week: 2 s (Small), 4 s (Full). A week over budget is played by the naive rule (fallback).
-Submission limits: 3 per UTC day, agent.py at zip root, Python 3.13, NumPy, SciPy, PyTorch (CPU, 1 thread), no network.
-What we already know (findings)
+AGENTS.md вище описує сам toolkit (він приходить з upstream) і правила, які вирішують бал. Усе нижче — наші
+домовленості: як міряємо, що вже знаємо і як працюємо. Якщо щось тут суперечить тому, що ти бачиш, спершу онови цей
+файл (або скажи людині), потім працюй.
 
-Status: [verified] confirmed by two independent runs, [1 person] one person so far, awaiting a second check.
+## Перед роботою прочитай
 
-Gamma (shock intensity). Gamma 0.62 gives the public split: 20 episodes at entropy 0, harm-level mix 50/30/15/5. Higher gammas exist and can be used to sample more hard cases. [1 person]
-We do not know which gamma Full uses. This is the most important thing to find out (see "Open questions").
-Therefore final candidates are always evaluated per level 1–4 separately. A heuristic or model can be strong on level 1 and near-naive on level 4. If level 4 turns out to be more than 5% of Full, that agent loses.
-20 episodes is a very noisy estimate. Never compare internal variants on it. For control checks on Small use at least 256 episodes, one seed, one gamma. We have already seen RSS differ across seeds. A noise study at 64/128/256+ episodes on Small and Full is in progress. [1 person]
-Principle: we need a stable solution that does not swing up or down on subsamples. Stability matters more than a good mean on one sample.
-Built-in MPC in the repo. RSS ≈ 0.65 on ≈64 episodes, without forecasting: it plans assuming the whole horizon is a copy of the current state. [1 person]
-We are testing the ceiling: the same MPC given the real future ("oracle") at different horizon lengths in weeks. A real forecast of that accuracy is impossible; this is only an upper bound.
-@KwenLu reruns this independently (own run, ideally a separate agent), because the result drives our strategy.
-Problem: the forecast is probabilistic, LP is deterministic. An LP solver minimises cost in a single world and cannot handle uncertainty. We need both a forecast and a way to use it in the optimisation. Two hypotheses: [hypotheses, untested]
-A. Several scenarios in one optimisation, minimising the probability-weighted average cost.
-B. Heuristic rules on top of the LP output.
-CPU budget: the built-in MPC takes 3.2 s/week on Small against a 2 s limit. [1 person] So as-is it exceeds the budget and some weeks would fall back to naive. Full has a 4 s limit and a bigger network.
-The repo ships a Docker build that imitates the server environment. All timing is measured in it. @KwenLu re-measures independently.
-Local benchmark
-Episode sets (fixed once, never changed)
-Set	Purpose	Size
-dev20	public root 0, gamma 0.62, entropy 0. Smoke only (does it crash, does it fit CPU)	20
-tune	tuning, policy search, training	≥256 on Small, one seed, one gamma
-holdout	final check of a candidate; never tune on it	≥256 on Small, different seed from tune
-hard	higher gamma if needed, to get enough level 3–4 episodes	separate, report levels separately
-Same for Full; size set after the noise study (finding 2).
-Episode lists (task, root/seed, gamma, index, level) live in bench/episodes_<task>_<set>.json and are committed to git.
-Agents are compared paired only: same episodes, same policy_seed.
-256 episodes gives only ~13 level-4 episodes, so level 4 is judged on hard or separately, and never from noise.
-Fixing randomness
-Seed everything only from config["policy_seed"]: random, numpy (default_rng), torch.manual_seed.
-torch.set_num_threads(1), PYTHONHASHSEED=0 in the run script.
-No time, os.urandom, uuid or unstable ordering in decision logic.
-Training seeds never overlap with tune and holdout.
-Determinism test: two runs of the same agent on dev20 give bit-identical costs.
-Script
+1. [hub/FINDINGS.md](hub/FINDINGS.md) — що ми знаємо про задачу. Без цього легко повторити чужі помилки.
+2. [hub/tried/](hub/tried/) — що вже пробували у твоєму підході і що з того вийшло.
+3. [hub/FORMAL_RESULTS.md](hub/FORMAL_RESULTS.md) — які моделі зараз найкращі і з чим порівнювати.
 
-bench/run.py --task {small,full} --set {dev20,tune,holdout,hard} --agent <name>
+## Змагання: головне
 
-Reads episodes from the json, plays them as the scorer does (one Agent per episode).
-Parallel across episodes (processes), one thread per process.
-Writes bench/results/<agent>_<task>_<set>_<githash>.json.
-Cross-checks against sbf evaluate on dev20: numbers must match. Exact flags are in the kit README and sbf --help.
-What we report
-RSS (weighted 0.5/0.3/0.15/0.05) and separately per level 1–4. Mean costs: agent, naive, clairvoyant.
-Bootstrap 95% CI for RSS and for the difference between agents (resampling within levels).
-Stability: RSS on subsamples (e.g. 4 × 64 from tune). If subsamples disagree by more than the CI, the solution is unstable.
-CPU per week: mean, p95, max, measured in the repo's Docker. Number of fallback weeks (must be 0).
-CPU budget
-Measure with time.process_time(), all threads.
-Target: p95 ≤ 50% of the limit (≤ 1 s Small, ≤ 2 s Full), since the server may be slower.
-The agent has an internal timer and a fast fallback mode if the main algorithm will not fit. Do not rely on the server's fallback.
-Full is mandatory because the Final runs there. A solution fast only on Small does not count.
-Load weights and heavy imports at module level, but remember Agent(config) counts toward week 1.
-Baselines
-naive (RSS = 0)
-agents/template
-built-in MPC (RSS ≈ 0.65, but 3.2 s on Small, so over budget)
-our current best
+- **Дати.** Публічний борд — до 10 жовтня 23:59 за Києвом. Фінал на Full — 11 жовтня 00:00–13:00.
+- **Два борди, один сабміт.** Публічний: 200 приватних епізодів Small, 2 с CPU на тиждень. Приватний: той самий
+  сабміт на 400 приватних епізодах Full, 4 с CPU на тиждень. Агент мусить працювати на Full без змін: усі розміри й
+  таблиці з `config`, нічого прибитого до Small. Модель, швидка лише на Small, не рахується.
+- **На публічному борді команда тримає одну модель, і саме її переоцінять на Full.** Тримаємо там ту, яку хочемо у
+  фінал.
+- **RSS:** 0 — правило naive, 1 — план clairvoyant, вище краще, нижче 0 не обрізається. Рівні шкоди важать
+  50 / 30 / 15 / 5 %.
+- **Сабміт** — zip з `agent.py` у корені. Python 3.13; імпорти лише зі стандартної бібліотеки, numpy, SciPy і PyTorch
+  (CPU, один потік); мережі немає. Тиждень понад бюджет, з помилкою або з дією неправильної форми грає naive.
+- **3 сабміти на добу (UTC) на всю команду.** Ніколи не відправляй без прямого прохання людини. `.env` з токеном не
+  друкуй і не коміть.
+- **Dev-набір** (root 0, 20 епізодів) лише для перевірки, що агент не падає і вкладається в час; на борді його немає,
+  варіанти на ньому не порівнюємо.
 
-A candidate goes to submission only if: it beats the current best in a paired comparison on tune (difference CI > 0), it is stable on subsamples, it is no worse on levels 3–4 on hard, it fits CPU on Small and Full, and it has been checked once on holdout.
+## Де що лежить
 
-Directions
-First target: an MPC that fits 2 s (Small) and 4 s (Full) without losing RSS. Simplify the model, shorten the horizon, warm start, shrink the LP.
-Upper bound: oracle-MPC across horizon lengths (finding 3).
-Uncertainty: scenario LP (A) vs rules on top of LP (B). Compare paired on tune, accounting for CPU: several scenarios multiply the problem size.
-Forecast: use warnings and announcements (warning.*, messages.* in docs/fields). Some are fake, so tune trust weights.
-Open questions
-Which gamma does Full use (and does it equal 0.62)? Until answered, evaluate per level and optimise the worst case.
-What does "entropy 0" mean for the splits (a seed parameter or a separate knob)? Record the value in the episode json.
-How many episodes are needed so RSS noise is smaller than the difference we want to detect (noise study result)?
-Will @KwenLu confirm RSS ≈ 0.65, the oracle ceiling and 3.2 s?
-Process
-Change the agent.
-dev20: smoke, no crashes, CPU fine.
-tune (Small): paired comparison with the best, CI, stability.
-tune (Full): CPU and RSS.
-hard: levels 3–4.
-holdout on Small and Full for the candidate.
-sbf check <name> --task=small, then sbf upload <name> --wait.
-Keep on the board only the one we want in the Final ("Add to Leaderboard").
+Toolkit не чіпаємо без потреби (`src/`, `examples/`, `docs/`, `tests/`, `agents/template|random|heuristic`), щоб
+`git pull upstream main` зливався без конфліктів.
 
-Do not
-Do not evaluate variants on 20 episodes, and do not tune on holdout.
-Do not draw conclusions without a CI and a subsample check.
-Do not change the fixed sets once comparisons have started.
-Do not measure CPU outside the repo's Docker, and do not use wall-clock as CPU.
-Treat a key result (oracle ceiling, CPU timings) as established only after an independent second check.
-Do not burn the 3 daily submissions without a passed holdout.
-Always log results with the git hash.
+```
+hub/                  # спільна тека команди: лише те, чим користуються всі
+  FORMAL_RESULTS.md   #   числа моделей на затверджених наборах
+  FINDINGS.md         #   знання про задачу (українською)
+  tried/              #   що пробували, за підходами: heuristics.md, mpc.md, ...
+  eval/               #   спільний пайплайн оцінювання; records/ — вартості моделей по епізодах
+  findings/data/      #   таблиці, які пишуть скрипти статистики
+  refcache/           #   спільний кеш референсів (вартості naive і clairvoyant по епізодах)
+agents/<модель>/      # лише моделі з Formal Results і агенти з коробки
+lab/<ім'я>/           # особисті теки: anastasiia, marichka, nazar, illia, mykyta
+outputs/              # важкі файли прогонів (локально, поза git)
+```
+
+## Оцінювання
+
+- **Набори** ([hub/eval/sets.py](hub/eval/sets.py)), зафіксовані й незмінні. Підбір: root 111 (64 епізоди для
+  парних порівнянь, 256 для абсолютних чисел). Формальні: root 222 — 256 епізодів на Small і 128 на Full. **На
+  root 222 нічого не підбираємо:** ні параметрів, ні вибору між варіантами.
+- **Зайняті roots:** 111 — підбір, 222 — формальні набори, 333 — статистика генератора, 444 — статистика
+  оптимального плану. Для навчання чи пошуку бери інший root і допиши його сюди: навчальні епізоди не мають
+  перетинатися з наборами підбору й формальними.
+- **«Стало краще» означає парне порівняння** з інтервалом, що не містить 0:
+  `uv run sbf compare new old --task=small --entropy=111 --episodes=64` або `hub/eval/compare.py` для кількох
+  агентів одразу. Різниця двох окремих RSS — ще не доказ: на 64 епізодах сам RSS має шум ±0.03.
+- **90 % інтервал** біля RSS — це шум вибору епізодів: на іншому наборі такого самого розміру RSS у дев'яти
+  випадках із десяти потрапив би в ці межі (пакет рахує його перевибіркою епізодів усередині рівнів шкоди). Дві моделі
+  порівнюємо за інтервалом парної різниці, а не за перекриттям їхніх інтервалів.
+- **Формальна оцінка:** `uv run python hub/eval/formal_eval.py <тека агента>`. Рахує RSS на формальних наборах без
+  CPU-бюджету (загальний і за рівнями 1–4, а також на перших 64 і 128 епізодах), час тижня в контейнері оцінювання
+  (медіана, 95-й перцентиль, максимум) і друкує готовий рядок для Formal Results. Сама нічого не записує.
+- **Час міряємо лише в контейнері** (`sbf check --docker`, його запускає і `formal_eval.py`), у CPU-секундах, не за
+  настінним годинником. На зайнятій машині числа завищені.
+- **Вартості по епізодах.** RSS рахується з вартості, яку агент заплатив за кожен епізод. Для моделей із Formal
+  Results ми зберігаємо ці числа в `hub/eval/records/<модель>.json` (прапорець `--record`), щоб нову модель можна
+  було порівняти зі старою попарно (`--against=<модель>`), не граючи стару знову.
+- **Кеш референсів** лежить у git (`hub/refcache`), тож перший запуск нічого не рахує. Порахував референси для
+  нового набору — закоміть нові файли. Після оновлення пакета ключ кешу змінюється: усе перераховується один раз і
+  комітиться разом з `uv.lock`; версію пакета оновлюємо всі разом. Python закріплено в `.python-version`.
+- **Де шукати причину програшу:** `hub/eval/diag.py` (витрати, скинуте навантаження, партії) і
+  `hub/eval/balance.py` (де зупиняються чипи).
+
+## Formal Results і назви моделей
+
+- Модель називається `<хто>_<підхід>_<деталі>`, наприклад `anastasiia_rules_fuelchip`; так само зветься її тека в
+  `agents/`.
+- Рядок у `hub/FORMAL_RESULTS.md` додає автор моделі власноруч: закомітити модель, запустити `formal_eval.py`,
+  вставити надрукований рядок. `+dirty` у колонці коміту означає, що результат не відтворити.
+- У `agents/` тримаємо лише моделі з Formal Results: вони потрібні як `old` у `sbf compare new old`.
+
+## Що пробували і що знаємо
+
+- Після кожного експерименту додай рядок у `hub/tried/<підхід>.md`: хто, що змінено, де код, на чому і з чим
+  порівнювали, результат, вердикт. Записуй і те, що не допомогло: головна мета — не повторювати чужі експерименти.
+- Новий факт про саму задачу — у `hub/FINDINGS.md`, з джерелом.
+- Ключовий результат (стеля, час, причина програшу) вважаємо встановленим лише після незалежної другої перевірки
+  іншою людиною або окремим прогоном. До того позначай його як перевірений однією людиною.
+
+## Особисті теки
+
+`lab/<ім'я>/` — вільна зона: пишемо лише у свою теку, комітимо прямо в main. Агента звідти оцінюємо за шляхом
+(`uv run sbf evaluate lab/<ім'я>/agents/x --task=small`), бо за назвою `sbf` шукає лише в `agents/`. Спільне
+(`hub/`, `agents/`) змінюємо свідомо.
+
+## Випадковість і відтворюваність
+
+- Усю випадковість сій лише з `config["policy_seed"]`: `random`, `numpy.random.default_rng`, `torch.manual_seed`.
+- `torch.set_num_threads(1)`. У логіці рішень немає `time`, `os.urandom`, `uuid` і нестабільного порядку обходу.
+- Перевірка: два прогони того самого агента на тих самих епізодах дають однакові вартості до цента.
+
+## Кандидат на сабміт
+
+Модель іде на борд, лише якщо:
+
+1. вона краща за поточну найкращу в парному порівнянні на наборі підбору (інтервал різниці не містить 0);
+2. вона стабільна: RSS на перших 64, 128 і 256 епізодах не розходиться більше, ніж на інтервал;
+3. вона не гірша на рівнях 3–4;
+4. вона вкладається в CPU на Small і на Full із запасом: 95-й перцентиль тижня в контейнері не більший за половину
+   бюджету (1 с на Small, 2 с на Full), і жодного тижня не віддано naive;
+5. її один раз оцінено на формальних наборах, і рядок є у Formal Results.
+
+Повільна модель має власний таймер і швидкий запасний режим: не покладайся на те, що сервер зіграє тиждень за тебе
+правилом naive.
+
+Порядок: `uv run sbf check <агент> --task=small` і `--task=full`, потім із `--docker`; відправляє людина
+(`uv run sbf upload <агент> --dry_run`, потім без `--dry_run`, або zip через сторінку змагання); після відправки —
+бал борду в колонку «борд».
+
+## Не роби
+
+- Не порівнюй варіанти на 20 dev-епізодах і не підбирай нічого на root 222.
+- Не роби висновків без інтервалу й без перевірки на підвибірках.
+- Не змінюй зафіксовані набори після початку порівнянь.
+- Не міряй час поза контейнером і не видавай настінний час за CPU.
+- Не витрачай сабміти на модель, яка не пройшла формальну оцінку.
+- Не записуй результат без коміту.
+
+## Для агентів (Claude)
+
+- На машині часто працює кілька сесій. Перед важким прогоном перевір `ps`, чи той самий скрипт уже не запущено; не
+  дублюй і не зупиняй чужі прогони. Обмежуй потоки (`--n_jobs`).
+- Важкі файли пиши в `outputs/<назва>/<дата_час>/`, код експериментів — у `lab/<ім'я>/`.
+- У git worktree є все закомічене, але немає `.venv`: `uv run` там створить окреме середовище.
+- Документи команди пишемо українською; код, коментарі й docstring — англійською, як у toolkit.
+- Не коміть, не пиши у Formal Results і не відправляй на борд без прохання людини.
+
+## Перехідний стан (6 жовтня)
+
+- Стара тека `team/` у Анастасії лежить локально і в git не потрапляє; пізніше вона переїде в `lab/anastasiia/`.
+  Нового туди не додаємо.
+- Скрипти, які пишуть таблиці в `hub/findings/data/` (`event_stats.py`, `cost_gap.py`, `plan_stats.py`), поки що
+  там же, у `team/experiments/`, тому в git їх ще немає.
+- `agents/mpc` (щотижневий LP) ще не закомічено: він змінюється, його автор додасть його разом із рядком у Formal
+  Results.

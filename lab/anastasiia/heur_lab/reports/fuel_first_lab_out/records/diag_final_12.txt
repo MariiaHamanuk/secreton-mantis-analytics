@@ -1,0 +1,65 @@
+/Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a598484e6f2fc03eb/agents/fuel_first: small, episodes 0..11 of root 111
+unweighted score on these episodes: 0.7034   (not the board's weighting; use compare.py for decisions)
+
+1. Cost per episode, USD bn (mean)
+component          naive     agent   clairv.  agent - clairv.
+freight              1.8       1.0       1.0             -0.1
+war_risk             0.0       0.1       0.0              0.0
+tariff               6.3       7.3       4.1              3.1
+holding              7.3       6.2       6.4             -0.2
+queue_holding        2.0       0.9       0.3              0.7
+shortage          1178.2     994.7     747.4            247.3
+disposal             5.1       8.5       0.4              8.1
+shed              2662.2    2104.2    2051.6             52.6
+total J           3861.0    3122.3    2810.7            311.6
+
+2. Grids: power shed, GWh per week (share of weeks with any shed %); weeks with the rationed fuel under its threshold %
+grid_tw    agent    355.6 ( 32%)  rationed  38%   clairv.    273.4 ( 43%)
+grid_kr    agent   1164.5 ( 57%)  rationed  58%   clairv.   1106.5 ( 71%)
+grid_jp    agent   3437.2 ( 90%)  rationed  67%   clairv.   3408.3 ( 94%)
+grid_eu    agent   4852.0 ( 68%)  rationed  66%   clairv.   4775.9 ( 67%)
+
+3. Fabs: lots started per week as % of nominal capacity (share of weeks with no start %)
+fab_tw_leading_1   agent  35.7% ( 33%)   clairv.  31.9% ( 48%), of which started while shedding  34%
+fab_tw_mature_1    agent  20.0% ( 59%)   clairv.  17.3% ( 58%), of which started while shedding  56%
+fab_kr_memory_1    agent  25.4% ( 57%)   clairv.  30.0% ( 47%), of which started while shedding  73%
+fab_jp_memory_1    agent   9.1% ( 90%)   clairv.  30.1% ( 65%), of which started while shedding  92%
+fab_eu_leading_1   agent  23.8% ( 67%)   clairv.  30.5% ( 53%), of which started while shedding  49%
+fab_eu_mature_1    agent  20.2% ( 67%)   clairv.  23.2% ( 54%), of which started while shedding  58%
+all fabs, lots per week: agent 205,851, clairv. 248,670
+
+4. Markets: demand served per week, thousands (share of demand %)
+sink_us  chip_le   demand   334.7  agent   131.4 ( 39%)  clairv.   191.9 ( 57%)
+sink_us  chip_mat  demand    96.2  agent    34.9 ( 36%)  clairv.    68.3 ( 71%)
+sink_eu  chip_le   demand   121.9  agent    45.1 ( 37%)  clairv.    55.7 ( 46%)
+sink_eu  chip_mat  demand    34.3  agent     7.7 ( 22%)  clairv.    15.5 ( 45%)
+sink_cn  chip_mat  demand   114.7  agent    26.1 ( 23%)  clairv.    27.7 ( 24%)
+sink_jp  chip_le   demand    94.4  agent    35.6 ( 38%)  clairv.    48.8 ( 52%)
+sink_jp  chip_mat  demand    26.5  agent     6.2 ( 23%)  clairv.    12.2 ( 46%)
+
+5. Dispatched per week by commodity (action slots only, units of the commodity)
+commodity            asked     executed      clairv.
+lng                 18,124       18,120       17,353
+crude                2,135        2,135        2,258
+nucfuel                  0            0          569
+wafer            2,433,324      540,647      191,106
+chip_le_raw        878,300      209,913      248,681
+chip_mat_raw       424,273       79,278       87,299
+chip_le            333,284      201,966      286,054
+chip_mat           180,212       83,103      116,529
+
+6. Slots where the agent ships most differently from the clairvoyant plan (mean units per week)
+  slot  86 chip_le      agent     52,501  clairv.     86,652   air.ct.osat_my.sink_us
+  slot  72 chip_le_raw  agent     15,445  clairv.     47,439   east.ct.fab_jp_memory_1.osat_my
+  slot  69 chip_le_raw  agent     47,739  clairv.     76,750   sea.ct.fab_kr_memory_1.osat_kr
+  slot 104 chip_le      agent     40,818  clairv.     60,537   air.ct.osat_kr.sink_us
+  slot  66 chip_le_raw  agent     24,789  clairv.     11,531   sea.ct.fab_kr_memory_1.chk_taiwan (lane lane.fab_kr_memory_1.osat_my)
+  slot  70 chip_le_raw  agent     11,935  clairv.        201   air.ct.fab_kr_memory_1.osat_kr
+  slot  41 wafer        agent    112,976  clairv.     34,956   sea.ct.mat_jp_wafer.fab_jp_memory_1
+  slot  63 chip_le_raw  agent     11,123  clairv.          0   air.ct.fab_tw_leading_1.osat_tw
+  slot  62 chip_le_raw  agent     43,916  clairv.     53,870   sea.ct.fab_tw_leading_1.osat_tw
+  slot  67 chip_le_raw  agent     23,491  clairv.     31,847   east.ct.fab_kr_memory_1.osat_my
+  slot  91 chip_le      agent     19,695  clairv.     27,879   air.ct.osat_my.sink_jp
+  slot  45 wafer        agent     68,004  clairv.     18,324   sea.ct.mat_de_wafer.fab_eu_mature_1
+  slot  95 chip_le      agent     32,049  clairv.     38,258   air.ct.osat_tw.sink_us
+  slot 105 chip_le      agent      8,427  clairv.     14,299   air.ct.osat_kr.sink_eu

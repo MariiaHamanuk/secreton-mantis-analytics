@@ -1,0 +1,10 @@
+{
+ "episode": 220,
+ "omega_hash": "46460575b819f14c6e0624a5df7e70275d491b9514176fecd0bfe8e0fad097d0",
+ "generator_id": "1cd0f51be58415da5085c8983ee3632a7291834a0731afaf92495196fdfcb3cf",
+ "harm_usd": 1820389455874.759,
+ "J_naive_cents": 202422488739338,
+ "J_oracle_cents": 107145403408049,
+ "excluded": null,
+ "seconds": 3.793
+}

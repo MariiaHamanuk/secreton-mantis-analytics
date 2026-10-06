@@ -1,0 +1,10 @@
+{
+ "episode": 208,
+ "omega_hash": "3dc06c511413e85bad4b26c8f69f2ba565860fca49d0a50f61573a2de084cafa",
+ "generator_id": "7113ffee789f4db55abf95156eacfcf6c0993c400cb186d1322131cae5520892",
+ "harm_usd": 5624845632122.644,
+ "J_naive_cents": 662535098330163,
+ "J_oracle_cents": 306251040674673,
+ "excluded": null,
+ "seconds": 99.214
+}

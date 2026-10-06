@@ -1,0 +1,31 @@
+small, 32 episodes of root 111
+  score   vs base   90% interval of the difference         by harm level 1..4 naive weeks  agent
+ 0.4779                                               0.369 0.571 0.604 0.535           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/agents/pull (base)
+ 0.5985   +0.1207               +0.0848 to +0.1641    0.507 0.690 0.700 0.572           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/a_noq
+ 0.5728   +0.0950               +0.0597 to +0.1373    0.473 0.676 0.675 0.543           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/a_q1_3
+ 0.5969   +0.1191               +0.0832 to +0.1629    0.504 0.690 0.697 0.569           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/a_q2_6
+ 0.5992   +0.1213               +0.0854 to +0.1650    0.507 0.690 0.703 0.576           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/a_q4_12
+ 0.5993   +0.1215               +0.0855 to +0.1652    0.506 0.690 0.703 0.576           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/a_q6_18
+ 0.5994   +0.1216               +0.0855 to +0.1654    0.507 0.690 0.702 0.575           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/c_base
+ 0.6309   +0.1530               +0.1108 to +0.2047    0.540 0.718 0.735 0.607           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/c_osat
+ 0.5997   +0.1218               +0.0871 to +0.1648    0.509 0.684 0.706 0.583           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/c_fab2
+ 0.6040   +0.1262               +0.0906 to +0.1699    0.514 0.690 0.707 0.583           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/c_fabS
+ 0.6326   +0.1547               +0.1121 to +0.2074    0.544 0.713 0.739 0.615           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/c_both
+ 0.6202   +0.1423               +0.1016 to +0.1921    0.526 0.707 0.733 0.608           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/d_fill
+ 0.6309   +0.1531               +0.1109 to +0.2049    0.540 0.718 0.737 0.607           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/d_stock
+ 0.6351   +0.1573               +0.1152 to +0.2090    0.544 0.722 0.740 0.609           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/d_rr1
+ 0.6358   +0.1579               +0.1155 to +0.2103    0.548 0.718 0.740 0.615           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/d_fabS
+ 0.6277   +0.1499               +0.1081 to +0.2007    0.538 0.716 0.728 0.598           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/d_last0
+ 0.6181   +0.1402               +0.0991 to +0.1911    0.530 0.705 0.718 0.583           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/d_last1
+ 0.4833   +0.0054               -0.0460 to +0.0616    0.396 0.543 0.611 0.520           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/d_cover
+ 0.6311   +0.1532               +0.1112 to +0.2047    0.540 0.718 0.735 0.607           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/e_grp
+ 0.6387   +0.1609               +0.1187 to +0.2125    0.550 0.723 0.741 0.615           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/e_grpFab
+ 0.6345   +0.1566               +0.1146 to +0.2080    0.544 0.721 0.740 0.609           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/e_grpRR
+ 0.6421   +0.1642               +0.1222 to +0.2160    0.554 0.726 0.745 0.617           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/e_grpRRFab
+ 0.4859   +0.0081               -0.0443 to +0.0649    0.396 0.546 0.617 0.528           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/e_cover
+ 0.6373   +0.1595               +0.1172 to +0.2114    0.549 0.723 0.738 0.610           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/e_lastc
+ 0.6252   +0.1474               +0.1060 to +0.1981    0.537 0.708 0.731 0.599           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/e_weeks6
+ 0.6290   +0.1511               +0.1095 to +0.2019    0.538 0.715 0.735 0.607           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/e_weeks12
+ 0.6310   +0.1532               +0.1111 to +0.2045    0.541 0.718 0.735 0.607           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/e_margin2
+ 0.6312   +0.1533               +0.1113 to +0.2048    0.541 0.718 0.735 0.607           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/e_margin1
+ 0.5843   +0.1064               +0.0629 to +0.1583    0.478 0.695 0.697 0.531           0  /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/lab_out/variants/e_split

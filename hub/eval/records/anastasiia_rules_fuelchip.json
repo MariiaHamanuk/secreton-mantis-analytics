@@ -1,0 +1,5143 @@
+{
+ "model": "anastasiia_rules_fuelchip",
+ "commit": "2419c3a+dirty",
+ "sha256": "2704640d06dcae017a5cdda319023c197bba9ec25001ee91daa0b68524908c0e",
+ "date": "2026-10-06",
+ "sets": {
+  "small-222": {
+   "episodes": 256,
+   "rows": [
+    {
+     "episode": 0,
+     "stratum": 1,
+     "J_policy_cents": 130450630018484,
+     "J_naive_cents": 218379369728597,
+     "J_clairvoyant_cents": 99658055748616,
+     "excluded": null
+    },
+    {
+     "episode": 1,
+     "stratum": 1,
+     "J_policy_cents": 349673018313404,
+     "J_naive_cents": 412520612821424,
+     "J_clairvoyant_cents": 326422259767632,
+     "excluded": null
+    },
+    {
+     "episode": 2,
+     "stratum": 2,
+     "J_policy_cents": 98968505071868,
+     "J_naive_cents": 193308319482166,
+     "J_clairvoyant_cents": 91669337529459,
+     "excluded": null
+    },
+    {
+     "episode": 3,
+     "stratum": 1,
+     "J_policy_cents": 114559226616161,
+     "J_naive_cents": 236840377463264,
+     "J_clairvoyant_cents": 80765915666982,
+     "excluded": null
+    },
+    {
+     "episode": 4,
+     "stratum": 2,
+     "J_policy_cents": 392878323273224,
+     "J_naive_cents": 510153532554877,
+     "J_clairvoyant_cents": 381415695328769,
+     "excluded": null
+    },
+    {
+     "episode": 5,
+     "stratum": 1,
+     "J_policy_cents": 363581432358611,
+     "J_naive_cents": 459752221428833,
+     "J_clairvoyant_cents": 326699101432435,
+     "excluded": null
+    },
+    {
+     "episode": 6,
+     "stratum": 2,
+     "J_policy_cents": 310481406837913,
+     "J_naive_cents": 371777191948339,
+     "J_clairvoyant_cents": 303902473755014,
+     "excluded": null
+    },
+    {
+     "episode": 7,
+     "stratum": 2,
+     "J_policy_cents": 428657389875850,
+     "J_naive_cents": 508558770987388,
+     "J_clairvoyant_cents": 417097674646869,
+     "excluded": null
+    },
+    {
+     "episode": 8,
+     "stratum": 1,
+     "J_policy_cents": 137581117810869,
+     "J_naive_cents": 205153430866239,
+     "J_clairvoyant_cents": 123037658952539,
+     "excluded": null
+    },
+    {
+     "episode": 9,
+     "stratum": 3,
+     "J_policy_cents": 327381412627355,
+     "J_naive_cents": 401024843571610,
+     "J_clairvoyant_cents": 309935950747482,
+     "excluded": null
+    },
+    {
+     "episode": 10,
+     "stratum": 2,
+     "J_policy_cents": 463772781329899,
+     "J_naive_cents": 524832625735595,
+     "J_clairvoyant_cents": 453114083971686,
+     "excluded": null
+    },
+    {
+     "episode": 11,
+     "stratum": 1,
+     "J_policy_cents": 247997440795410,
+     "J_naive_cents": 368875816360311,
+     "J_clairvoyant_cents": 232183333678324,
+     "excluded": null
+    },
+    {
+     "episode": 12,
+     "stratum": 1,
+     "J_policy_cents": 89271988770183,
+     "J_naive_cents": 231278170915477,
+     "J_clairvoyant_cents": 67910322045539,
+     "excluded": null
+    },
+    {
+     "episode": 13,
+     "stratum": 1,
+     "J_policy_cents": 156490514092413,
+     "J_naive_cents": 232813368883732,
+     "J_clairvoyant_cents": 145880606774805,
+     "excluded": null
+    },
+    {
+     "episode": 14,
+     "stratum": 1,
+     "J_policy_cents": 278507678996371,
+     "J_naive_cents": 366116424244235,
+     "J_clairvoyant_cents": 236070569120463,
+     "excluded": null
+    },
+    {
+     "episode": 15,
+     "stratum": 3,
+     "J_policy_cents": 280252755092707,
+     "J_naive_cents": 389991514888321,
+     "J_clairvoyant_cents": 258476059564526,
+     "excluded": null
+    },
+    {
+     "episode": 16,
+     "stratum": 2,
+     "J_policy_cents": 170930636570598,
+     "J_naive_cents": 261046006770409,
+     "J_clairvoyant_cents": 161378822476754,
+     "excluded": null
+    },
+    {
+     "episode": 17,
+     "stratum": 2,
+     "J_policy_cents": 106853569575886,
+     "J_naive_cents": 273232691618092,
+     "J_clairvoyant_cents": 95607008436580,
+     "excluded": null
+    },
+    {
+     "episode": 18,
+     "stratum": 2,
+     "J_policy_cents": 404686151185881,
+     "J_naive_cents": 482132233281279,
+     "J_clairvoyant_cents": 392832896869617,
+     "excluded": null
+    },
+    {
+     "episode": 19,
+     "stratum": 2,
+     "J_policy_cents": 324885015346205,
+     "J_naive_cents": 369815045494110,
+     "J_clairvoyant_cents": 303868953028464,
+     "excluded": null
+    },
+    {
+     "episode": 20,
+     "stratum": 1,
+     "J_policy_cents": 114815454717312,
+     "J_naive_cents": 125679128102425,
+     "J_clairvoyant_cents": 111197464632166,
+     "excluded": null
+    },
+    {
+     "episode": 21,
+     "stratum": 2,
+     "J_policy_cents": 386822354159398,
+     "J_naive_cents": 424481888231400,
+     "J_clairvoyant_cents": 374491432492999,
+     "excluded": null
+    },
+    {
+     "episode": 22,
+     "stratum": 3,
+     "J_policy_cents": 189383838635627,
+     "J_naive_cents": 272326065911797,
+     "J_clairvoyant_cents": 184179598997455,
+     "excluded": null
+    },
+    {
+     "episode": 23,
+     "stratum": 3,
+     "J_policy_cents": 387454219314166,
+     "J_naive_cents": 448097237489132,
+     "J_clairvoyant_cents": 374210306400625,
+     "excluded": null
+    },
+    {
+     "episode": 24,
+     "stratum": 4,
+     "J_policy_cents": 234880876192503,
+     "J_naive_cents": 299947573543467,
+     "J_clairvoyant_cents": 215668326934824,
+     "excluded": null
+    },
+    {
+     "episode": 25,
+     "stratum": 2,
+     "J_policy_cents": 331120790306972,
+     "J_naive_cents": 358750325008764,
+     "J_clairvoyant_cents": 279534729084623,
+     "excluded": null
+    },
+    {
+     "episode": 26,
+     "stratum": 3,
+     "J_policy_cents": 350080971920590,
+     "J_naive_cents": 414942453416860,
+     "J_clairvoyant_cents": 338356210793936,
+     "excluded": null
+    },
+    {
+     "episode": 27,
+     "stratum": 1,
+     "J_policy_cents": 138623551977955,
+     "J_naive_cents": 201943704247410,
+     "J_clairvoyant_cents": 131631213632576,
+     "excluded": null
+    },
+    {
+     "episode": 28,
+     "stratum": 1,
+     "J_policy_cents": 218894494465235,
+     "J_naive_cents": 300449388527923,
+     "J_clairvoyant_cents": 208988590492410,
+     "excluded": null
+    },
+    {
+     "episode": 29,
+     "stratum": 1,
+     "J_policy_cents": 217300902241959,
+     "J_naive_cents": 284200788462685,
+     "J_clairvoyant_cents": 211620158347008,
+     "excluded": null
+    },
+    {
+     "episode": 30,
+     "stratum": 1,
+     "J_policy_cents": 324084499091042,
+     "J_naive_cents": 384484746123208,
+     "J_clairvoyant_cents": 292744084849863,
+     "excluded": null
+    },
+    {
+     "episode": 31,
+     "stratum": 2,
+     "J_policy_cents": 281006854302323,
+     "J_naive_cents": 322567473468369,
+     "J_clairvoyant_cents": 251036486173353,
+     "excluded": null
+    },
+    {
+     "episode": 32,
+     "stratum": 1,
+     "J_policy_cents": 232547822663581,
+     "J_naive_cents": 331326842970748,
+     "J_clairvoyant_cents": 197612047257374,
+     "excluded": null
+    },
+    {
+     "episode": 33,
+     "stratum": 1,
+     "J_policy_cents": 208270393941476,
+     "J_naive_cents": 286407760381322,
+     "J_clairvoyant_cents": 194981469322111,
+     "excluded": null
+    },
+    {
+     "episode": 34,
+     "stratum": 2,
+     "J_policy_cents": 184814236851755,
+     "J_naive_cents": 275461487328629,
+     "J_clairvoyant_cents": 144447930839727,
+     "excluded": null
+    },
+    {
+     "episode": 35,
+     "stratum": 1,
+     "J_policy_cents": 212892056400363,
+     "J_naive_cents": 330614602011728,
+     "J_clairvoyant_cents": 201316768086185,
+     "excluded": null
+    },
+    {
+     "episode": 36,
+     "stratum": 1,
+     "J_policy_cents": 159630782949964,
+     "J_naive_cents": 294024516330855,
+     "J_clairvoyant_cents": 156449083756304,
+     "excluded": null
+    },
+    {
+     "episode": 37,
+     "stratum": 4,
+     "J_policy_cents": 207676029857191,
+     "J_naive_cents": 292477281438731,
+     "J_clairvoyant_cents": 192876335822465,
+     "excluded": null
+    },
+    {
+     "episode": 38,
+     "stratum": 1,
+     "J_policy_cents": 151038065680325,
+     "J_naive_cents": 242960120438370,
+     "J_clairvoyant_cents": 117793787039103,
+     "excluded": null
+    },
+    {
+     "episode": 39,
+     "stratum": 1,
+     "J_policy_cents": 341460828279506,
+     "J_naive_cents": 417970572027414,
+     "J_clairvoyant_cents": 331105612833995,
+     "excluded": null
+    },
+    {
+     "episode": 40,
+     "stratum": 3,
+     "J_policy_cents": 170284495427680,
+     "J_naive_cents": 249622425139045,
+     "J_clairvoyant_cents": 159231652118347,
+     "excluded": null
+    },
+    {
+     "episode": 41,
+     "stratum": 2,
+     "J_policy_cents": 349335993276723,
+     "J_naive_cents": 467553945827419,
+     "J_clairvoyant_cents": 313087962489665,
+     "excluded": null
+    },
+    {
+     "episode": 42,
+     "stratum": 2,
+     "J_policy_cents": 248650087992871,
+     "J_naive_cents": 358986576383200,
+     "J_clairvoyant_cents": 231459296154834,
+     "excluded": null
+    },
+    {
+     "episode": 43,
+     "stratum": 1,
+     "J_policy_cents": 229213483442289,
+     "J_naive_cents": 295467758467970,
+     "J_clairvoyant_cents": 202435878751455,
+     "excluded": null
+    },
+    {
+     "episode": 44,
+     "stratum": 1,
+     "J_policy_cents": 329353171693041,
+     "J_naive_cents": 440863212503592,
+     "J_clairvoyant_cents": 282946949485105,
+     "excluded": null
+    },
+    {
+     "episode": 45,
+     "stratum": 2,
+     "J_policy_cents": 367996592832593,
+     "J_naive_cents": 426133341615277,
+     "J_clairvoyant_cents": 345542507686240,
+     "excluded": null
+    },
+    {
+     "episode": 46,
+     "stratum": 1,
+     "J_policy_cents": 240377007852325,
+     "J_naive_cents": 342736503544877,
+     "J_clairvoyant_cents": 193764446545250,
+     "excluded": null
+    },
+    {
+     "episode": 47,
+     "stratum": 1,
+     "J_policy_cents": 200416491504870,
+     "J_naive_cents": 289784643258236,
+     "J_clairvoyant_cents": 172933855312590,
+     "excluded": null
+    },
+    {
+     "episode": 48,
+     "stratum": 1,
+     "J_policy_cents": 407688127331718,
+     "J_naive_cents": 471237437327329,
+     "J_clairvoyant_cents": 390974098200243,
+     "excluded": null
+    },
+    {
+     "episode": 49,
+     "stratum": 2,
+     "J_policy_cents": 146023431021475,
+     "J_naive_cents": 219815704167991,
+     "J_clairvoyant_cents": 138486057706667,
+     "excluded": null
+    },
+    {
+     "episode": 50,
+     "stratum": 1,
+     "J_policy_cents": 282546018883580,
+     "J_naive_cents": 373710275405782,
+     "J_clairvoyant_cents": 262938886527056,
+     "excluded": null
+    },
+    {
+     "episode": 51,
+     "stratum": 1,
+     "J_policy_cents": 198013935457065,
+     "J_naive_cents": 255634537928515,
+     "J_clairvoyant_cents": 188591632879446,
+     "excluded": null
+    },
+    {
+     "episode": 52,
+     "stratum": 1,
+     "J_policy_cents": 256154887119372,
+     "J_naive_cents": 343838626310852,
+     "J_clairvoyant_cents": 252558784410288,
+     "excluded": null
+    },
+    {
+     "episode": 53,
+     "stratum": 1,
+     "J_policy_cents": 82762165057438,
+     "J_naive_cents": 189852962119410,
+     "J_clairvoyant_cents": 68591671883663,
+     "excluded": null
+    },
+    {
+     "episode": 54,
+     "stratum": 1,
+     "J_policy_cents": 73540863679656,
+     "J_naive_cents": 276407524947419,
+     "J_clairvoyant_cents": 65091662388964,
+     "excluded": null
+    },
+    {
+     "episode": 55,
+     "stratum": 2,
+     "J_policy_cents": 128656083368676,
+     "J_naive_cents": 286705229772624,
+     "J_clairvoyant_cents": 100025372564334,
+     "excluded": null
+    },
+    {
+     "episode": 56,
+     "stratum": 2,
+     "J_policy_cents": 429136299399351,
+     "J_naive_cents": 484881243723177,
+     "J_clairvoyant_cents": 387176324909295,
+     "excluded": null
+    },
+    {
+     "episode": 57,
+     "stratum": 1,
+     "J_policy_cents": 178365521994451,
+     "J_naive_cents": 265331007467978,
+     "J_clairvoyant_cents": 151061747665622,
+     "excluded": null
+    },
+    {
+     "episode": 58,
+     "stratum": 1,
+     "J_policy_cents": 203067713178190,
+     "J_naive_cents": 292759140409307,
+     "J_clairvoyant_cents": 199055452656155,
+     "excluded": null
+    },
+    {
+     "episode": 59,
+     "stratum": 1,
+     "J_policy_cents": 254232858196943,
+     "J_naive_cents": 293460295286772,
+     "J_clairvoyant_cents": 205813646569109,
+     "excluded": null
+    },
+    {
+     "episode": 60,
+     "stratum": 1,
+     "J_policy_cents": 101869192723366,
+     "J_naive_cents": 220081173824504,
+     "J_clairvoyant_cents": 78190396381126,
+     "excluded": null
+    },
+    {
+     "episode": 61,
+     "stratum": 2,
+     "J_policy_cents": 335522437155644,
+     "J_naive_cents": 394826391687117,
+     "J_clairvoyant_cents": 307081679550902,
+     "excluded": null
+    },
+    {
+     "episode": 62,
+     "stratum": 1,
+     "J_policy_cents": 409818300925456,
+     "J_naive_cents": 449029153894036,
+     "J_clairvoyant_cents": 402191542953197,
+     "excluded": null
+    },
+    {
+     "episode": 63,
+     "stratum": 1,
+     "J_policy_cents": 338462187819011,
+     "J_naive_cents": 422434796821033,
+     "J_clairvoyant_cents": 323886604715772,
+     "excluded": null
+    },
+    {
+     "episode": 64,
+     "stratum": 2,
+     "J_policy_cents": 382432335330907,
+     "J_naive_cents": 483744493760375,
+     "J_clairvoyant_cents": 360846959211193,
+     "excluded": null
+    },
+    {
+     "episode": 65,
+     "stratum": 3,
+     "J_policy_cents": 369398722395962,
+     "J_naive_cents": 411644931790696,
+     "J_clairvoyant_cents": 357081846795645,
+     "excluded": null
+    },
+    {
+     "episode": 66,
+     "stratum": 1,
+     "J_policy_cents": 264942541493596,
+     "J_naive_cents": 361725070468796,
+     "J_clairvoyant_cents": 221446076124692,
+     "excluded": null
+    },
+    {
+     "episode": 67,
+     "stratum": 2,
+     "J_policy_cents": 310595033401655,
+     "J_naive_cents": 374988360858348,
+     "J_clairvoyant_cents": 302218086964411,
+     "excluded": null
+    },
+    {
+     "episode": 68,
+     "stratum": 1,
+     "J_policy_cents": 337761670997773,
+     "J_naive_cents": 450130359670952,
+     "J_clairvoyant_cents": 288923667894975,
+     "excluded": null
+    },
+    {
+     "episode": 69,
+     "stratum": 1,
+     "J_policy_cents": 292853577797065,
+     "J_naive_cents": 334450781722109,
+     "J_clairvoyant_cents": 272883862080303,
+     "excluded": null
+    },
+    {
+     "episode": 70,
+     "stratum": 1,
+     "J_policy_cents": 107414920604046,
+     "J_naive_cents": 221374913892266,
+     "J_clairvoyant_cents": 96555019094996,
+     "excluded": null
+    },
+    {
+     "episode": 71,
+     "stratum": 2,
+     "J_policy_cents": 334147806889954,
+     "J_naive_cents": 442265254034305,
+     "J_clairvoyant_cents": 306578043620970,
+     "excluded": null
+    },
+    {
+     "episode": 72,
+     "stratum": 1,
+     "J_policy_cents": 290812571398234,
+     "J_naive_cents": 347634446794637,
+     "J_clairvoyant_cents": 278907559968113,
+     "excluded": null
+    },
+    {
+     "episode": 73,
+     "stratum": 1,
+     "J_policy_cents": 209900417822927,
+     "J_naive_cents": 292217730851261,
+     "J_clairvoyant_cents": 190191407295575,
+     "excluded": null
+    },
+    {
+     "episode": 74,
+     "stratum": 3,
+     "J_policy_cents": 344158645637405,
+     "J_naive_cents": 399291665864762,
+     "J_clairvoyant_cents": 322114323508311,
+     "excluded": null
+    },
+    {
+     "episode": 75,
+     "stratum": 1,
+     "J_policy_cents": 329491506336243,
+     "J_naive_cents": 389123569143970,
+     "J_clairvoyant_cents": 289845527524533,
+     "excluded": null
+    },
+    {
+     "episode": 76,
+     "stratum": 2,
+     "J_policy_cents": 250122707116694,
+     "J_naive_cents": 345817252159121,
+     "J_clairvoyant_cents": 236822019327684,
+     "excluded": null
+    },
+    {
+     "episode": 77,
+     "stratum": 2,
+     "J_policy_cents": 309766439271977,
+     "J_naive_cents": 408201593392742,
+     "J_clairvoyant_cents": 300554015806411,
+     "excluded": null
+    },
+    {
+     "episode": 78,
+     "stratum": 1,
+     "J_policy_cents": 215387441394161,
+     "J_naive_cents": 315299337763825,
+     "J_clairvoyant_cents": 202982432367738,
+     "excluded": null
+    },
+    {
+     "episode": 79,
+     "stratum": 4,
+     "J_policy_cents": 296857950616246,
+     "J_naive_cents": 380727818282992,
+     "J_clairvoyant_cents": 274612401390874,
+     "excluded": null
+    },
+    {
+     "episode": 80,
+     "stratum": 1,
+     "J_policy_cents": 220757409965561,
+     "J_naive_cents": 309137660869928,
+     "J_clairvoyant_cents": 198749815541129,
+     "excluded": null
+    },
+    {
+     "episode": 81,
+     "stratum": 2,
+     "J_policy_cents": 456153753314434,
+     "J_naive_cents": 494827712885454,
+     "J_clairvoyant_cents": 402701052659138,
+     "excluded": null
+    },
+    {
+     "episode": 82,
+     "stratum": 1,
+     "J_policy_cents": 355335697318958,
+     "J_naive_cents": 454876717613771,
+     "J_clairvoyant_cents": 324422476855724,
+     "excluded": null
+    },
+    {
+     "episode": 83,
+     "stratum": 1,
+     "J_policy_cents": 283106956807602,
+     "J_naive_cents": 319292828344134,
+     "J_clairvoyant_cents": 268316364629189,
+     "excluded": null
+    },
+    {
+     "episode": 84,
+     "stratum": 1,
+     "J_policy_cents": 89858189540678,
+     "J_naive_cents": 141362426313438,
+     "J_clairvoyant_cents": 79952872001276,
+     "excluded": null
+    },
+    {
+     "episode": 85,
+     "stratum": 2,
+     "J_policy_cents": 138044027554010,
+     "J_naive_cents": 267839865718658,
+     "J_clairvoyant_cents": 103829523313181,
+     "excluded": null
+    },
+    {
+     "episode": 86,
+     "stratum": 3,
+     "J_policy_cents": 462224757118304,
+     "J_naive_cents": 486026728797849,
+     "J_clairvoyant_cents": 449817369597237,
+     "excluded": null
+    },
+    {
+     "episode": 87,
+     "stratum": 1,
+     "J_policy_cents": 335280393469360,
+     "J_naive_cents": 407696299251900,
+     "J_clairvoyant_cents": 309707119849506,
+     "excluded": null
+    },
+    {
+     "episode": 88,
+     "stratum": 1,
+     "J_policy_cents": 278047282477166,
+     "J_naive_cents": 392289539668607,
+     "J_clairvoyant_cents": 215357093649833,
+     "excluded": null
+    },
+    {
+     "episode": 89,
+     "stratum": 1,
+     "J_policy_cents": 401243330076635,
+     "J_naive_cents": 442290464143779,
+     "J_clairvoyant_cents": 372633170077217,
+     "excluded": null
+    },
+    {
+     "episode": 90,
+     "stratum": 1,
+     "J_policy_cents": 402187035542913,
+     "J_naive_cents": 445332543143551,
+     "J_clairvoyant_cents": 386631530206307,
+     "excluded": null
+    },
+    {
+     "episode": 91,
+     "stratum": 3,
+     "J_policy_cents": 437531652765230,
+     "J_naive_cents": 504813388841652,
+     "J_clairvoyant_cents": 409052012531013,
+     "excluded": null
+    },
+    {
+     "episode": 92,
+     "stratum": 1,
+     "J_policy_cents": 190928960097053,
+     "J_naive_cents": 281839202528599,
+     "J_clairvoyant_cents": 178439990502349,
+     "excluded": null
+    },
+    {
+     "episode": 93,
+     "stratum": 1,
+     "J_policy_cents": 301574803235564,
+     "J_naive_cents": 373959178780528,
+     "J_clairvoyant_cents": 284281409024350,
+     "excluded": null
+    },
+    {
+     "episode": 94,
+     "stratum": 3,
+     "J_policy_cents": 192179649467457,
+     "J_naive_cents": 294897552414901,
+     "J_clairvoyant_cents": 163675598276118,
+     "excluded": null
+    },
+    {
+     "episode": 95,
+     "stratum": 2,
+     "J_policy_cents": 124693153944531,
+     "J_naive_cents": 264802244245991,
+     "J_clairvoyant_cents": 100524632125233,
+     "excluded": null
+    },
+    {
+     "episode": 96,
+     "stratum": 1,
+     "J_policy_cents": 187768856234272,
+     "J_naive_cents": 322433472765652,
+     "J_clairvoyant_cents": 170788901616977,
+     "excluded": null
+    },
+    {
+     "episode": 97,
+     "stratum": 1,
+     "J_policy_cents": 170212305427794,
+     "J_naive_cents": 283511373099346,
+     "J_clairvoyant_cents": 160426807722963,
+     "excluded": null
+    },
+    {
+     "episode": 98,
+     "stratum": 1,
+     "J_policy_cents": 126033308372558,
+     "J_naive_cents": 191606536541002,
+     "J_clairvoyant_cents": 113677082440122,
+     "excluded": null
+    },
+    {
+     "episode": 99,
+     "stratum": 4,
+     "J_policy_cents": 406618413509261,
+     "J_naive_cents": 463219368199713,
+     "J_clairvoyant_cents": 398485579883701,
+     "excluded": null
+    },
+    {
+     "episode": 100,
+     "stratum": 1,
+     "J_policy_cents": 398812987682751,
+     "J_naive_cents": 480720551839606,
+     "J_clairvoyant_cents": 371945537395052,
+     "excluded": null
+    },
+    {
+     "episode": 101,
+     "stratum": 1,
+     "J_policy_cents": 436926986993567,
+     "J_naive_cents": 480112975661715,
+     "J_clairvoyant_cents": 408770688951792,
+     "excluded": null
+    },
+    {
+     "episode": 102,
+     "stratum": 1,
+     "J_policy_cents": 238048812150361,
+     "J_naive_cents": 312096731735660,
+     "J_clairvoyant_cents": 219786137813903,
+     "excluded": null
+    },
+    {
+     "episode": 103,
+     "stratum": 3,
+     "J_policy_cents": 203524160573796,
+     "J_naive_cents": 314936738774426,
+     "J_clairvoyant_cents": 175815945590003,
+     "excluded": null
+    },
+    {
+     "episode": 104,
+     "stratum": 3,
+     "J_policy_cents": 353972640459691,
+     "J_naive_cents": 397638212074563,
+     "J_clairvoyant_cents": 344145709689400,
+     "excluded": null
+    },
+    {
+     "episode": 105,
+     "stratum": 1,
+     "J_policy_cents": 387294317598531,
+     "J_naive_cents": 444865652643480,
+     "J_clairvoyant_cents": 333299583538552,
+     "excluded": null
+    },
+    {
+     "episode": 106,
+     "stratum": 1,
+     "J_policy_cents": 421336775625377,
+     "J_naive_cents": 476002442907928,
+     "J_clairvoyant_cents": 400615517600675,
+     "excluded": null
+    },
+    {
+     "episode": 107,
+     "stratum": 2,
+     "J_policy_cents": 234834427986160,
+     "J_naive_cents": 358962222861986,
+     "J_clairvoyant_cents": 224082281602402,
+     "excluded": null
+    },
+    {
+     "episode": 108,
+     "stratum": 2,
+     "J_policy_cents": 214643763209464,
+     "J_naive_cents": 295584098768979,
+     "J_clairvoyant_cents": 197774454407891,
+     "excluded": null
+    },
+    {
+     "episode": 109,
+     "stratum": 1,
+     "J_policy_cents": 75105359730182,
+     "J_naive_cents": 91850858425597,
+     "J_clairvoyant_cents": 71629144688152,
+     "excluded": null
+    },
+    {
+     "episode": 110,
+     "stratum": 2,
+     "J_policy_cents": 370547911941002,
+     "J_naive_cents": 459216057674549,
+     "J_clairvoyant_cents": 365376064933588,
+     "excluded": null
+    },
+    {
+     "episode": 111,
+     "stratum": 1,
+     "J_policy_cents": 396409735871470,
+     "J_naive_cents": 471310911403701,
+     "J_clairvoyant_cents": 380565321825499,
+     "excluded": null
+    },
+    {
+     "episode": 112,
+     "stratum": 1,
+     "J_policy_cents": 179508598979340,
+     "J_naive_cents": 262734082284586,
+     "J_clairvoyant_cents": 153815614048327,
+     "excluded": null
+    },
+    {
+     "episode": 113,
+     "stratum": 2,
+     "J_policy_cents": 218347148940735,
+     "J_naive_cents": 358756429913789,
+     "J_clairvoyant_cents": 205139137620743,
+     "excluded": null
+    },
+    {
+     "episode": 114,
+     "stratum": 3,
+     "J_policy_cents": 286655505928374,
+     "J_naive_cents": 392421296227919,
+     "J_clairvoyant_cents": 278632120413678,
+     "excluded": null
+    },
+    {
+     "episode": 115,
+     "stratum": 3,
+     "J_policy_cents": 502170404896063,
+     "J_naive_cents": 580558558188243,
+     "J_clairvoyant_cents": 483916582453780,
+     "excluded": null
+    },
+    {
+     "episode": 116,
+     "stratum": 3,
+     "J_policy_cents": 323000161397258,
+     "J_naive_cents": 397291527158896,
+     "J_clairvoyant_cents": 304721579535137,
+     "excluded": null
+    },
+    {
+     "episode": 117,
+     "stratum": 1,
+     "J_policy_cents": 132378600265782,
+     "J_naive_cents": 264227950841065,
+     "J_clairvoyant_cents": 119650919163342,
+     "excluded": null
+    },
+    {
+     "episode": 118,
+     "stratum": 4,
+     "J_policy_cents": 394971166986459,
+     "J_naive_cents": 452337139275452,
+     "J_clairvoyant_cents": 390782299803378,
+     "excluded": null
+    },
+    {
+     "episode": 119,
+     "stratum": 2,
+     "J_policy_cents": 204666902469233,
+     "J_naive_cents": 318569600134210,
+     "J_clairvoyant_cents": 191102204231334,
+     "excluded": null
+    },
+    {
+     "episode": 120,
+     "stratum": 1,
+     "J_policy_cents": 193510935798657,
+     "J_naive_cents": 295649655444975,
+     "J_clairvoyant_cents": 166183573847076,
+     "excluded": null
+    },
+    {
+     "episode": 121,
+     "stratum": 1,
+     "J_policy_cents": 138004721970603,
+     "J_naive_cents": 270421241085633,
+     "J_clairvoyant_cents": 120709775766530,
+     "excluded": null
+    },
+    {
+     "episode": 122,
+     "stratum": 1,
+     "J_policy_cents": 234120730959934,
+     "J_naive_cents": 310083351397273,
+     "J_clairvoyant_cents": 226273733671886,
+     "excluded": null
+    },
+    {
+     "episode": 123,
+     "stratum": 3,
+     "J_policy_cents": 295262904229452,
+     "J_naive_cents": 404875678914089,
+     "J_clairvoyant_cents": 280535859355878,
+     "excluded": null
+    },
+    {
+     "episode": 124,
+     "stratum": 3,
+     "J_policy_cents": 195002319339827,
+     "J_naive_cents": 294198045871402,
+     "J_clairvoyant_cents": 166690418181514,
+     "excluded": null
+    },
+    {
+     "episode": 125,
+     "stratum": 2,
+     "J_policy_cents": 163802676945777,
+     "J_naive_cents": 229281403244888,
+     "J_clairvoyant_cents": 158239253876941,
+     "excluded": null
+    },
+    {
+     "episode": 126,
+     "stratum": 2,
+     "J_policy_cents": 354375195030778,
+     "J_naive_cents": 404136082165653,
+     "J_clairvoyant_cents": 335839702234847,
+     "excluded": null
+    },
+    {
+     "episode": 127,
+     "stratum": 1,
+     "J_policy_cents": 260752210254346,
+     "J_naive_cents": 353470592167365,
+     "J_clairvoyant_cents": 245344418278370,
+     "excluded": null
+    },
+    {
+     "episode": 128,
+     "stratum": 4,
+     "J_policy_cents": 330268610117492,
+     "J_naive_cents": 412662116406193,
+     "J_clairvoyant_cents": 321498705340519,
+     "excluded": null
+    },
+    {
+     "episode": 129,
+     "stratum": 1,
+     "J_policy_cents": 123009315844563,
+     "J_naive_cents": 253105236942519,
+     "J_clairvoyant_cents": 78791305667673,
+     "excluded": null
+    },
+    {
+     "episode": 130,
+     "stratum": 3,
+     "J_policy_cents": 361416823337908,
+     "J_naive_cents": 404396417978925,
+     "J_clairvoyant_cents": 340150140758913,
+     "excluded": null
+    },
+    {
+     "episode": 131,
+     "stratum": 1,
+     "J_policy_cents": 230980827979461,
+     "J_naive_cents": 334052708215012,
+     "J_clairvoyant_cents": 207827580765432,
+     "excluded": null
+    },
+    {
+     "episode": 132,
+     "stratum": 3,
+     "J_policy_cents": 449108224394438,
+     "J_naive_cents": 493095607473024,
+     "J_clairvoyant_cents": 424959008792583,
+     "excluded": null
+    },
+    {
+     "episode": 133,
+     "stratum": 1,
+     "J_policy_cents": 205029670744882,
+     "J_naive_cents": 257475753739292,
+     "J_clairvoyant_cents": 189225197816851,
+     "excluded": null
+    },
+    {
+     "episode": 134,
+     "stratum": 1,
+     "J_policy_cents": 143835714378076,
+     "J_naive_cents": 176405990461742,
+     "J_clairvoyant_cents": 132093635939579,
+     "excluded": null
+    },
+    {
+     "episode": 135,
+     "stratum": 1,
+     "J_policy_cents": 132279075460551,
+     "J_naive_cents": 241493148585127,
+     "J_clairvoyant_cents": 100872566269754,
+     "excluded": null
+    },
+    {
+     "episode": 136,
+     "stratum": 1,
+     "J_policy_cents": 345005033604958,
+     "J_naive_cents": 433468208551272,
+     "J_clairvoyant_cents": 322511343218075,
+     "excluded": null
+    },
+    {
+     "episode": 137,
+     "stratum": 3,
+     "J_policy_cents": 373319444845741,
+     "J_naive_cents": 447613911921311,
+     "J_clairvoyant_cents": 357090694917987,
+     "excluded": null
+    },
+    {
+     "episode": 138,
+     "stratum": 1,
+     "J_policy_cents": 413468460577211,
+     "J_naive_cents": 458611133747184,
+     "J_clairvoyant_cents": 400947577871823,
+     "excluded": null
+    },
+    {
+     "episode": 139,
+     "stratum": 2,
+     "J_policy_cents": 414335094648285,
+     "J_naive_cents": 474645284716867,
+     "J_clairvoyant_cents": 405600077969141,
+     "excluded": null
+    },
+    {
+     "episode": 140,
+     "stratum": 1,
+     "J_policy_cents": 321356198315841,
+     "J_naive_cents": 370255207854574,
+     "J_clairvoyant_cents": 311011704771309,
+     "excluded": null
+    },
+    {
+     "episode": 141,
+     "stratum": 1,
+     "J_policy_cents": 123126887792169,
+     "J_naive_cents": 213032678648719,
+     "J_clairvoyant_cents": 114707793161989,
+     "excluded": null
+    },
+    {
+     "episode": 142,
+     "stratum": 2,
+     "J_policy_cents": 308097470024039,
+     "J_naive_cents": 345637680900636,
+     "J_clairvoyant_cents": 280580725899648,
+     "excluded": null
+    },
+    {
+     "episode": 143,
+     "stratum": 3,
+     "J_policy_cents": 296311448816945,
+     "J_naive_cents": 401738423924321,
+     "J_clairvoyant_cents": 284346423349436,
+     "excluded": null
+    },
+    {
+     "episode": 144,
+     "stratum": 2,
+     "J_policy_cents": 279575853590603,
+     "J_naive_cents": 338520444564838,
+     "J_clairvoyant_cents": 251934438839763,
+     "excluded": null
+    },
+    {
+     "episode": 145,
+     "stratum": 1,
+     "J_policy_cents": 319942511655914,
+     "J_naive_cents": 431871707722885,
+     "J_clairvoyant_cents": 312888067703036,
+     "excluded": null
+    },
+    {
+     "episode": 146,
+     "stratum": 2,
+     "J_policy_cents": 167271651747892,
+     "J_naive_cents": 222252302907650,
+     "J_clairvoyant_cents": 161326690685333,
+     "excluded": null
+    },
+    {
+     "episode": 147,
+     "stratum": 4,
+     "J_policy_cents": 354873729761673,
+     "J_naive_cents": 456330115048722,
+     "J_clairvoyant_cents": 344258135504676,
+     "excluded": null
+    },
+    {
+     "episode": 148,
+     "stratum": 3,
+     "J_policy_cents": 431174371086720,
+     "J_naive_cents": 470346059314706,
+     "J_clairvoyant_cents": 402717043327681,
+     "excluded": null
+    },
+    {
+     "episode": 149,
+     "stratum": 3,
+     "J_policy_cents": 288368808479492,
+     "J_naive_cents": 398902295167388,
+     "J_clairvoyant_cents": 274497518970774,
+     "excluded": null
+    },
+    {
+     "episode": 150,
+     "stratum": 1,
+     "J_policy_cents": 140862228749686,
+     "J_naive_cents": 177800359994916,
+     "J_clairvoyant_cents": 83844108205103,
+     "excluded": null
+    },
+    {
+     "episode": 151,
+     "stratum": 2,
+     "J_policy_cents": 155652250494204,
+     "J_naive_cents": 227413814931801,
+     "J_clairvoyant_cents": 149096271936657,
+     "excluded": null
+    },
+    {
+     "episode": 152,
+     "stratum": 1,
+     "J_policy_cents": 324126503757328,
+     "J_naive_cents": 367219293445663,
+     "J_clairvoyant_cents": 271018000413278,
+     "excluded": null
+    },
+    {
+     "episode": 153,
+     "stratum": 2,
+     "J_policy_cents": 294582768770816,
+     "J_naive_cents": 337975113347404,
+     "J_clairvoyant_cents": 269032232000058,
+     "excluded": null
+    },
+    {
+     "episode": 154,
+     "stratum": 1,
+     "J_policy_cents": 312253139357007,
+     "J_naive_cents": 413306114740014,
+     "J_clairvoyant_cents": 303295226855318,
+     "excluded": null
+    },
+    {
+     "episode": 155,
+     "stratum": 1,
+     "J_policy_cents": 292281521014359,
+     "J_naive_cents": 373413249460465,
+     "J_clairvoyant_cents": 255488033531280,
+     "excluded": null
+    },
+    {
+     "episode": 156,
+     "stratum": 3,
+     "J_policy_cents": 297986918096864,
+     "J_naive_cents": 320497876381929,
+     "J_clairvoyant_cents": 278212914218899,
+     "excluded": null
+    },
+    {
+     "episode": 157,
+     "stratum": 2,
+     "J_policy_cents": 345925431270551,
+     "J_naive_cents": 439853544442603,
+     "J_clairvoyant_cents": 312325232543755,
+     "excluded": null
+    },
+    {
+     "episode": 158,
+     "stratum": 3,
+     "J_policy_cents": 342388375473799,
+     "J_naive_cents": 402219550936879,
+     "J_clairvoyant_cents": 317716880550700,
+     "excluded": null
+    },
+    {
+     "episode": 159,
+     "stratum": 2,
+     "J_policy_cents": 437682802743535,
+     "J_naive_cents": 458039068790386,
+     "J_clairvoyant_cents": 403981850910452,
+     "excluded": null
+    },
+    {
+     "episode": 160,
+     "stratum": 3,
+     "J_policy_cents": 144251800373137,
+     "J_naive_cents": 289725495104858,
+     "J_clairvoyant_cents": 116816049349928,
+     "excluded": null
+    },
+    {
+     "episode": 161,
+     "stratum": 1,
+     "J_policy_cents": 66177410142847,
+     "J_naive_cents": 180570499932285,
+     "J_clairvoyant_cents": 49351112095242,
+     "excluded": null
+    },
+    {
+     "episode": 162,
+     "stratum": 1,
+     "J_policy_cents": 170769855369417,
+     "J_naive_cents": 273562340506590,
+     "J_clairvoyant_cents": 160184864544187,
+     "excluded": null
+    },
+    {
+     "episode": 163,
+     "stratum": 2,
+     "J_policy_cents": 355076524457769,
+     "J_naive_cents": 401317713794868,
+     "J_clairvoyant_cents": 342210386313460,
+     "excluded": null
+    },
+    {
+     "episode": 164,
+     "stratum": 2,
+     "J_policy_cents": 144073302715235,
+     "J_naive_cents": 198243492963566,
+     "J_clairvoyant_cents": 131350534775730,
+     "excluded": null
+    },
+    {
+     "episode": 165,
+     "stratum": 1,
+     "J_policy_cents": 227346992879879,
+     "J_naive_cents": 277882876423756,
+     "J_clairvoyant_cents": 194806182940418,
+     "excluded": null
+    },
+    {
+     "episode": 166,
+     "stratum": 1,
+     "J_policy_cents": 193250666146311,
+     "J_naive_cents": 312445766539914,
+     "J_clairvoyant_cents": 160443285927634,
+     "excluded": null
+    },
+    {
+     "episode": 167,
+     "stratum": 1,
+     "J_policy_cents": 308583899088087,
+     "J_naive_cents": 376518284395894,
+     "J_clairvoyant_cents": 290208146751289,
+     "excluded": null
+    },
+    {
+     "episode": 168,
+     "stratum": 2,
+     "J_policy_cents": 178347344684736,
+     "J_naive_cents": 212298896333939,
+     "J_clairvoyant_cents": 165872138546019,
+     "excluded": null
+    },
+    {
+     "episode": 169,
+     "stratum": 2,
+     "J_policy_cents": 402276548294913,
+     "J_naive_cents": 507906258691928,
+     "J_clairvoyant_cents": 386891835623536,
+     "excluded": null
+    },
+    {
+     "episode": 170,
+     "stratum": 2,
+     "J_policy_cents": 401748481876368,
+     "J_naive_cents": 472901354104435,
+     "J_clairvoyant_cents": 357230272989794,
+     "excluded": null
+    },
+    {
+     "episode": 171,
+     "stratum": 4,
+     "J_policy_cents": 237501622431331,
+     "J_naive_cents": 314855748996309,
+     "J_clairvoyant_cents": 188658967790199,
+     "excluded": null
+    },
+    {
+     "episode": 172,
+     "stratum": 2,
+     "J_policy_cents": 377027887665623,
+     "J_naive_cents": 478808316829598,
+     "J_clairvoyant_cents": 361100624681071,
+     "excluded": null
+    },
+    {
+     "episode": 173,
+     "stratum": 1,
+     "J_policy_cents": 131381708056477,
+     "J_naive_cents": 226483918564383,
+     "J_clairvoyant_cents": 102994855308948,
+     "excluded": null
+    },
+    {
+     "episode": 174,
+     "stratum": 1,
+     "J_policy_cents": 166383343832403,
+     "J_naive_cents": 258073389525338,
+     "J_clairvoyant_cents": 158457688155502,
+     "excluded": null
+    },
+    {
+     "episode": 175,
+     "stratum": 4,
+     "J_policy_cents": 387751757356662,
+     "J_naive_cents": 456096373159076,
+     "J_clairvoyant_cents": 363586473628589,
+     "excluded": null
+    },
+    {
+     "episode": 176,
+     "stratum": 1,
+     "J_policy_cents": 73359627651682,
+     "J_naive_cents": 201439287945747,
+     "J_clairvoyant_cents": 37303516373208,
+     "excluded": null
+    },
+    {
+     "episode": 177,
+     "stratum": 3,
+     "J_policy_cents": 388241098047302,
+     "J_naive_cents": 431906763104265,
+     "J_clairvoyant_cents": 373791433062893,
+     "excluded": null
+    },
+    {
+     "episode": 178,
+     "stratum": 1,
+     "J_policy_cents": 315530872117215,
+     "J_naive_cents": 376808025724840,
+     "J_clairvoyant_cents": 279682570625467,
+     "excluded": null
+    },
+    {
+     "episode": 179,
+     "stratum": 2,
+     "J_policy_cents": 247711128264973,
+     "J_naive_cents": 344657457749144,
+     "J_clairvoyant_cents": 239320209658383,
+     "excluded": null
+    },
+    {
+     "episode": 180,
+     "stratum": 1,
+     "J_policy_cents": 92493612364115,
+     "J_naive_cents": 245107214943578,
+     "J_clairvoyant_cents": 85124977909260,
+     "excluded": null
+    },
+    {
+     "episode": 181,
+     "stratum": 2,
+     "J_policy_cents": 203486051565348,
+     "J_naive_cents": 344625127489775,
+     "J_clairvoyant_cents": 198841884800813,
+     "excluded": null
+    },
+    {
+     "episode": 182,
+     "stratum": 2,
+     "J_policy_cents": 189726792668743,
+     "J_naive_cents": 294844007554776,
+     "J_clairvoyant_cents": 150340826884025,
+     "excluded": null
+    },
+    {
+     "episode": 183,
+     "stratum": 2,
+     "J_policy_cents": 353023221881619,
+     "J_naive_cents": 420074513595129,
+     "J_clairvoyant_cents": 318004205027203,
+     "excluded": null
+    },
+    {
+     "episode": 184,
+     "stratum": 1,
+     "J_policy_cents": 266880843076959,
+     "J_naive_cents": 369159452243531,
+     "J_clairvoyant_cents": 250823812930057,
+     "excluded": null
+    },
+    {
+     "episode": 185,
+     "stratum": 2,
+     "J_policy_cents": 312599055936234,
+     "J_naive_cents": 437603567390889,
+     "J_clairvoyant_cents": 295303679960248,
+     "excluded": null
+    },
+    {
+     "episode": 186,
+     "stratum": 1,
+     "J_policy_cents": 59050211640598,
+     "J_naive_cents": 148249766702422,
+     "J_clairvoyant_cents": 31345479978086,
+     "excluded": null
+    },
+    {
+     "episode": 187,
+     "stratum": 2,
+     "J_policy_cents": 80089094435938,
+     "J_naive_cents": 241485519272297,
+     "J_clairvoyant_cents": 62789080957350,
+     "excluded": null
+    },
+    {
+     "episode": 188,
+     "stratum": 1,
+     "J_policy_cents": 62954158725183,
+     "J_naive_cents": 118734399952886,
+     "J_clairvoyant_cents": 34317503965568,
+     "excluded": null
+    },
+    {
+     "episode": 189,
+     "stratum": 1,
+     "J_policy_cents": 222179955496123,
+     "J_naive_cents": 234305187287467,
+     "J_clairvoyant_cents": 217107221951431,
+     "excluded": null
+    },
+    {
+     "episode": 190,
+     "stratum": 2,
+     "J_policy_cents": 424211264007332,
+     "J_naive_cents": 478202030561169,
+     "J_clairvoyant_cents": 386010865460666,
+     "excluded": null
+    },
+    {
+     "episode": 191,
+     "stratum": 2,
+     "J_policy_cents": 390799984214829,
+     "J_naive_cents": 465924837276538,
+     "J_clairvoyant_cents": 376180812755846,
+     "excluded": null
+    },
+    {
+     "episode": 192,
+     "stratum": 1,
+     "J_policy_cents": 77613872349052,
+     "J_naive_cents": 131628628678699,
+     "J_clairvoyant_cents": 74638414454665,
+     "excluded": null
+    },
+    {
+     "episode": 193,
+     "stratum": 2,
+     "J_policy_cents": 130980470215966,
+     "J_naive_cents": 232167093928795,
+     "J_clairvoyant_cents": 116886485844103,
+     "excluded": null
+    },
+    {
+     "episode": 194,
+     "stratum": 1,
+     "J_policy_cents": 139839042596645,
+     "J_naive_cents": 313092177238015,
+     "J_clairvoyant_cents": 128155010145153,
+     "excluded": null
+    },
+    {
+     "episode": 195,
+     "stratum": 2,
+     "J_policy_cents": 386449684531658,
+     "J_naive_cents": 446835909508394,
+     "J_clairvoyant_cents": 360716602353225,
+     "excluded": null
+    },
+    {
+     "episode": 196,
+     "stratum": 3,
+     "J_policy_cents": 250769070705724,
+     "J_naive_cents": 365507610518629,
+     "J_clairvoyant_cents": 235890271685106,
+     "excluded": null
+    },
+    {
+     "episode": 197,
+     "stratum": 1,
+     "J_policy_cents": 124418622110707,
+     "J_naive_cents": 206501316043213,
+     "J_clairvoyant_cents": 114344149594076,
+     "excluded": null
+    },
+    {
+     "episode": 198,
+     "stratum": 4,
+     "J_policy_cents": 301762664241587,
+     "J_naive_cents": 385690177699470,
+     "J_clairvoyant_cents": 294313648368084,
+     "excluded": null
+    },
+    {
+     "episode": 199,
+     "stratum": 2,
+     "J_policy_cents": 372556861123764,
+     "J_naive_cents": 467530325379558,
+     "J_clairvoyant_cents": 349758321632124,
+     "excluded": null
+    },
+    {
+     "episode": 200,
+     "stratum": 1,
+     "J_policy_cents": 329260377065656,
+     "J_naive_cents": 352932113355733,
+     "J_clairvoyant_cents": 313645627193951,
+     "excluded": null
+    },
+    {
+     "episode": 201,
+     "stratum": 4,
+     "J_policy_cents": 392827179542608,
+     "J_naive_cents": 409740736922816,
+     "J_clairvoyant_cents": 360463750246049,
+     "excluded": null
+    },
+    {
+     "episode": 202,
+     "stratum": 2,
+     "J_policy_cents": 367682985334330,
+     "J_naive_cents": 395702360710351,
+     "J_clairvoyant_cents": 334195758819434,
+     "excluded": null
+    },
+    {
+     "episode": 203,
+     "stratum": 3,
+     "J_policy_cents": 134387361132519,
+     "J_naive_cents": 205101721676604,
+     "J_clairvoyant_cents": 125722447706098,
+     "excluded": null
+    },
+    {
+     "episode": 204,
+     "stratum": 2,
+     "J_policy_cents": 393254770588994,
+     "J_naive_cents": 482194233818165,
+     "J_clairvoyant_cents": 380220734365221,
+     "excluded": null
+    },
+    {
+     "episode": 205,
+     "stratum": 3,
+     "J_policy_cents": 354024693210418,
+     "J_naive_cents": 394688490027979,
+     "J_clairvoyant_cents": 334477670859749,
+     "excluded": null
+    },
+    {
+     "episode": 206,
+     "stratum": 1,
+     "J_policy_cents": 169401579870487,
+     "J_naive_cents": 250187028007752,
+     "J_clairvoyant_cents": 135302763162575,
+     "excluded": null
+    },
+    {
+     "episode": 207,
+     "stratum": 3,
+     "J_policy_cents": 272082693554167,
+     "J_naive_cents": 430699552701884,
+     "J_clairvoyant_cents": 260074069772133,
+     "excluded": null
+    },
+    {
+     "episode": 208,
+     "stratum": 3,
+     "J_policy_cents": 292946508723171,
+     "J_naive_cents": 340011453514834,
+     "J_clairvoyant_cents": 282233009943104,
+     "excluded": null
+    },
+    {
+     "episode": 209,
+     "stratum": 1,
+     "J_policy_cents": 325215607626404,
+     "J_naive_cents": 332718208455594,
+     "J_clairvoyant_cents": 322033333173135,
+     "excluded": null
+    },
+    {
+     "episode": 210,
+     "stratum": 1,
+     "J_policy_cents": 168311039273470,
+     "J_naive_cents": 238706921211052,
+     "J_clairvoyant_cents": 157795603758857,
+     "excluded": null
+    },
+    {
+     "episode": 211,
+     "stratum": 1,
+     "J_policy_cents": 311028527921979,
+     "J_naive_cents": 360530583189335,
+     "J_clairvoyant_cents": 269483174281758,
+     "excluded": null
+    },
+    {
+     "episode": 212,
+     "stratum": 1,
+     "J_policy_cents": 356625745412638,
+     "J_naive_cents": 475679985080631,
+     "J_clairvoyant_cents": 328287909392226,
+     "excluded": null
+    },
+    {
+     "episode": 213,
+     "stratum": 1,
+     "J_policy_cents": 257292460461655,
+     "J_naive_cents": 342526201477964,
+     "J_clairvoyant_cents": 225111049483852,
+     "excluded": null
+    },
+    {
+     "episode": 214,
+     "stratum": 1,
+     "J_policy_cents": 149039304806805,
+     "J_naive_cents": 281810498800969,
+     "J_clairvoyant_cents": 125956134044342,
+     "excluded": null
+    },
+    {
+     "episode": 215,
+     "stratum": 2,
+     "J_policy_cents": 175131791610352,
+     "J_naive_cents": 297982627101881,
+     "J_clairvoyant_cents": 158952479955303,
+     "excluded": null
+    },
+    {
+     "episode": 216,
+     "stratum": 3,
+     "J_policy_cents": 214559213959810,
+     "J_naive_cents": 335719377371951,
+     "J_clairvoyant_cents": 190372042465199,
+     "excluded": null
+    },
+    {
+     "episode": 217,
+     "stratum": 1,
+     "J_policy_cents": 219434073635989,
+     "J_naive_cents": 299482391836284,
+     "J_clairvoyant_cents": 193493941243957,
+     "excluded": null
+    },
+    {
+     "episode": 218,
+     "stratum": 2,
+     "J_policy_cents": 383719449218681,
+     "J_naive_cents": 417902076255313,
+     "J_clairvoyant_cents": 352971788835676,
+     "excluded": null
+    },
+    {
+     "episode": 219,
+     "stratum": 2,
+     "J_policy_cents": 361316390611124,
+     "J_naive_cents": 456271712610855,
+     "J_clairvoyant_cents": 346961801797145,
+     "excluded": null
+    },
+    {
+     "episode": 220,
+     "stratum": 1,
+     "J_policy_cents": 206734833627918,
+     "J_naive_cents": 354486869432923,
+     "J_clairvoyant_cents": 201165915329297,
+     "excluded": null
+    },
+    {
+     "episode": 221,
+     "stratum": 2,
+     "J_policy_cents": 267738562102664,
+     "J_naive_cents": 373560913403033,
+     "J_clairvoyant_cents": 249337295696420,
+     "excluded": null
+    },
+    {
+     "episode": 222,
+     "stratum": 3,
+     "J_policy_cents": 428288469391455,
+     "J_naive_cents": 471496714568519,
+     "J_clairvoyant_cents": 402476262788930,
+     "excluded": null
+    },
+    {
+     "episode": 223,
+     "stratum": 2,
+     "J_policy_cents": 215535094969797,
+     "J_naive_cents": 324313351479181,
+     "J_clairvoyant_cents": 194430426440034,
+     "excluded": null
+    },
+    {
+     "episode": 224,
+     "stratum": 1,
+     "J_policy_cents": 88348994144073,
+     "J_naive_cents": 123482413187836,
+     "J_clairvoyant_cents": 62013551714866,
+     "excluded": null
+    },
+    {
+     "episode": 225,
+     "stratum": 2,
+     "J_policy_cents": 392575673752945,
+     "J_naive_cents": 448592746575092,
+     "J_clairvoyant_cents": 357713276540438,
+     "excluded": null
+    },
+    {
+     "episode": 226,
+     "stratum": 1,
+     "J_policy_cents": 336215337694107,
+     "J_naive_cents": 408154773979552,
+     "J_clairvoyant_cents": 330638343159264,
+     "excluded": null
+    },
+    {
+     "episode": 227,
+     "stratum": 4,
+     "J_policy_cents": 338736020158459,
+     "J_naive_cents": 422947960508398,
+     "J_clairvoyant_cents": 329899265025549,
+     "excluded": null
+    },
+    {
+     "episode": 228,
+     "stratum": 2,
+     "J_policy_cents": 192146339193096,
+     "J_naive_cents": 299899238142666,
+     "J_clairvoyant_cents": 175319453105105,
+     "excluded": null
+    },
+    {
+     "episode": 229,
+     "stratum": 3,
+     "J_policy_cents": 411754308240922,
+     "J_naive_cents": 496404876141771,
+     "J_clairvoyant_cents": 390504296856602,
+     "excluded": null
+    },
+    {
+     "episode": 230,
+     "stratum": 2,
+     "J_policy_cents": 256045956954276,
+     "J_naive_cents": 348448813421859,
+     "J_clairvoyant_cents": 237602583615929,
+     "excluded": null
+    },
+    {
+     "episode": 231,
+     "stratum": 2,
+     "J_policy_cents": 358129328491956,
+     "J_naive_cents": 392545677278792,
+     "J_clairvoyant_cents": 348480258931368,
+     "excluded": null
+    },
+    {
+     "episode": 232,
+     "stratum": 2,
+     "J_policy_cents": 93387578956474,
+     "J_naive_cents": 197688486877974,
+     "J_clairvoyant_cents": 72438650037319,
+     "excluded": null
+    },
+    {
+     "episode": 233,
+     "stratum": 1,
+     "J_policy_cents": 310944872099364,
+     "J_naive_cents": 374737945092617,
+     "J_clairvoyant_cents": 296810967079288,
+     "excluded": null
+    },
+    {
+     "episode": 234,
+     "stratum": 1,
+     "J_policy_cents": 298628787050162,
+     "J_naive_cents": 368703279337494,
+     "J_clairvoyant_cents": 290796859417806,
+     "excluded": null
+    },
+    {
+     "episode": 235,
+     "stratum": 1,
+     "J_policy_cents": 210562882324373,
+     "J_naive_cents": 253712883529806,
+     "J_clairvoyant_cents": 186373841831605,
+     "excluded": null
+    },
+    {
+     "episode": 236,
+     "stratum": 1,
+     "J_policy_cents": 115298446918278,
+     "J_naive_cents": 228884920692263,
+     "J_clairvoyant_cents": 104915886755261,
+     "excluded": null
+    },
+    {
+     "episode": 237,
+     "stratum": 1,
+     "J_policy_cents": 370037363353661,
+     "J_naive_cents": 438425171826879,
+     "J_clairvoyant_cents": 333979356849710,
+     "excluded": null
+    },
+    {
+     "episode": 238,
+     "stratum": 1,
+     "J_policy_cents": 354046130831043,
+     "J_naive_cents": 411802200372006,
+     "J_clairvoyant_cents": 336588013667559,
+     "excluded": null
+    },
+    {
+     "episode": 239,
+     "stratum": 2,
+     "J_policy_cents": 104407269414970,
+     "J_naive_cents": 219626728562069,
+     "J_clairvoyant_cents": 70663750509434,
+     "excluded": null
+    },
+    {
+     "episode": 240,
+     "stratum": 1,
+     "J_policy_cents": 87662408090593,
+     "J_naive_cents": 169912220142743,
+     "J_clairvoyant_cents": 81586679281816,
+     "excluded": null
+    },
+    {
+     "episode": 241,
+     "stratum": 1,
+     "J_policy_cents": 171856719007761,
+     "J_naive_cents": 239323643463187,
+     "J_clairvoyant_cents": 142902300497773,
+     "excluded": null
+    },
+    {
+     "episode": 242,
+     "stratum": 2,
+     "J_policy_cents": 363743784687710,
+     "J_naive_cents": 426913074176352,
+     "J_clairvoyant_cents": 327595673688287,
+     "excluded": null
+    },
+    {
+     "episode": 243,
+     "stratum": 1,
+     "J_policy_cents": 271718207332879,
+     "J_naive_cents": 333594927095670,
+     "J_clairvoyant_cents": 262791007986435,
+     "excluded": null
+    },
+    {
+     "episode": 244,
+     "stratum": 2,
+     "J_policy_cents": 195298574612640,
+     "J_naive_cents": 339402575696357,
+     "J_clairvoyant_cents": 172641534666811,
+     "excluded": null
+    },
+    {
+     "episode": 245,
+     "stratum": 4,
+     "J_policy_cents": 391847189757468,
+     "J_naive_cents": 459051628632373,
+     "J_clairvoyant_cents": 384290456442503,
+     "excluded": null
+    },
+    {
+     "episode": 246,
+     "stratum": 3,
+     "J_policy_cents": 438548918481420,
+     "J_naive_cents": 464480133391464,
+     "J_clairvoyant_cents": 431930865310180,
+     "excluded": null
+    },
+    {
+     "episode": 247,
+     "stratum": 2,
+     "J_policy_cents": 417782464918378,
+     "J_naive_cents": 469792121000834,
+     "J_clairvoyant_cents": 403488701326847,
+     "excluded": null
+    },
+    {
+     "episode": 248,
+     "stratum": 1,
+     "J_policy_cents": 222875017694621,
+     "J_naive_cents": 281462542939939,
+     "J_clairvoyant_cents": 207490903608562,
+     "excluded": null
+    },
+    {
+     "episode": 249,
+     "stratum": 1,
+     "J_policy_cents": 270816480219065,
+     "J_naive_cents": 326944972267912,
+     "J_clairvoyant_cents": 219883135583766,
+     "excluded": null
+    },
+    {
+     "episode": 250,
+     "stratum": 2,
+     "J_policy_cents": 299367876649419,
+     "J_naive_cents": 393521389864417,
+     "J_clairvoyant_cents": 261038641116239,
+     "excluded": null
+    },
+    {
+     "episode": 251,
+     "stratum": 2,
+     "J_policy_cents": 414435427388684,
+     "J_naive_cents": 488101324463526,
+     "J_clairvoyant_cents": 375466480051914,
+     "excluded": null
+    },
+    {
+     "episode": 252,
+     "stratum": 2,
+     "J_policy_cents": 323757870146568,
+     "J_naive_cents": 396263698381297,
+     "J_clairvoyant_cents": 312000423328838,
+     "excluded": null
+    },
+    {
+     "episode": 253,
+     "stratum": 1,
+     "J_policy_cents": 77389092585639,
+     "J_naive_cents": 195700520442847,
+     "J_clairvoyant_cents": 57243939208220,
+     "excluded": null
+    },
+    {
+     "episode": 254,
+     "stratum": 1,
+     "J_policy_cents": 98216988758584,
+     "J_naive_cents": 145680915110486,
+     "J_clairvoyant_cents": 79973949012681,
+     "excluded": null
+    },
+    {
+     "episode": 255,
+     "stratum": 2,
+     "J_policy_cents": 452028064171523,
+     "J_naive_cents": 470775895883726,
+     "J_clairvoyant_cents": 416310888456844,
+     "excluded": null
+    }
+   ]
+  },
+  "full-222": {
+   "episodes": 128,
+   "rows": [
+    {
+     "episode": 0,
+     "stratum": 1,
+     "J_policy_cents": 375930708152109,
+     "J_naive_cents": 567657819824517,
+     "J_clairvoyant_cents": 292984997528121,
+     "excluded": null
+    },
+    {
+     "episode": 1,
+     "stratum": 1,
+     "J_policy_cents": 892112745271636,
+     "J_naive_cents": 1191234065596543,
+     "J_clairvoyant_cents": 819798810218974,
+     "excluded": null
+    },
+    {
+     "episode": 2,
+     "stratum": 3,
+     "J_policy_cents": 688755289250004,
+     "J_naive_cents": 952064409589956,
+     "J_clairvoyant_cents": 540675646704671,
+     "excluded": null
+    },
+    {
+     "episode": 3,
+     "stratum": 1,
+     "J_policy_cents": 655550416254783,
+     "J_naive_cents": 876185568020293,
+     "J_clairvoyant_cents": 416886778369786,
+     "excluded": null
+    },
+    {
+     "episode": 4,
+     "stratum": 3,
+     "J_policy_cents": 711029888888017,
+     "J_naive_cents": 978417239046864,
+     "J_clairvoyant_cents": 612273101745411,
+     "excluded": null
+    },
+    {
+     "episode": 5,
+     "stratum": 1,
+     "J_policy_cents": 727226364623928,
+     "J_naive_cents": 1027394969169268,
+     "J_clairvoyant_cents": 687370409044396,
+     "excluded": null
+    },
+    {
+     "episode": 6,
+     "stratum": 1,
+     "J_policy_cents": 430409594888910,
+     "J_naive_cents": 611115458367247,
+     "J_clairvoyant_cents": 392967538147573,
+     "excluded": null
+    },
+    {
+     "episode": 7,
+     "stratum": 1,
+     "J_policy_cents": 416007033201502,
+     "J_naive_cents": 776002889926385,
+     "J_clairvoyant_cents": 377840750766654,
+     "excluded": null
+    },
+    {
+     "episode": 8,
+     "stratum": 2,
+     "J_policy_cents": 465769345912445,
+     "J_naive_cents": 678450502184352,
+     "J_clairvoyant_cents": 429056564610436,
+     "excluded": null
+    },
+    {
+     "episode": 9,
+     "stratum": 3,
+     "J_policy_cents": 814265189865013,
+     "J_naive_cents": 1038228429439576,
+     "J_clairvoyant_cents": 682672586569587,
+     "excluded": null
+    },
+    {
+     "episode": 10,
+     "stratum": 1,
+     "J_policy_cents": 654164687779557,
+     "J_naive_cents": 869325642181278,
+     "J_clairvoyant_cents": 604899304475007,
+     "excluded": null
+    },
+    {
+     "episode": 11,
+     "stratum": 1,
+     "J_policy_cents": 230663572357484,
+     "J_naive_cents": 559404457825504,
+     "J_clairvoyant_cents": 158973406623825,
+     "excluded": null
+    },
+    {
+     "episode": 12,
+     "stratum": 2,
+     "J_policy_cents": 394720221048627,
+     "J_naive_cents": 776106486579705,
+     "J_clairvoyant_cents": 346345353951281,
+     "excluded": null
+    },
+    {
+     "episode": 13,
+     "stratum": 2,
+     "J_policy_cents": 833716570381697,
+     "J_naive_cents": 1083570224314953,
+     "J_clairvoyant_cents": 751691532716874,
+     "excluded": null
+    },
+    {
+     "episode": 14,
+     "stratum": 1,
+     "J_policy_cents": 292176858617617,
+     "J_naive_cents": 474889463561235,
+     "J_clairvoyant_cents": 261974252854296,
+     "excluded": null
+    },
+    {
+     "episode": 15,
+     "stratum": 4,
+     "J_policy_cents": 688088778300928,
+     "J_naive_cents": 1018380456334970,
+     "J_clairvoyant_cents": 625391668001506,
+     "excluded": null
+    },
+    {
+     "episode": 16,
+     "stratum": 1,
+     "J_policy_cents": 890186440138341,
+     "J_naive_cents": 1315290244553843,
+     "J_clairvoyant_cents": 807625939248801,
+     "excluded": null
+    },
+    {
+     "episode": 17,
+     "stratum": 3,
+     "J_policy_cents": 986462848954257,
+     "J_naive_cents": 1284455622717847,
+     "J_clairvoyant_cents": 833018373549594,
+     "excluded": null
+    },
+    {
+     "episode": 18,
+     "stratum": 4,
+     "J_policy_cents": 847227385474144,
+     "J_naive_cents": 1168872184243878,
+     "J_clairvoyant_cents": 808903501103304,
+     "excluded": null
+    },
+    {
+     "episode": 19,
+     "stratum": 2,
+     "J_policy_cents": 299629187994329,
+     "J_naive_cents": 592291861167125,
+     "J_clairvoyant_cents": 279033025483431,
+     "excluded": null
+    },
+    {
+     "episode": 20,
+     "stratum": 1,
+     "J_policy_cents": 401751749358920,
+     "J_naive_cents": 615352815013437,
+     "J_clairvoyant_cents": 322252224969026,
+     "excluded": null
+    },
+    {
+     "episode": 21,
+     "stratum": 3,
+     "J_policy_cents": 387118073656362,
+     "J_naive_cents": 698167017852493,
+     "J_clairvoyant_cents": 283701313778223,
+     "excluded": null
+    },
+    {
+     "episode": 22,
+     "stratum": 1,
+     "J_policy_cents": 335370839700011,
+     "J_naive_cents": 588758488960810,
+     "J_clairvoyant_cents": 294891938540955,
+     "excluded": null
+    },
+    {
+     "episode": 23,
+     "stratum": 2,
+     "J_policy_cents": 521849478581476,
+     "J_naive_cents": 866731977471729,
+     "J_clairvoyant_cents": 473263845056059,
+     "excluded": null
+    },
+    {
+     "episode": 24,
+     "stratum": 4,
+     "J_policy_cents": 1072439977719840,
+     "J_naive_cents": 1189433697445101,
+     "J_clairvoyant_cents": 947733506952029,
+     "excluded": null
+    },
+    {
+     "episode": 25,
+     "stratum": 3,
+     "J_policy_cents": 517934750873610,
+     "J_naive_cents": 748991939145784,
+     "J_clairvoyant_cents": 451099608904731,
+     "excluded": null
+    },
+    {
+     "episode": 26,
+     "stratum": 1,
+     "J_policy_cents": 379479984754975,
+     "J_naive_cents": 657131688031136,
+     "J_clairvoyant_cents": 299720861286460,
+     "excluded": null
+    },
+    {
+     "episode": 27,
+     "stratum": 2,
+     "J_policy_cents": 493913833110448,
+     "J_naive_cents": 720982351155038,
+     "J_clairvoyant_cents": 440242094483365,
+     "excluded": null
+    },
+    {
+     "episode": 28,
+     "stratum": 1,
+     "J_policy_cents": 278892888911858,
+     "J_naive_cents": 632023742514793,
+     "J_clairvoyant_cents": 235355467270136,
+     "excluded": null
+    },
+    {
+     "episode": 29,
+     "stratum": 1,
+     "J_policy_cents": 569748551748892,
+     "J_naive_cents": 758336796805931,
+     "J_clairvoyant_cents": 487714895499458,
+     "excluded": null
+    },
+    {
+     "episode": 30,
+     "stratum": 1,
+     "J_policy_cents": 373940422862945,
+     "J_naive_cents": 775477722249249,
+     "J_clairvoyant_cents": 360442037495032,
+     "excluded": null
+    },
+    {
+     "episode": 31,
+     "stratum": 1,
+     "J_policy_cents": 614497453728344,
+     "J_naive_cents": 909024406873086,
+     "J_clairvoyant_cents": 521303778636814,
+     "excluded": null
+    },
+    {
+     "episode": 32,
+     "stratum": 1,
+     "J_policy_cents": 397167116176690,
+     "J_naive_cents": 730373856252441,
+     "J_clairvoyant_cents": 356947998582301,
+     "excluded": null
+    },
+    {
+     "episode": 33,
+     "stratum": 1,
+     "J_policy_cents": 243193122332140,
+     "J_naive_cents": 497695033744187,
+     "J_clairvoyant_cents": 188315671320642,
+     "excluded": null
+    },
+    {
+     "episode": 34,
+     "stratum": 3,
+     "J_policy_cents": 459141326608134,
+     "J_naive_cents": 830455947558465,
+     "J_clairvoyant_cents": 422333447538934,
+     "excluded": null
+    },
+    {
+     "episode": 35,
+     "stratum": 1,
+     "J_policy_cents": 603546045130500,
+     "J_naive_cents": 975705145156220,
+     "J_clairvoyant_cents": 577536262812822,
+     "excluded": null
+    },
+    {
+     "episode": 36,
+     "stratum": 1,
+     "J_policy_cents": 335830199329115,
+     "J_naive_cents": 633911691425511,
+     "J_clairvoyant_cents": 276435518630904,
+     "excluded": null
+    },
+    {
+     "episode": 37,
+     "stratum": 1,
+     "J_policy_cents": 350378372115571,
+     "J_naive_cents": 489494735698046,
+     "J_clairvoyant_cents": 328210821003446,
+     "excluded": null
+    },
+    {
+     "episode": 38,
+     "stratum": 1,
+     "J_policy_cents": 180193549667661,
+     "J_naive_cents": 549073352736465,
+     "J_clairvoyant_cents": 157980696414328,
+     "excluded": null
+    },
+    {
+     "episode": 39,
+     "stratum": 1,
+     "J_policy_cents": 628373405967022,
+     "J_naive_cents": 1003920350068494,
+     "J_clairvoyant_cents": 590827610889360,
+     "excluded": null
+    },
+    {
+     "episode": 40,
+     "stratum": 1,
+     "J_policy_cents": 402638735055502,
+     "J_naive_cents": 588423037330248,
+     "J_clairvoyant_cents": 281870333263875,
+     "excluded": null
+    },
+    {
+     "episode": 41,
+     "stratum": 3,
+     "J_policy_cents": 791418673041199,
+     "J_naive_cents": 1107014310834046,
+     "J_clairvoyant_cents": 732975844721677,
+     "excluded": null
+    },
+    {
+     "episode": 42,
+     "stratum": 2,
+     "J_policy_cents": 768622552615513,
+     "J_naive_cents": 1062336740624760,
+     "J_clairvoyant_cents": 723376373414376,
+     "excluded": null
+    },
+    {
+     "episode": 43,
+     "stratum": 2,
+     "J_policy_cents": 1250247156320148,
+     "J_naive_cents": 1508660780442399,
+     "J_clairvoyant_cents": 1115318607012095,
+     "excluded": null
+    },
+    {
+     "episode": 44,
+     "stratum": 1,
+     "J_policy_cents": 592106308485151,
+     "J_naive_cents": 934090036895618,
+     "J_clairvoyant_cents": 497048749791947,
+     "excluded": null
+    },
+    {
+     "episode": 45,
+     "stratum": 2,
+     "J_policy_cents": 1040715265465798,
+     "J_naive_cents": 1216398501332721,
+     "J_clairvoyant_cents": 979495862422421,
+     "excluded": null
+    },
+    {
+     "episode": 46,
+     "stratum": 1,
+     "J_policy_cents": 700714411099629,
+     "J_naive_cents": 961977037633416,
+     "J_clairvoyant_cents": 558010543865579,
+     "excluded": null
+    },
+    {
+     "episode": 47,
+     "stratum": 3,
+     "J_policy_cents": 470996616095792,
+     "J_naive_cents": 775263580861144,
+     "J_clairvoyant_cents": 359985626374170,
+     "excluded": null
+    },
+    {
+     "episode": 48,
+     "stratum": 2,
+     "J_policy_cents": 699469816735300,
+     "J_naive_cents": 1111631712185671,
+     "J_clairvoyant_cents": 652594261160732,
+     "excluded": null
+    },
+    {
+     "episode": 49,
+     "stratum": 1,
+     "J_policy_cents": 297409737392415,
+     "J_naive_cents": 380343564996626,
+     "J_clairvoyant_cents": 255692540793988,
+     "excluded": null
+    },
+    {
+     "episode": 50,
+     "stratum": 2,
+     "J_policy_cents": 393233916730407,
+     "J_naive_cents": 715414383994876,
+     "J_clairvoyant_cents": 354643305992670,
+     "excluded": null
+    },
+    {
+     "episode": 51,
+     "stratum": 2,
+     "J_policy_cents": 873644602545688,
+     "J_naive_cents": 1063275101144792,
+     "J_clairvoyant_cents": 731215687598105,
+     "excluded": null
+    },
+    {
+     "episode": 52,
+     "stratum": 1,
+     "J_policy_cents": 382931374326810,
+     "J_naive_cents": 808430692602336,
+     "J_clairvoyant_cents": 342534397728360,
+     "excluded": null
+    },
+    {
+     "episode": 53,
+     "stratum": 1,
+     "J_policy_cents": 466729479416698,
+     "J_naive_cents": 701066252060569,
+     "J_clairvoyant_cents": 287159190639171,
+     "excluded": null
+    },
+    {
+     "episode": 54,
+     "stratum": 1,
+     "J_policy_cents": 440757063097241,
+     "J_naive_cents": 884563843753475,
+     "J_clairvoyant_cents": 343439639051558,
+     "excluded": null
+    },
+    {
+     "episode": 55,
+     "stratum": 2,
+     "J_policy_cents": 528583372080411,
+     "J_naive_cents": 963364979303277,
+     "J_clairvoyant_cents": 488898037799577,
+     "excluded": null
+    },
+    {
+     "episode": 56,
+     "stratum": 2,
+     "J_policy_cents": 1249965764192121,
+     "J_naive_cents": 1626721506518821,
+     "J_clairvoyant_cents": 1169547030770741,
+     "excluded": null
+    },
+    {
+     "episode": 57,
+     "stratum": 1,
+     "J_policy_cents": 465110849255215,
+     "J_naive_cents": 637248589148777,
+     "J_clairvoyant_cents": 418618178600188,
+     "excluded": null
+    },
+    {
+     "episode": 58,
+     "stratum": 1,
+     "J_policy_cents": 624379076548414,
+     "J_naive_cents": 1046008569497945,
+     "J_clairvoyant_cents": 542638711758251,
+     "excluded": null
+    },
+    {
+     "episode": 59,
+     "stratum": 1,
+     "J_policy_cents": 598060247746796,
+     "J_naive_cents": 887921442239823,
+     "J_clairvoyant_cents": 515235095932565,
+     "excluded": null
+    },
+    {
+     "episode": 60,
+     "stratum": 1,
+     "J_policy_cents": 319203869531150,
+     "J_naive_cents": 633055720995977,
+     "J_clairvoyant_cents": 255996690445431,
+     "excluded": null
+    },
+    {
+     "episode": 61,
+     "stratum": 2,
+     "J_policy_cents": 929397240909055,
+     "J_naive_cents": 1129824930077455,
+     "J_clairvoyant_cents": 822632545503894,
+     "excluded": null
+    },
+    {
+     "episode": 62,
+     "stratum": 1,
+     "J_policy_cents": 760616191757913,
+     "J_naive_cents": 910327293765747,
+     "J_clairvoyant_cents": 676460733745947,
+     "excluded": null
+    },
+    {
+     "episode": 63,
+     "stratum": 1,
+     "J_policy_cents": 767038842754500,
+     "J_naive_cents": 1083169479528314,
+     "J_clairvoyant_cents": 659254586415827,
+     "excluded": null
+    },
+    {
+     "episode": 64,
+     "stratum": 2,
+     "J_policy_cents": 1017929084538554,
+     "J_naive_cents": 1140901013174525,
+     "J_clairvoyant_cents": 874166214913178,
+     "excluded": null
+    },
+    {
+     "episode": 65,
+     "stratum": 1,
+     "J_policy_cents": 811462224091542,
+     "J_naive_cents": 1065579896031043,
+     "J_clairvoyant_cents": 727791894358413,
+     "excluded": null
+    },
+    {
+     "episode": 66,
+     "stratum": 1,
+     "J_policy_cents": 655318872448437,
+     "J_naive_cents": 808565611518745,
+     "J_clairvoyant_cents": 575964784899896,
+     "excluded": null
+    },
+    {
+     "episode": 67,
+     "stratum": 1,
+     "J_policy_cents": 447629176987913,
+     "J_naive_cents": 629116548626187,
+     "J_clairvoyant_cents": 347995819205444,
+     "excluded": null
+    },
+    {
+     "episode": 68,
+     "stratum": 1,
+     "J_policy_cents": 797880946317634,
+     "J_naive_cents": 1172520425485718,
+     "J_clairvoyant_cents": 731702055520522,
+     "excluded": null
+    },
+    {
+     "episode": 69,
+     "stratum": 1,
+     "J_policy_cents": 564132327703519,
+     "J_naive_cents": 695730313735878,
+     "J_clairvoyant_cents": 509779265528666,
+     "excluded": null
+    },
+    {
+     "episode": 70,
+     "stratum": 1,
+     "J_policy_cents": 394610624083023,
+     "J_naive_cents": 808523776335886,
+     "J_clairvoyant_cents": 298461827089876,
+     "excluded": null
+    },
+    {
+     "episode": 71,
+     "stratum": 2,
+     "J_policy_cents": 797228763081003,
+     "J_naive_cents": 1141168251971775,
+     "J_clairvoyant_cents": 728312080666933,
+     "excluded": null
+    },
+    {
+     "episode": 72,
+     "stratum": 1,
+     "J_policy_cents": 407453215611962,
+     "J_naive_cents": 522784822542084,
+     "J_clairvoyant_cents": 319956452241945,
+     "excluded": null
+    },
+    {
+     "episode": 73,
+     "stratum": 1,
+     "J_policy_cents": 467726528760703,
+     "J_naive_cents": 591117755392346,
+     "J_clairvoyant_cents": 318991840221304,
+     "excluded": null
+    },
+    {
+     "episode": 74,
+     "stratum": 2,
+     "J_policy_cents": 486515030789049,
+     "J_naive_cents": 700021451927087,
+     "J_clairvoyant_cents": 455247391000010,
+     "excluded": null
+    },
+    {
+     "episode": 75,
+     "stratum": 1,
+     "J_policy_cents": 982791287956047,
+     "J_naive_cents": 1307679825080905,
+     "J_clairvoyant_cents": 910690287188566,
+     "excluded": null
+    },
+    {
+     "episode": 76,
+     "stratum": 1,
+     "J_policy_cents": 261939036373564,
+     "J_naive_cents": 553410257418571,
+     "J_clairvoyant_cents": 234217395193307,
+     "excluded": null
+    },
+    {
+     "episode": 77,
+     "stratum": 2,
+     "J_policy_cents": 426168689615804,
+     "J_naive_cents": 731626006099574,
+     "J_clairvoyant_cents": 357727473936277,
+     "excluded": null
+    },
+    {
+     "episode": 78,
+     "stratum": 2,
+     "J_policy_cents": 925976032915332,
+     "J_naive_cents": 1276132942494331,
+     "J_clairvoyant_cents": 868876759879148,
+     "excluded": null
+    },
+    {
+     "episode": 79,
+     "stratum": 2,
+     "J_policy_cents": 515411488623684,
+     "J_naive_cents": 602363244735496,
+     "J_clairvoyant_cents": 469541222745365,
+     "excluded": null
+    },
+    {
+     "episode": 80,
+     "stratum": 2,
+     "J_policy_cents": 606417027765954,
+     "J_naive_cents": 873133518050977,
+     "J_clairvoyant_cents": 519342558999481,
+     "excluded": null
+    },
+    {
+     "episode": 81,
+     "stratum": 2,
+     "J_policy_cents": 692502147607820,
+     "J_naive_cents": 930877586270625,
+     "J_clairvoyant_cents": 615634042670269,
+     "excluded": null
+    },
+    {
+     "episode": 82,
+     "stratum": 2,
+     "J_policy_cents": 799446883684497,
+     "J_naive_cents": 1108947573647693,
+     "J_clairvoyant_cents": 742764489450626,
+     "excluded": null
+    },
+    {
+     "episode": 83,
+     "stratum": 1,
+     "J_policy_cents": 362106186102784,
+     "J_naive_cents": 405512129386168,
+     "J_clairvoyant_cents": 205077235536224,
+     "excluded": null
+    },
+    {
+     "episode": 84,
+     "stratum": 2,
+     "J_policy_cents": 370310077662143,
+     "J_naive_cents": 645663162126112,
+     "J_clairvoyant_cents": 302616154466582,
+     "excluded": null
+    },
+    {
+     "episode": 85,
+     "stratum": 1,
+     "J_policy_cents": 463041955666237,
+     "J_naive_cents": 668828316686834,
+     "J_clairvoyant_cents": 408199628025779,
+     "excluded": null
+    },
+    {
+     "episode": 86,
+     "stratum": 1,
+     "J_policy_cents": 742443598778975,
+     "J_naive_cents": 885939157104079,
+     "J_clairvoyant_cents": 594316254314607,
+     "excluded": null
+    },
+    {
+     "episode": 87,
+     "stratum": 1,
+     "J_policy_cents": 565927126021942,
+     "J_naive_cents": 699935389452898,
+     "J_clairvoyant_cents": 523074855199809,
+     "excluded": null
+    },
+    {
+     "episode": 88,
+     "stratum": 3,
+     "J_policy_cents": 528585188490321,
+     "J_naive_cents": 838255262560034,
+     "J_clairvoyant_cents": 400366313331541,
+     "excluded": null
+    },
+    {
+     "episode": 89,
+     "stratum": 1,
+     "J_policy_cents": 701691649407894,
+     "J_naive_cents": 784324248800626,
+     "J_clairvoyant_cents": 608639837527113,
+     "excluded": null
+    },
+    {
+     "episode": 90,
+     "stratum": 2,
+     "J_policy_cents": 740487127754502,
+     "J_naive_cents": 998444742465877,
+     "J_clairvoyant_cents": 695754156377780,
+     "excluded": null
+    },
+    {
+     "episode": 91,
+     "stratum": 2,
+     "J_policy_cents": 978812978980291,
+     "J_naive_cents": 1085238152373035,
+     "J_clairvoyant_cents": 830129573685664,
+     "excluded": null
+    },
+    {
+     "episode": 92,
+     "stratum": 1,
+     "J_policy_cents": 403965327551992,
+     "J_naive_cents": 741893925704508,
+     "J_clairvoyant_cents": 322020833165500,
+     "excluded": null
+    },
+    {
+     "episode": 93,
+     "stratum": 1,
+     "J_policy_cents": 702520425877396,
+     "J_naive_cents": 961155874861637,
+     "J_clairvoyant_cents": 602469863058243,
+     "excluded": null
+    },
+    {
+     "episode": 94,
+     "stratum": 2,
+     "J_policy_cents": 545038338672413,
+     "J_naive_cents": 807911248145761,
+     "J_clairvoyant_cents": 489711010392622,
+     "excluded": null
+    },
+    {
+     "episode": 95,
+     "stratum": 3,
+     "J_policy_cents": 881274762683156,
+     "J_naive_cents": 1259284191518078,
+     "J_clairvoyant_cents": 835416554812746,
+     "excluded": null
+    },
+    {
+     "episode": 96,
+     "stratum": 1,
+     "J_policy_cents": 726733431418537,
+     "J_naive_cents": 1120345609908144,
+     "J_clairvoyant_cents": 637004241950060,
+     "excluded": null
+    },
+    {
+     "episode": 97,
+     "stratum": 1,
+     "J_policy_cents": 377872196045376,
+     "J_naive_cents": 555899627576973,
+     "J_clairvoyant_cents": 327811636720055,
+     "excluded": null
+    },
+    {
+     "episode": 98,
+     "stratum": 1,
+     "J_policy_cents": 426295115206156,
+     "J_naive_cents": 573320188282577,
+     "J_clairvoyant_cents": 286075000987907,
+     "excluded": null
+    },
+    {
+     "episode": 99,
+     "stratum": 3,
+     "J_policy_cents": 565419813260837,
+     "J_naive_cents": 910252130480481,
+     "J_clairvoyant_cents": 522017196597490,
+     "excluded": null
+    },
+    {
+     "episode": 100,
+     "stratum": 1,
+     "J_policy_cents": 993318434578873,
+     "J_naive_cents": 1452752454834062,
+     "J_clairvoyant_cents": 956212637506702,
+     "excluded": null
+    },
+    {
+     "episode": 101,
+     "stratum": 3,
+     "J_policy_cents": 595277722609333,
+     "J_naive_cents": 858615677974396,
+     "J_clairvoyant_cents": 545112973166632,
+     "excluded": null
+    },
+    {
+     "episode": 102,
+     "stratum": 2,
+     "J_policy_cents": 761791168555001,
+     "J_naive_cents": 1040430392378246,
+     "J_clairvoyant_cents": 694340935485358,
+     "excluded": null
+    },
+    {
+     "episode": 103,
+     "stratum": 3,
+     "J_policy_cents": 510650204509599,
+     "J_naive_cents": 839274072110230,
+     "J_clairvoyant_cents": 468571867411097,
+     "excluded": null
+    },
+    {
+     "episode": 104,
+     "stratum": 3,
+     "J_policy_cents": 477614732479870,
+     "J_naive_cents": 759099174612596,
+     "J_clairvoyant_cents": 358772998791929,
+     "excluded": null
+    },
+    {
+     "episode": 105,
+     "stratum": 1,
+     "J_policy_cents": 566092318139504,
+     "J_naive_cents": 862305064545973,
+     "J_clairvoyant_cents": 495871258483786,
+     "excluded": null
+    },
+    {
+     "episode": 106,
+     "stratum": 1,
+     "J_policy_cents": 789974838636651,
+     "J_naive_cents": 1036168570356460,
+     "J_clairvoyant_cents": 724318751857565,
+     "excluded": null
+    },
+    {
+     "episode": 107,
+     "stratum": 2,
+     "J_policy_cents": 794750641504896,
+     "J_naive_cents": 1100914730724671,
+     "J_clairvoyant_cents": 741025539564517,
+     "excluded": null
+    },
+    {
+     "episode": 108,
+     "stratum": 1,
+     "J_policy_cents": 682854237459971,
+     "J_naive_cents": 786639079253552,
+     "J_clairvoyant_cents": 632243012466747,
+     "excluded": null
+    },
+    {
+     "episode": 109,
+     "stratum": 2,
+     "J_policy_cents": 490263041296469,
+     "J_naive_cents": 766006375033575,
+     "J_clairvoyant_cents": 355500024999048,
+     "excluded": null
+    },
+    {
+     "episode": 110,
+     "stratum": 3,
+     "J_policy_cents": 723152064947241,
+     "J_naive_cents": 989421641532567,
+     "J_clairvoyant_cents": 674915030029453,
+     "excluded": null
+    },
+    {
+     "episode": 111,
+     "stratum": 1,
+     "J_policy_cents": 657373583238547,
+     "J_naive_cents": 897226750157737,
+     "J_clairvoyant_cents": 583782219989840,
+     "excluded": null
+    },
+    {
+     "episode": 112,
+     "stratum": 1,
+     "J_policy_cents": 489116204316958,
+     "J_naive_cents": 757343888088611,
+     "J_clairvoyant_cents": 394910855366463,
+     "excluded": null
+    },
+    {
+     "episode": 113,
+     "stratum": 2,
+     "J_policy_cents": 1036697598721421,
+     "J_naive_cents": 1288584044728076,
+     "J_clairvoyant_cents": 935432940790452,
+     "excluded": null
+    },
+    {
+     "episode": 114,
+     "stratum": 1,
+     "J_policy_cents": 248642382716314,
+     "J_naive_cents": 544964546734457,
+     "J_clairvoyant_cents": 219515395513469,
+     "excluded": null
+    },
+    {
+     "episode": 115,
+     "stratum": 2,
+     "J_policy_cents": 964624622954350,
+     "J_naive_cents": 1359458238275997,
+     "J_clairvoyant_cents": 929079215978344,
+     "excluded": null
+    },
+    {
+     "episode": 116,
+     "stratum": 3,
+     "J_policy_cents": 606608072895269,
+     "J_naive_cents": 864109983321169,
+     "J_clairvoyant_cents": 491644605363215,
+     "excluded": null
+    },
+    {
+     "episode": 117,
+     "stratum": 1,
+     "J_policy_cents": 626997016326411,
+     "J_naive_cents": 1052892992768969,
+     "J_clairvoyant_cents": 605079668163373,
+     "excluded": null
+    },
+    {
+     "episode": 118,
+     "stratum": 3,
+     "J_policy_cents": 525919623714858,
+     "J_naive_cents": 825652490798026,
+     "J_clairvoyant_cents": 435725108038995,
+     "excluded": null
+    },
+    {
+     "episode": 119,
+     "stratum": 2,
+     "J_policy_cents": 405903917924351,
+     "J_naive_cents": 673982135619426,
+     "J_clairvoyant_cents": 356903488841841,
+     "excluded": null
+    },
+    {
+     "episode": 120,
+     "stratum": 1,
+     "J_policy_cents": 449365011722802,
+     "J_naive_cents": 739654628646312,
+     "J_clairvoyant_cents": 372060089453267,
+     "excluded": null
+    },
+    {
+     "episode": 121,
+     "stratum": 1,
+     "J_policy_cents": 349300518430738,
+     "J_naive_cents": 460588297245735,
+     "J_clairvoyant_cents": 195944216427944,
+     "excluded": null
+    },
+    {
+     "episode": 122,
+     "stratum": 1,
+     "J_policy_cents": 375331518828429,
+     "J_naive_cents": 688883831249270,
+     "J_clairvoyant_cents": 329526400548301,
+     "excluded": null
+    },
+    {
+     "episode": 123,
+     "stratum": 3,
+     "J_policy_cents": 804287237174416,
+     "J_naive_cents": 1193716137053511,
+     "J_clairvoyant_cents": 760221870240354,
+     "excluded": null
+    },
+    {
+     "episode": 124,
+     "stratum": 2,
+     "J_policy_cents": 1025006702766544,
+     "J_naive_cents": 1194678580088680,
+     "J_clairvoyant_cents": 901213913508401,
+     "excluded": null
+    },
+    {
+     "episode": 125,
+     "stratum": 2,
+     "J_policy_cents": 491993629225829,
+     "J_naive_cents": 714361121690012,
+     "J_clairvoyant_cents": 373653329045276,
+     "excluded": null
+    },
+    {
+     "episode": 126,
+     "stratum": 1,
+     "J_policy_cents": 640505687790919,
+     "J_naive_cents": 797451179573839,
+     "J_clairvoyant_cents": 602707622552539,
+     "excluded": null
+    },
+    {
+     "episode": 127,
+     "stratum": 2,
+     "J_policy_cents": 605114334797220,
+     "J_naive_cents": 875719052787304,
+     "J_clairvoyant_cents": 520723458774026,
+     "excluded": null
+    }
+   ]
+  },
+  "small-111": {
+   "episodes": 256,
+   "rows": [
+    {
+     "episode": 0,
+     "stratum": 3,
+     "J_policy_cents": 232175028608678,
+     "J_naive_cents": 375289476311989,
+     "J_clairvoyant_cents": 215136102613375,
+     "excluded": null
+    },
+    {
+     "episode": 1,
+     "stratum": 1,
+     "J_policy_cents": 393330796961075,
+     "J_naive_cents": 430601264324420,
+     "J_clairvoyant_cents": 387784813480637,
+     "excluded": null
+    },
+    {
+     "episode": 2,
+     "stratum": 1,
+     "J_policy_cents": 309445296407729,
+     "J_naive_cents": 422179158461725,
+     "J_clairvoyant_cents": 282988803248503,
+     "excluded": null
+    },
+    {
+     "episode": 3,
+     "stratum": 2,
+     "J_policy_cents": 339682201442264,
+     "J_naive_cents": 415137943843523,
+     "J_clairvoyant_cents": 297855625241989,
+     "excluded": null
+    },
+    {
+     "episode": 4,
+     "stratum": 4,
+     "J_policy_cents": 377433354206927,
+     "J_naive_cents": 421310272246669,
+     "J_clairvoyant_cents": 364244990584009,
+     "excluded": null
+    },
+    {
+     "episode": 5,
+     "stratum": 1,
+     "J_policy_cents": 425447745784692,
+     "J_naive_cents": 475290844041226,
+     "J_clairvoyant_cents": 363137367172825,
+     "excluded": null
+    },
+    {
+     "episode": 6,
+     "stratum": 2,
+     "J_policy_cents": 248599428481380,
+     "J_naive_cents": 362903698560499,
+     "J_clairvoyant_cents": 232103842931568,
+     "excluded": null
+    },
+    {
+     "episode": 7,
+     "stratum": 3,
+     "J_policy_cents": 397580925439994,
+     "J_naive_cents": 477419452023690,
+     "J_clairvoyant_cents": 382555115299068,
+     "excluded": null
+    },
+    {
+     "episode": 8,
+     "stratum": 2,
+     "J_policy_cents": 194816427954921,
+     "J_naive_cents": 263594985563524,
+     "J_clairvoyant_cents": 174777529521352,
+     "excluded": null
+    },
+    {
+     "episode": 9,
+     "stratum": 1,
+     "J_policy_cents": 84846123448819,
+     "J_naive_cents": 167133129267138,
+     "J_clairvoyant_cents": 75210901474366,
+     "excluded": null
+    },
+    {
+     "episode": 10,
+     "stratum": 3,
+     "J_policy_cents": 243170652937806,
+     "J_naive_cents": 350530930825029,
+     "J_clairvoyant_cents": 232389371338840,
+     "excluded": null
+    },
+    {
+     "episode": 11,
+     "stratum": 3,
+     "J_policy_cents": 406298195750000,
+     "J_naive_cents": 471836469136853,
+     "J_clairvoyant_cents": 364667204462089,
+     "excluded": null
+    },
+    {
+     "episode": 12,
+     "stratum": 2,
+     "J_policy_cents": 153072849942415,
+     "J_naive_cents": 244972294939799,
+     "J_clairvoyant_cents": 148126456503488,
+     "excluded": null
+    },
+    {
+     "episode": 13,
+     "stratum": 1,
+     "J_policy_cents": 117541789518030,
+     "J_naive_cents": 205222371922979,
+     "J_clairvoyant_cents": 79376625195160,
+     "excluded": null
+    },
+    {
+     "episode": 14,
+     "stratum": 1,
+     "J_policy_cents": 233788330180839,
+     "J_naive_cents": 271276769070808,
+     "J_clairvoyant_cents": 222920517961387,
+     "excluded": null
+    },
+    {
+     "episode": 15,
+     "stratum": 2,
+     "J_policy_cents": 349164813227943,
+     "J_naive_cents": 403851751445989,
+     "J_clairvoyant_cents": 332883027245614,
+     "excluded": null
+    },
+    {
+     "episode": 16,
+     "stratum": 2,
+     "J_policy_cents": 312847529079675,
+     "J_naive_cents": 381707382340313,
+     "J_clairvoyant_cents": 289021611796863,
+     "excluded": null
+    },
+    {
+     "episode": 17,
+     "stratum": 2,
+     "J_policy_cents": 147222252160870,
+     "J_naive_cents": 252556915542226,
+     "J_clairvoyant_cents": 116331494992216,
+     "excluded": null
+    },
+    {
+     "episode": 18,
+     "stratum": 3,
+     "J_policy_cents": 167106000105953,
+     "J_naive_cents": 270692352204534,
+     "J_clairvoyant_cents": 149233244849348,
+     "excluded": null
+    },
+    {
+     "episode": 19,
+     "stratum": 2,
+     "J_policy_cents": 348040564888553,
+     "J_naive_cents": 407869044593238,
+     "J_clairvoyant_cents": 342424771735956,
+     "excluded": null
+    },
+    {
+     "episode": 20,
+     "stratum": 2,
+     "J_policy_cents": 115978111651775,
+     "J_naive_cents": 198076922532663,
+     "J_clairvoyant_cents": 103966362342047,
+     "excluded": null
+    },
+    {
+     "episode": 21,
+     "stratum": 1,
+     "J_policy_cents": 291658055076525,
+     "J_naive_cents": 362119729558537,
+     "J_clairvoyant_cents": 277214800726516,
+     "excluded": null
+    },
+    {
+     "episode": 22,
+     "stratum": 3,
+     "J_policy_cents": 201738135446901,
+     "J_naive_cents": 301319334291536,
+     "J_clairvoyant_cents": 174917635854317,
+     "excluded": null
+    },
+    {
+     "episode": 23,
+     "stratum": 1,
+     "J_policy_cents": 302651799054500,
+     "J_naive_cents": 357674978538317,
+     "J_clairvoyant_cents": 275153398080314,
+     "excluded": null
+    },
+    {
+     "episode": 24,
+     "stratum": 2,
+     "J_policy_cents": 128317130453597,
+     "J_naive_cents": 224519879846645,
+     "J_clairvoyant_cents": 117324110133009,
+     "excluded": null
+    },
+    {
+     "episode": 25,
+     "stratum": 1,
+     "J_policy_cents": 252226982800113,
+     "J_naive_cents": 343153653166893,
+     "J_clairvoyant_cents": 229581900902949,
+     "excluded": null
+    },
+    {
+     "episode": 26,
+     "stratum": 1,
+     "J_policy_cents": 190114472367243,
+     "J_naive_cents": 282488901582346,
+     "J_clairvoyant_cents": 157290460602190,
+     "excluded": null
+    },
+    {
+     "episode": 27,
+     "stratum": 2,
+     "J_policy_cents": 74674797230646,
+     "J_naive_cents": 204481802532571,
+     "J_clairvoyant_cents": 66663636289081,
+     "excluded": null
+    },
+    {
+     "episode": 28,
+     "stratum": 2,
+     "J_policy_cents": 226510695906401,
+     "J_naive_cents": 388678665270111,
+     "J_clairvoyant_cents": 207410441880438,
+     "excluded": null
+    },
+    {
+     "episode": 29,
+     "stratum": 4,
+     "J_policy_cents": 450022418369201,
+     "J_naive_cents": 510995659955913,
+     "J_clairvoyant_cents": 420942192538871,
+     "excluded": null
+    },
+    {
+     "episode": 30,
+     "stratum": 2,
+     "J_policy_cents": 309661086637584,
+     "J_naive_cents": 348313264374314,
+     "J_clairvoyant_cents": 304496313425237,
+     "excluded": null
+    },
+    {
+     "episode": 31,
+     "stratum": 2,
+     "J_policy_cents": 409902647798564,
+     "J_naive_cents": 423101541512915,
+     "J_clairvoyant_cents": 404368490255845,
+     "excluded": null
+    },
+    {
+     "episode": 32,
+     "stratum": 1,
+     "J_policy_cents": 396155180498216,
+     "J_naive_cents": 457283307280965,
+     "J_clairvoyant_cents": 349131516770608,
+     "excluded": null
+    },
+    {
+     "episode": 33,
+     "stratum": 1,
+     "J_policy_cents": 354442009409711,
+     "J_naive_cents": 395666442443668,
+     "J_clairvoyant_cents": 301590543537957,
+     "excluded": null
+    },
+    {
+     "episode": 34,
+     "stratum": 2,
+     "J_policy_cents": 217747904369730,
+     "J_naive_cents": 323841464117267,
+     "J_clairvoyant_cents": 209963612103202,
+     "excluded": null
+    },
+    {
+     "episode": 35,
+     "stratum": 1,
+     "J_policy_cents": 291584756392046,
+     "J_naive_cents": 399976893065982,
+     "J_clairvoyant_cents": 240081343233077,
+     "excluded": null
+    },
+    {
+     "episode": 36,
+     "stratum": 1,
+     "J_policy_cents": 140578426689510,
+     "J_naive_cents": 203972022397934,
+     "J_clairvoyant_cents": 124379693072885,
+     "excluded": null
+    },
+    {
+     "episode": 37,
+     "stratum": 2,
+     "J_policy_cents": 364540927404477,
+     "J_naive_cents": 403547924846066,
+     "J_clairvoyant_cents": 334963527935412,
+     "excluded": null
+    },
+    {
+     "episode": 38,
+     "stratum": 1,
+     "J_policy_cents": 104678511477983,
+     "J_naive_cents": 189118967928668,
+     "J_clairvoyant_cents": 73495532078521,
+     "excluded": null
+    },
+    {
+     "episode": 39,
+     "stratum": 2,
+     "J_policy_cents": 425844574127712,
+     "J_naive_cents": 488167781169211,
+     "J_clairvoyant_cents": 411908110859389,
+     "excluded": null
+    },
+    {
+     "episode": 40,
+     "stratum": 1,
+     "J_policy_cents": 160085939361285,
+     "J_naive_cents": 199654213738438,
+     "J_clairvoyant_cents": 153762278626425,
+     "excluded": null
+    },
+    {
+     "episode": 41,
+     "stratum": 4,
+     "J_policy_cents": 408622712089158,
+     "J_naive_cents": 500538279575677,
+     "J_clairvoyant_cents": 392720158121043,
+     "excluded": null
+    },
+    {
+     "episode": 42,
+     "stratum": 1,
+     "J_policy_cents": 191494255926326,
+     "J_naive_cents": 250847700192526,
+     "J_clairvoyant_cents": 170718811677925,
+     "excluded": null
+    },
+    {
+     "episode": 43,
+     "stratum": 1,
+     "J_policy_cents": 121060127372192,
+     "J_naive_cents": 209557904429454,
+     "J_clairvoyant_cents": 108359056282886,
+     "excluded": null
+    },
+    {
+     "episode": 44,
+     "stratum": 1,
+     "J_policy_cents": 314122037764126,
+     "J_naive_cents": 347369027703562,
+     "J_clairvoyant_cents": 305320940120097,
+     "excluded": null
+    },
+    {
+     "episode": 45,
+     "stratum": 1,
+     "J_policy_cents": 371567875843734,
+     "J_naive_cents": 422089963655766,
+     "J_clairvoyant_cents": 336479567908936,
+     "excluded": null
+    },
+    {
+     "episode": 46,
+     "stratum": 2,
+     "J_policy_cents": 152829240560809,
+     "J_naive_cents": 192810914537325,
+     "J_clairvoyant_cents": 146906606914424,
+     "excluded": null
+    },
+    {
+     "episode": 47,
+     "stratum": 1,
+     "J_policy_cents": 385087777661746,
+     "J_naive_cents": 458258711424171,
+     "J_clairvoyant_cents": 369702414193509,
+     "excluded": null
+    },
+    {
+     "episode": 48,
+     "stratum": 2,
+     "J_policy_cents": 359227788028422,
+     "J_naive_cents": 401029863570354,
+     "J_clairvoyant_cents": 327628491864513,
+     "excluded": null
+    },
+    {
+     "episode": 49,
+     "stratum": 2,
+     "J_policy_cents": 281812459633549,
+     "J_naive_cents": 369584030792696,
+     "J_clairvoyant_cents": 253903032238480,
+     "excluded": null
+    },
+    {
+     "episode": 50,
+     "stratum": 4,
+     "J_policy_cents": 299514424633592,
+     "J_naive_cents": 405989199017613,
+     "J_clairvoyant_cents": 286213500764704,
+     "excluded": null
+    },
+    {
+     "episode": 51,
+     "stratum": 1,
+     "J_policy_cents": 197032761047382,
+     "J_naive_cents": 267527549484808,
+     "J_clairvoyant_cents": 192348310072609,
+     "excluded": null
+    },
+    {
+     "episode": 52,
+     "stratum": 2,
+     "J_policy_cents": 379415985166307,
+     "J_naive_cents": 470955069111093,
+     "J_clairvoyant_cents": 358089509683908,
+     "excluded": null
+    },
+    {
+     "episode": 53,
+     "stratum": 2,
+     "J_policy_cents": 359543258930791,
+     "J_naive_cents": 431575975081661,
+     "J_clairvoyant_cents": 327749622031742,
+     "excluded": null
+    },
+    {
+     "episode": 54,
+     "stratum": 4,
+     "J_policy_cents": 398634121475692,
+     "J_naive_cents": 416323520178404,
+     "J_clairvoyant_cents": 387255536073564,
+     "excluded": null
+    },
+    {
+     "episode": 55,
+     "stratum": 2,
+     "J_policy_cents": 385608187442001,
+     "J_naive_cents": 471825443600296,
+     "J_clairvoyant_cents": 375315841473403,
+     "excluded": null
+    },
+    {
+     "episode": 56,
+     "stratum": 2,
+     "J_policy_cents": 98558691942990,
+     "J_naive_cents": 246923469639470,
+     "J_clairvoyant_cents": 86685801447366,
+     "excluded": null
+    },
+    {
+     "episode": 57,
+     "stratum": 1,
+     "J_policy_cents": 87195054412058,
+     "J_naive_cents": 190499798257651,
+     "J_clairvoyant_cents": 63421637148073,
+     "excluded": null
+    },
+    {
+     "episode": 58,
+     "stratum": 4,
+     "J_policy_cents": 157151315029804,
+     "J_naive_cents": 256415810257885,
+     "J_clairvoyant_cents": 136130067444482,
+     "excluded": null
+    },
+    {
+     "episode": 59,
+     "stratum": 2,
+     "J_policy_cents": 139572337155959,
+     "J_naive_cents": 236882004122145,
+     "J_clairvoyant_cents": 117523185706123,
+     "excluded": null
+    },
+    {
+     "episode": 60,
+     "stratum": 1,
+     "J_policy_cents": 144598776172568,
+     "J_naive_cents": 206066652515959,
+     "J_clairvoyant_cents": 140136105354367,
+     "excluded": null
+    },
+    {
+     "episode": 61,
+     "stratum": 1,
+     "J_policy_cents": 260165217842695,
+     "J_naive_cents": 360088939229159,
+     "J_clairvoyant_cents": 211512490737700,
+     "excluded": null
+    },
+    {
+     "episode": 62,
+     "stratum": 3,
+     "J_policy_cents": 297770623363752,
+     "J_naive_cents": 365990122040224,
+     "J_clairvoyant_cents": 279479647319245,
+     "excluded": null
+    },
+    {
+     "episode": 63,
+     "stratum": 3,
+     "J_policy_cents": 191140396599041,
+     "J_naive_cents": 314051197663063,
+     "J_clairvoyant_cents": 178817588319498,
+     "excluded": null
+    },
+    {
+     "episode": 64,
+     "stratum": 1,
+     "J_policy_cents": 214153014943027,
+     "J_naive_cents": 312656795956873,
+     "J_clairvoyant_cents": 197260906736028,
+     "excluded": null
+    },
+    {
+     "episode": 65,
+     "stratum": 2,
+     "J_policy_cents": 263227167229342,
+     "J_naive_cents": 363409759998882,
+     "J_clairvoyant_cents": 235177930189181,
+     "excluded": null
+    },
+    {
+     "episode": 66,
+     "stratum": 1,
+     "J_policy_cents": 104728384618130,
+     "J_naive_cents": 250677468610820,
+     "J_clairvoyant_cents": 91326620483181,
+     "excluded": null
+    },
+    {
+     "episode": 67,
+     "stratum": 1,
+     "J_policy_cents": 308266273816428,
+     "J_naive_cents": 372575940332112,
+     "J_clairvoyant_cents": 279226902983389,
+     "excluded": null
+    },
+    {
+     "episode": 68,
+     "stratum": 2,
+     "J_policy_cents": 231798558696530,
+     "J_naive_cents": 297803073837900,
+     "J_clairvoyant_cents": 215894878888093,
+     "excluded": null
+    },
+    {
+     "episode": 69,
+     "stratum": 2,
+     "J_policy_cents": 270537486579745,
+     "J_naive_cents": 336375241555333,
+     "J_clairvoyant_cents": 244637510115237,
+     "excluded": null
+    },
+    {
+     "episode": 70,
+     "stratum": 1,
+     "J_policy_cents": 295384557921694,
+     "J_naive_cents": 351743078881587,
+     "J_clairvoyant_cents": 281846331862139,
+     "excluded": null
+    },
+    {
+     "episode": 71,
+     "stratum": 3,
+     "J_policy_cents": 283069156760977,
+     "J_naive_cents": 333902716225923,
+     "J_clairvoyant_cents": 229512305817872,
+     "excluded": null
+    },
+    {
+     "episode": 72,
+     "stratum": 2,
+     "J_policy_cents": 330108500824432,
+     "J_naive_cents": 390464044677877,
+     "J_clairvoyant_cents": 320429843239807,
+     "excluded": null
+    },
+    {
+     "episode": 73,
+     "stratum": 1,
+     "J_policy_cents": 274206457499498,
+     "J_naive_cents": 322571511405066,
+     "J_clairvoyant_cents": 248324611138559,
+     "excluded": null
+    },
+    {
+     "episode": 74,
+     "stratum": 1,
+     "J_policy_cents": 140221537568851,
+     "J_naive_cents": 273098951383788,
+     "J_clairvoyant_cents": 128993414206119,
+     "excluded": null
+    },
+    {
+     "episode": 75,
+     "stratum": 2,
+     "J_policy_cents": 442945577555223,
+     "J_naive_cents": 523706272839219,
+     "J_clairvoyant_cents": 437840727572412,
+     "excluded": null
+    },
+    {
+     "episode": 76,
+     "stratum": 3,
+     "J_policy_cents": 314500959674969,
+     "J_naive_cents": 393664113652731,
+     "J_clairvoyant_cents": 303524659296186,
+     "excluded": null
+    },
+    {
+     "episode": 77,
+     "stratum": 1,
+     "J_policy_cents": 193436915202825,
+     "J_naive_cents": 282207065874608,
+     "J_clairvoyant_cents": 155791937584779,
+     "excluded": null
+    },
+    {
+     "episode": 78,
+     "stratum": 4,
+     "J_policy_cents": 286326864769616,
+     "J_naive_cents": 379409184429854,
+     "J_clairvoyant_cents": 252191942031007,
+     "excluded": null
+    },
+    {
+     "episode": 79,
+     "stratum": 1,
+     "J_policy_cents": 279512244986304,
+     "J_naive_cents": 318634451562375,
+     "J_clairvoyant_cents": 263478501110052,
+     "excluded": null
+    },
+    {
+     "episode": 80,
+     "stratum": 1,
+     "J_policy_cents": 119005624558032,
+     "J_naive_cents": 166330406692093,
+     "J_clairvoyant_cents": 109396288987978,
+     "excluded": null
+    },
+    {
+     "episode": 81,
+     "stratum": 1,
+     "J_policy_cents": 287433264568441,
+     "J_naive_cents": 372557500813605,
+     "J_clairvoyant_cents": 253076465079513,
+     "excluded": null
+    },
+    {
+     "episode": 82,
+     "stratum": 2,
+     "J_policy_cents": 314249121075322,
+     "J_naive_cents": 476324317391031,
+     "J_clairvoyant_cents": 270786513415889,
+     "excluded": null
+    },
+    {
+     "episode": 83,
+     "stratum": 1,
+     "J_policy_cents": 257141418105545,
+     "J_naive_cents": 274002623492621,
+     "J_clairvoyant_cents": 248114999153295,
+     "excluded": null
+    },
+    {
+     "episode": 84,
+     "stratum": 1,
+     "J_policy_cents": 311206583229727,
+     "J_naive_cents": 362251078089169,
+     "J_clairvoyant_cents": 282896133218114,
+     "excluded": null
+    },
+    {
+     "episode": 85,
+     "stratum": 1,
+     "J_policy_cents": 85476676226684,
+     "J_naive_cents": 156663249527826,
+     "J_clairvoyant_cents": 80912543696754,
+     "excluded": null
+    },
+    {
+     "episode": 86,
+     "stratum": 1,
+     "J_policy_cents": 155584651391915,
+     "J_naive_cents": 228321135805229,
+     "J_clairvoyant_cents": 128250685631416,
+     "excluded": null
+    },
+    {
+     "episode": 87,
+     "stratum": 1,
+     "J_policy_cents": 237072801871639,
+     "J_naive_cents": 330314419698263,
+     "J_clairvoyant_cents": 220654988725759,
+     "excluded": null
+    },
+    {
+     "episode": 88,
+     "stratum": 1,
+     "J_policy_cents": 266824274605636,
+     "J_naive_cents": 363700618948145,
+     "J_clairvoyant_cents": 250043994045092,
+     "excluded": null
+    },
+    {
+     "episode": 89,
+     "stratum": 2,
+     "J_policy_cents": 153767599011639,
+     "J_naive_cents": 182927319593087,
+     "J_clairvoyant_cents": 149153462544216,
+     "excluded": null
+    },
+    {
+     "episode": 90,
+     "stratum": 2,
+     "J_policy_cents": 219736115917177,
+     "J_naive_cents": 294159906425543,
+     "J_clairvoyant_cents": 193950636370722,
+     "excluded": null
+    },
+    {
+     "episode": 91,
+     "stratum": 2,
+     "J_policy_cents": 188629403674225,
+     "J_naive_cents": 332471078103860,
+     "J_clairvoyant_cents": 152011557577414,
+     "excluded": null
+    },
+    {
+     "episode": 92,
+     "stratum": 4,
+     "J_policy_cents": 166445402766553,
+     "J_naive_cents": 314071071914854,
+     "J_clairvoyant_cents": 154272327106038,
+     "excluded": null
+    },
+    {
+     "episode": 93,
+     "stratum": 2,
+     "J_policy_cents": 222086144816537,
+     "J_naive_cents": 332948354380581,
+     "J_clairvoyant_cents": 214379644116989,
+     "excluded": null
+    },
+    {
+     "episode": 94,
+     "stratum": 4,
+     "J_policy_cents": 496133376107301,
+     "J_naive_cents": 509031160677321,
+     "J_clairvoyant_cents": 485169790155507,
+     "excluded": null
+    },
+    {
+     "episode": 95,
+     "stratum": 1,
+     "J_policy_cents": 216735584947595,
+     "J_naive_cents": 330749373888245,
+     "J_clairvoyant_cents": 198122678248671,
+     "excluded": null
+    },
+    {
+     "episode": 96,
+     "stratum": 3,
+     "J_policy_cents": 366274309901962,
+     "J_naive_cents": 407621980195580,
+     "J_clairvoyant_cents": 356698207234121,
+     "excluded": null
+    },
+    {
+     "episode": 97,
+     "stratum": 4,
+     "J_policy_cents": 433242857429561,
+     "J_naive_cents": 475484368471602,
+     "J_clairvoyant_cents": 422321542874209,
+     "excluded": null
+    },
+    {
+     "episode": 98,
+     "stratum": 1,
+     "J_policy_cents": 301568914231913,
+     "J_naive_cents": 332809654845331,
+     "J_clairvoyant_cents": 294686094838025,
+     "excluded": null
+    },
+    {
+     "episode": 99,
+     "stratum": 1,
+     "J_policy_cents": 251215531396580,
+     "J_naive_cents": 303661044773820,
+     "J_clairvoyant_cents": 238080801122954,
+     "excluded": null
+    },
+    {
+     "episode": 100,
+     "stratum": 1,
+     "J_policy_cents": 232299344933816,
+     "J_naive_cents": 279062775674763,
+     "J_clairvoyant_cents": 198944050906236,
+     "excluded": null
+    },
+    {
+     "episode": 101,
+     "stratum": 1,
+     "J_policy_cents": 232942792737832,
+     "J_naive_cents": 338003428737526,
+     "J_clairvoyant_cents": 210940202288769,
+     "excluded": null
+    },
+    {
+     "episode": 102,
+     "stratum": 3,
+     "J_policy_cents": 338300486875919,
+     "J_naive_cents": 434703867122592,
+     "J_clairvoyant_cents": 318240113464715,
+     "excluded": null
+    },
+    {
+     "episode": 103,
+     "stratum": 2,
+     "J_policy_cents": 406679692559437,
+     "J_naive_cents": 440437384617005,
+     "J_clairvoyant_cents": 371023255683504,
+     "excluded": null
+    },
+    {
+     "episode": 104,
+     "stratum": 2,
+     "J_policy_cents": 395427154447938,
+     "J_naive_cents": 453426969739478,
+     "J_clairvoyant_cents": 379256710127278,
+     "excluded": null
+    },
+    {
+     "episode": 105,
+     "stratum": 1,
+     "J_policy_cents": 277034959243826,
+     "J_naive_cents": 310018262338008,
+     "J_clairvoyant_cents": 254803795526677,
+     "excluded": null
+    },
+    {
+     "episode": 106,
+     "stratum": 2,
+     "J_policy_cents": 219999468933313,
+     "J_naive_cents": 256834460783923,
+     "J_clairvoyant_cents": 213430801828380,
+     "excluded": null
+    },
+    {
+     "episode": 107,
+     "stratum": 3,
+     "J_policy_cents": 138579231487439,
+     "J_naive_cents": 278452312916059,
+     "J_clairvoyant_cents": 115302169297037,
+     "excluded": null
+    },
+    {
+     "episode": 108,
+     "stratum": 1,
+     "J_policy_cents": 358684838972110,
+     "J_naive_cents": 404324678810050,
+     "J_clairvoyant_cents": 314627503484656,
+     "excluded": null
+    },
+    {
+     "episode": 109,
+     "stratum": 1,
+     "J_policy_cents": 293639078641244,
+     "J_naive_cents": 354294275747260,
+     "J_clairvoyant_cents": 283807602360005,
+     "excluded": null
+    },
+    {
+     "episode": 110,
+     "stratum": 3,
+     "J_policy_cents": 191032397363208,
+     "J_naive_cents": 248143704860020,
+     "J_clairvoyant_cents": 173798130957430,
+     "excluded": null
+    },
+    {
+     "episode": 111,
+     "stratum": 1,
+     "J_policy_cents": 262999482902154,
+     "J_naive_cents": 356949042034416,
+     "J_clairvoyant_cents": 218284856834454,
+     "excluded": null
+    },
+    {
+     "episode": 112,
+     "stratum": 1,
+     "J_policy_cents": 328414579605201,
+     "J_naive_cents": 402784086338952,
+     "J_clairvoyant_cents": 311280130353950,
+     "excluded": null
+    },
+    {
+     "episode": 113,
+     "stratum": 1,
+     "J_policy_cents": 112439367513962,
+     "J_naive_cents": 213848297498399,
+     "J_clairvoyant_cents": 90931539199781,
+     "excluded": null
+    },
+    {
+     "episode": 114,
+     "stratum": 2,
+     "J_policy_cents": 233403486024756,
+     "J_naive_cents": 266914488835079,
+     "J_clairvoyant_cents": 194156169908022,
+     "excluded": null
+    },
+    {
+     "episode": 115,
+     "stratum": 3,
+     "J_policy_cents": 308216032879518,
+     "J_naive_cents": 405001544684510,
+     "J_clairvoyant_cents": 296994851442660,
+     "excluded": null
+    },
+    {
+     "episode": 116,
+     "stratum": 4,
+     "J_policy_cents": 400735897182356,
+     "J_naive_cents": 458059822558132,
+     "J_clairvoyant_cents": 383302273141798,
+     "excluded": null
+    },
+    {
+     "episode": 117,
+     "stratum": 1,
+     "J_policy_cents": 210776392576269,
+     "J_naive_cents": 334249360906497,
+     "J_clairvoyant_cents": 205845483169726,
+     "excluded": null
+    },
+    {
+     "episode": 118,
+     "stratum": 4,
+     "J_policy_cents": 409982368815059,
+     "J_naive_cents": 457936409708797,
+     "J_clairvoyant_cents": 398677538075607,
+     "excluded": null
+    },
+    {
+     "episode": 119,
+     "stratum": 1,
+     "J_policy_cents": 353734828076981,
+     "J_naive_cents": 435429880619763,
+     "J_clairvoyant_cents": 314509689002679,
+     "excluded": null
+    },
+    {
+     "episode": 120,
+     "stratum": 2,
+     "J_policy_cents": 153497608608207,
+     "J_naive_cents": 286016447701529,
+     "J_clairvoyant_cents": 135764733119172,
+     "excluded": null
+    },
+    {
+     "episode": 121,
+     "stratum": 3,
+     "J_policy_cents": 110953099484208,
+     "J_naive_cents": 230422395133830,
+     "J_clairvoyant_cents": 84841302830664,
+     "excluded": null
+    },
+    {
+     "episode": 122,
+     "stratum": 2,
+     "J_policy_cents": 245819998808327,
+     "J_naive_cents": 296509561949508,
+     "J_clairvoyant_cents": 211908751788871,
+     "excluded": null
+    },
+    {
+     "episode": 123,
+     "stratum": 1,
+     "J_policy_cents": 380777644656073,
+     "J_naive_cents": 491372988326586,
+     "J_clairvoyant_cents": 372923958917110,
+     "excluded": null
+    },
+    {
+     "episode": 124,
+     "stratum": 1,
+     "J_policy_cents": 143575710386924,
+     "J_naive_cents": 182842856644890,
+     "J_clairvoyant_cents": 139311776798768,
+     "excluded": null
+    },
+    {
+     "episode": 125,
+     "stratum": 2,
+     "J_policy_cents": 342353874095512,
+     "J_naive_cents": 451779857843281,
+     "J_clairvoyant_cents": 333766590458074,
+     "excluded": null
+    },
+    {
+     "episode": 126,
+     "stratum": 2,
+     "J_policy_cents": 488478052474915,
+     "J_naive_cents": 525350900208198,
+     "J_clairvoyant_cents": 479291130873879,
+     "excluded": null
+    },
+    {
+     "episode": 127,
+     "stratum": 1,
+     "J_policy_cents": 346064264738299,
+     "J_naive_cents": 446205781164674,
+     "J_clairvoyant_cents": 325793546091433,
+     "excluded": null
+    },
+    {
+     "episode": 128,
+     "stratum": 2,
+     "J_policy_cents": 393064699933648,
+     "J_naive_cents": 484092313096722,
+     "J_clairvoyant_cents": 354076498146380,
+     "excluded": null
+    },
+    {
+     "episode": 129,
+     "stratum": 4,
+     "J_policy_cents": 355927550986053,
+     "J_naive_cents": 391678535485944,
+     "J_clairvoyant_cents": 322953452582233,
+     "excluded": null
+    },
+    {
+     "episode": 130,
+     "stratum": 1,
+     "J_policy_cents": 141134539230405,
+     "J_naive_cents": 181712427866489,
+     "J_clairvoyant_cents": 136778605865958,
+     "excluded": null
+    },
+    {
+     "episode": 131,
+     "stratum": 1,
+     "J_policy_cents": 183868578222526,
+     "J_naive_cents": 212996500795015,
+     "J_clairvoyant_cents": 170761508305495,
+     "excluded": null
+    },
+    {
+     "episode": 132,
+     "stratum": 3,
+     "J_policy_cents": 462194914471796,
+     "J_naive_cents": 501283061765217,
+     "J_clairvoyant_cents": 435891856952573,
+     "excluded": null
+    },
+    {
+     "episode": 133,
+     "stratum": 3,
+     "J_policy_cents": 194984098165954,
+     "J_naive_cents": 262383983190782,
+     "J_clairvoyant_cents": 170165486989344,
+     "excluded": null
+    },
+    {
+     "episode": 134,
+     "stratum": 1,
+     "J_policy_cents": 225488438447464,
+     "J_naive_cents": 322958780437161,
+     "J_clairvoyant_cents": 213126522067095,
+     "excluded": null
+    },
+    {
+     "episode": 135,
+     "stratum": 2,
+     "J_policy_cents": 311015369467177,
+     "J_naive_cents": 414767386067580,
+     "J_clairvoyant_cents": 291361855899237,
+     "excluded": null
+    },
+    {
+     "episode": 136,
+     "stratum": 2,
+     "J_policy_cents": 379712423570767,
+     "J_naive_cents": 420759039864915,
+     "J_clairvoyant_cents": 352102626245516,
+     "excluded": null
+    },
+    {
+     "episode": 137,
+     "stratum": 1,
+     "J_policy_cents": 481461819350294,
+     "J_naive_cents": 512029918905200,
+     "J_clairvoyant_cents": 466308832069715,
+     "excluded": null
+    },
+    {
+     "episode": 138,
+     "stratum": 1,
+     "J_policy_cents": 77420655956241,
+     "J_naive_cents": 161654916111665,
+     "J_clairvoyant_cents": 75023106722869,
+     "excluded": null
+    },
+    {
+     "episode": 139,
+     "stratum": 4,
+     "J_policy_cents": 392302246700142,
+     "J_naive_cents": 462788762407869,
+     "J_clairvoyant_cents": 381564337796804,
+     "excluded": null
+    },
+    {
+     "episode": 140,
+     "stratum": 1,
+     "J_policy_cents": 80590687245253,
+     "J_naive_cents": 205800421980785,
+     "J_clairvoyant_cents": 73652239459738,
+     "excluded": null
+    },
+    {
+     "episode": 141,
+     "stratum": 3,
+     "J_policy_cents": 369688844371357,
+     "J_naive_cents": 483708807121159,
+     "J_clairvoyant_cents": 355434039541628,
+     "excluded": null
+    },
+    {
+     "episode": 142,
+     "stratum": 1,
+     "J_policy_cents": 168011598939852,
+     "J_naive_cents": 269508102396884,
+     "J_clairvoyant_cents": 153604867464858,
+     "excluded": null
+    },
+    {
+     "episode": 143,
+     "stratum": 2,
+     "J_policy_cents": 216392168120446,
+     "J_naive_cents": 292572083734072,
+     "J_clairvoyant_cents": 205819733311497,
+     "excluded": null
+    },
+    {
+     "episode": 144,
+     "stratum": 1,
+     "J_policy_cents": 424615736238459,
+     "J_naive_cents": 482870518563664,
+     "J_clairvoyant_cents": 401804499800400,
+     "excluded": null
+    },
+    {
+     "episode": 145,
+     "stratum": 4,
+     "J_policy_cents": 240956712963867,
+     "J_naive_cents": 328927406010592,
+     "J_clairvoyant_cents": 222800716541992,
+     "excluded": null
+    },
+    {
+     "episode": 146,
+     "stratum": 2,
+     "J_policy_cents": 291704264050775,
+     "J_naive_cents": 316890571503093,
+     "J_clairvoyant_cents": 278017737323560,
+     "excluded": null
+    },
+    {
+     "episode": 147,
+     "stratum": 2,
+     "J_policy_cents": 241272271469973,
+     "J_naive_cents": 309403191886190,
+     "J_clairvoyant_cents": 224439405938110,
+     "excluded": null
+    },
+    {
+     "episode": 148,
+     "stratum": 1,
+     "J_policy_cents": 292932000161910,
+     "J_naive_cents": 405140284618610,
+     "J_clairvoyant_cents": 265218756640941,
+     "excluded": null
+    },
+    {
+     "episode": 149,
+     "stratum": 1,
+     "J_policy_cents": 218459198641701,
+     "J_naive_cents": 227622767122655,
+     "J_clairvoyant_cents": 210029955795789,
+     "excluded": null
+    },
+    {
+     "episode": 150,
+     "stratum": 1,
+     "J_policy_cents": 170601220044294,
+     "J_naive_cents": 293475644184693,
+     "J_clairvoyant_cents": 162584680279095,
+     "excluded": null
+    },
+    {
+     "episode": 151,
+     "stratum": 2,
+     "J_policy_cents": 361048765756777,
+     "J_naive_cents": 441850405996338,
+     "J_clairvoyant_cents": 349305929212767,
+     "excluded": null
+    },
+    {
+     "episode": 152,
+     "stratum": 1,
+     "J_policy_cents": 245763942927249,
+     "J_naive_cents": 317828110720872,
+     "J_clairvoyant_cents": 230830422036616,
+     "excluded": null
+    },
+    {
+     "episode": 153,
+     "stratum": 1,
+     "J_policy_cents": 311500539545512,
+     "J_naive_cents": 366032777941065,
+     "J_clairvoyant_cents": 278762560354373,
+     "excluded": null
+    },
+    {
+     "episode": 154,
+     "stratum": 1,
+     "J_policy_cents": 244495961556458,
+     "J_naive_cents": 326746749714240,
+     "J_clairvoyant_cents": 227091592188133,
+     "excluded": null
+    },
+    {
+     "episode": 155,
+     "stratum": 1,
+     "J_policy_cents": 160457805498834,
+     "J_naive_cents": 232825943024947,
+     "J_clairvoyant_cents": 152842642039368,
+     "excluded": null
+    },
+    {
+     "episode": 156,
+     "stratum": 1,
+     "J_policy_cents": 542390621548695,
+     "J_naive_cents": 589755786882860,
+     "J_clairvoyant_cents": 512854628080534,
+     "excluded": null
+    },
+    {
+     "episode": 157,
+     "stratum": 1,
+     "J_policy_cents": 160737319972513,
+     "J_naive_cents": 231957279472904,
+     "J_clairvoyant_cents": 142202363703893,
+     "excluded": null
+    },
+    {
+     "episode": 158,
+     "stratum": 1,
+     "J_policy_cents": 120858539206727,
+     "J_naive_cents": 183750550151914,
+     "J_clairvoyant_cents": 107434427705808,
+     "excluded": null
+    },
+    {
+     "episode": 159,
+     "stratum": 3,
+     "J_policy_cents": 370092856134631,
+     "J_naive_cents": 465218473804035,
+     "J_clairvoyant_cents": 351636767250996,
+     "excluded": null
+    },
+    {
+     "episode": 160,
+     "stratum": 2,
+     "J_policy_cents": 155746508482248,
+     "J_naive_cents": 288679865449188,
+     "J_clairvoyant_cents": 127098533713838,
+     "excluded": null
+    },
+    {
+     "episode": 161,
+     "stratum": 1,
+     "J_policy_cents": 250185528919931,
+     "J_naive_cents": 345193486159085,
+     "J_clairvoyant_cents": 224806712066805,
+     "excluded": null
+    },
+    {
+     "episode": 162,
+     "stratum": 2,
+     "J_policy_cents": 179023461543341,
+     "J_naive_cents": 243041963783088,
+     "J_clairvoyant_cents": 166476693517992,
+     "excluded": null
+    },
+    {
+     "episode": 163,
+     "stratum": 2,
+     "J_policy_cents": 366455732093214,
+     "J_naive_cents": 425006414520939,
+     "J_clairvoyant_cents": 363174944660551,
+     "excluded": null
+    },
+    {
+     "episode": 164,
+     "stratum": 1,
+     "J_policy_cents": 409369118240129,
+     "J_naive_cents": 461624819996937,
+     "J_clairvoyant_cents": 390058327646886,
+     "excluded": null
+    },
+    {
+     "episode": 165,
+     "stratum": 1,
+     "J_policy_cents": 369071717625305,
+     "J_naive_cents": 453592785490465,
+     "J_clairvoyant_cents": 355923926439481,
+     "excluded": null
+    },
+    {
+     "episode": 166,
+     "stratum": 1,
+     "J_policy_cents": 270845621385677,
+     "J_naive_cents": 368162082951220,
+     "J_clairvoyant_cents": 215669733286372,
+     "excluded": null
+    },
+    {
+     "episode": 167,
+     "stratum": 3,
+     "J_policy_cents": 366105775801217,
+     "J_naive_cents": 447959467342917,
+     "J_clairvoyant_cents": 350540384172857,
+     "excluded": null
+    },
+    {
+     "episode": 168,
+     "stratum": 3,
+     "J_policy_cents": 272134179583205,
+     "J_naive_cents": 341167061420443,
+     "J_clairvoyant_cents": 258315556707240,
+     "excluded": null
+    },
+    {
+     "episode": 169,
+     "stratum": 1,
+     "J_policy_cents": 124841766914192,
+     "J_naive_cents": 220380848512200,
+     "J_clairvoyant_cents": 103209152701263,
+     "excluded": null
+    },
+    {
+     "episode": 170,
+     "stratum": 2,
+     "J_policy_cents": 327464633114870,
+     "J_naive_cents": 394683252392549,
+     "J_clairvoyant_cents": 315944319391958,
+     "excluded": null
+    },
+    {
+     "episode": 171,
+     "stratum": 1,
+     "J_policy_cents": 174785416919711,
+     "J_naive_cents": 244404770410657,
+     "J_clairvoyant_cents": 148061114060620,
+     "excluded": null
+    },
+    {
+     "episode": 172,
+     "stratum": 2,
+     "J_policy_cents": 266882291236281,
+     "J_naive_cents": 339515095098924,
+     "J_clairvoyant_cents": 240317687540939,
+     "excluded": null
+    },
+    {
+     "episode": 173,
+     "stratum": 1,
+     "J_policy_cents": 368246595155131,
+     "J_naive_cents": 463195144838462,
+     "J_clairvoyant_cents": 343772594332860,
+     "excluded": null
+    },
+    {
+     "episode": 174,
+     "stratum": 1,
+     "J_policy_cents": 318185706291690,
+     "J_naive_cents": 415898666661026,
+     "J_clairvoyant_cents": 285322108672769,
+     "excluded": null
+    },
+    {
+     "episode": 175,
+     "stratum": 1,
+     "J_policy_cents": 275120207951903,
+     "J_naive_cents": 339310116282216,
+     "J_clairvoyant_cents": 268964611456598,
+     "excluded": null
+    },
+    {
+     "episode": 176,
+     "stratum": 1,
+     "J_policy_cents": 248677959781236,
+     "J_naive_cents": 391576596570240,
+     "J_clairvoyant_cents": 231150490844283,
+     "excluded": null
+    },
+    {
+     "episode": 177,
+     "stratum": 2,
+     "J_policy_cents": 364124533523160,
+     "J_naive_cents": 485381078734511,
+     "J_clairvoyant_cents": 355656602156452,
+     "excluded": null
+    },
+    {
+     "episode": 178,
+     "stratum": 1,
+     "J_policy_cents": 50215726502664,
+     "J_naive_cents": 132337611403547,
+     "J_clairvoyant_cents": 39142849802163,
+     "excluded": null
+    },
+    {
+     "episode": 179,
+     "stratum": 3,
+     "J_policy_cents": 312238731579426,
+     "J_naive_cents": 367675450246739,
+     "J_clairvoyant_cents": 300054127590462,
+     "excluded": null
+    },
+    {
+     "episode": 180,
+     "stratum": 1,
+     "J_policy_cents": 115503496046286,
+     "J_naive_cents": 173588879864665,
+     "J_clairvoyant_cents": 95450773005218,
+     "excluded": null
+    },
+    {
+     "episode": 181,
+     "stratum": 1,
+     "J_policy_cents": 266316213857562,
+     "J_naive_cents": 338831489042439,
+     "J_clairvoyant_cents": 257017020448635,
+     "excluded": null
+    },
+    {
+     "episode": 182,
+     "stratum": 1,
+     "J_policy_cents": 206864526006939,
+     "J_naive_cents": 260271147493911,
+     "J_clairvoyant_cents": 181809303828652,
+     "excluded": null
+    },
+    {
+     "episode": 183,
+     "stratum": 1,
+     "J_policy_cents": 295547523335837,
+     "J_naive_cents": 377474398936382,
+     "J_clairvoyant_cents": 265831735970674,
+     "excluded": null
+    },
+    {
+     "episode": 184,
+     "stratum": 3,
+     "J_policy_cents": 217583920854786,
+     "J_naive_cents": 310135336967928,
+     "J_clairvoyant_cents": 213229220958503,
+     "excluded": null
+    },
+    {
+     "episode": 185,
+     "stratum": 1,
+     "J_policy_cents": 427547060714224,
+     "J_naive_cents": 502666668440968,
+     "J_clairvoyant_cents": 403132355856013,
+     "excluded": null
+    },
+    {
+     "episode": 186,
+     "stratum": 1,
+     "J_policy_cents": 135203902427399,
+     "J_naive_cents": 208477412255436,
+     "J_clairvoyant_cents": 103155676772985,
+     "excluded": null
+    },
+    {
+     "episode": 187,
+     "stratum": 1,
+     "J_policy_cents": 290260007607934,
+     "J_naive_cents": 348697672053506,
+     "J_clairvoyant_cents": 282956079260832,
+     "excluded": null
+    },
+    {
+     "episode": 188,
+     "stratum": 2,
+     "J_policy_cents": 393631059284549,
+     "J_naive_cents": 471409472398265,
+     "J_clairvoyant_cents": 351640209733218,
+     "excluded": null
+    },
+    {
+     "episode": 189,
+     "stratum": 1,
+     "J_policy_cents": 397383365960926,
+     "J_naive_cents": 486053348779743,
+     "J_clairvoyant_cents": 369917219726301,
+     "excluded": null
+    },
+    {
+     "episode": 190,
+     "stratum": 1,
+     "J_policy_cents": 379891270943546,
+     "J_naive_cents": 467441539082383,
+     "J_clairvoyant_cents": 347144296350065,
+     "excluded": null
+    },
+    {
+     "episode": 191,
+     "stratum": 3,
+     "J_policy_cents": 368271208332282,
+     "J_naive_cents": 461681966504212,
+     "J_clairvoyant_cents": 345637317832314,
+     "excluded": null
+    },
+    {
+     "episode": 192,
+     "stratum": 3,
+     "J_policy_cents": 188521925233928,
+     "J_naive_cents": 283046927507395,
+     "J_clairvoyant_cents": 165560268395747,
+     "excluded": null
+    },
+    {
+     "episode": 193,
+     "stratum": 1,
+     "J_policy_cents": 91831566804522,
+     "J_naive_cents": 200486389439439,
+     "J_clairvoyant_cents": 71947504772275,
+     "excluded": null
+    },
+    {
+     "episode": 194,
+     "stratum": 1,
+     "J_policy_cents": 343987256453644,
+     "J_naive_cents": 467601078307156,
+     "J_clairvoyant_cents": 324027205786129,
+     "excluded": null
+    },
+    {
+     "episode": 195,
+     "stratum": 1,
+     "J_policy_cents": 185982857633855,
+     "J_naive_cents": 358783836470606,
+     "J_clairvoyant_cents": 162801945186968,
+     "excluded": null
+    },
+    {
+     "episode": 196,
+     "stratum": 1,
+     "J_policy_cents": 269781162294037,
+     "J_naive_cents": 307582541030320,
+     "J_clairvoyant_cents": 256590707166499,
+     "excluded": null
+    },
+    {
+     "episode": 197,
+     "stratum": 4,
+     "J_policy_cents": 380837779748037,
+     "J_naive_cents": 411718839937007,
+     "J_clairvoyant_cents": 371940482647531,
+     "excluded": null
+    },
+    {
+     "episode": 198,
+     "stratum": 1,
+     "J_policy_cents": 310389974624500,
+     "J_naive_cents": 403998300400703,
+     "J_clairvoyant_cents": 239997204066836,
+     "excluded": null
+    },
+    {
+     "episode": 199,
+     "stratum": 4,
+     "J_policy_cents": 351576363231654,
+     "J_naive_cents": 406856754681795,
+     "J_clairvoyant_cents": 335882729625335,
+     "excluded": null
+    },
+    {
+     "episode": 200,
+     "stratum": 3,
+     "J_policy_cents": 323242457660327,
+     "J_naive_cents": 437675132534896,
+     "J_clairvoyant_cents": 303219758939898,
+     "excluded": null
+    },
+    {
+     "episode": 201,
+     "stratum": 2,
+     "J_policy_cents": 132163025620340,
+     "J_naive_cents": 207350175420396,
+     "J_clairvoyant_cents": 119374274882529,
+     "excluded": null
+    },
+    {
+     "episode": 202,
+     "stratum": 3,
+     "J_policy_cents": 347278864820684,
+     "J_naive_cents": 376724241935234,
+     "J_clairvoyant_cents": 318667831758672,
+     "excluded": null
+    },
+    {
+     "episode": 203,
+     "stratum": 2,
+     "J_policy_cents": 409116470532500,
+     "J_naive_cents": 489160851344574,
+     "J_clairvoyant_cents": 388083068370355,
+     "excluded": null
+    },
+    {
+     "episode": 204,
+     "stratum": 1,
+     "J_policy_cents": 189697840129691,
+     "J_naive_cents": 298874970835692,
+     "J_clairvoyant_cents": 172389788653140,
+     "excluded": null
+    },
+    {
+     "episode": 205,
+     "stratum": 1,
+     "J_policy_cents": 208347125887836,
+     "J_naive_cents": 349957773396345,
+     "J_clairvoyant_cents": 178496374027915,
+     "excluded": null
+    },
+    {
+     "episode": 206,
+     "stratum": 1,
+     "J_policy_cents": 379546821028583,
+     "J_naive_cents": 468407998378397,
+     "J_clairvoyant_cents": 364306555229565,
+     "excluded": null
+    },
+    {
+     "episode": 207,
+     "stratum": 1,
+     "J_policy_cents": 145437513771027,
+     "J_naive_cents": 289050557464200,
+     "J_clairvoyant_cents": 133213973681427,
+     "excluded": null
+    },
+    {
+     "episode": 208,
+     "stratum": 1,
+     "J_policy_cents": 282899105801111,
+     "J_naive_cents": 373347832073182,
+     "J_clairvoyant_cents": 257996534652555,
+     "excluded": null
+    },
+    {
+     "episode": 209,
+     "stratum": 2,
+     "J_policy_cents": 249065343202412,
+     "J_naive_cents": 382177681429289,
+     "J_clairvoyant_cents": 243253649624490,
+     "excluded": null
+    },
+    {
+     "episode": 210,
+     "stratum": 1,
+     "J_policy_cents": 129978615334926,
+     "J_naive_cents": 190969366594569,
+     "J_clairvoyant_cents": 122870492281509,
+     "excluded": null
+    },
+    {
+     "episode": 211,
+     "stratum": 2,
+     "J_policy_cents": 425873383871041,
+     "J_naive_cents": 519496431396668,
+     "J_clairvoyant_cents": 406690586673469,
+     "excluded": null
+    },
+    {
+     "episode": 212,
+     "stratum": 3,
+     "J_policy_cents": 285655542728561,
+     "J_naive_cents": 380749399768062,
+     "J_clairvoyant_cents": 263697695195698,
+     "excluded": null
+    },
+    {
+     "episode": 213,
+     "stratum": 3,
+     "J_policy_cents": 145688132299903,
+     "J_naive_cents": 277508869208974,
+     "J_clairvoyant_cents": 131871482976850,
+     "excluded": null
+    },
+    {
+     "episode": 214,
+     "stratum": 1,
+     "J_policy_cents": 392315519720179,
+     "J_naive_cents": 458974518605540,
+     "J_clairvoyant_cents": 366464635573949,
+     "excluded": null
+    },
+    {
+     "episode": 215,
+     "stratum": 3,
+     "J_policy_cents": 200267977425093,
+     "J_naive_cents": 285278164853361,
+     "J_clairvoyant_cents": 182056324311573,
+     "excluded": null
+    },
+    {
+     "episode": 216,
+     "stratum": 1,
+     "J_policy_cents": 354677429716846,
+     "J_naive_cents": 444648580035679,
+     "J_clairvoyant_cents": 347243497473419,
+     "excluded": null
+    },
+    {
+     "episode": 217,
+     "stratum": 3,
+     "J_policy_cents": 132492628392926,
+     "J_naive_cents": 224379820207919,
+     "J_clairvoyant_cents": 105135275139543,
+     "excluded": null
+    },
+    {
+     "episode": 218,
+     "stratum": 2,
+     "J_policy_cents": 247013550855754,
+     "J_naive_cents": 365136092515406,
+     "J_clairvoyant_cents": 224096748244332,
+     "excluded": null
+    },
+    {
+     "episode": 219,
+     "stratum": 1,
+     "J_policy_cents": 348065365989413,
+     "J_naive_cents": 398523933727723,
+     "J_clairvoyant_cents": 326473873296694,
+     "excluded": null
+    },
+    {
+     "episode": 220,
+     "stratum": 2,
+     "J_policy_cents": 124220034047067,
+     "J_naive_cents": 202422488739338,
+     "J_clairvoyant_cents": 107145403408049,
+     "excluded": null
+    },
+    {
+     "episode": 221,
+     "stratum": 3,
+     "J_policy_cents": 395376835519512,
+     "J_naive_cents": 433502176169036,
+     "J_clairvoyant_cents": 379498892336927,
+     "excluded": null
+    },
+    {
+     "episode": 222,
+     "stratum": 1,
+     "J_policy_cents": 328468379998775,
+     "J_naive_cents": 405795646789093,
+     "J_clairvoyant_cents": 295945813426219,
+     "excluded": null
+    },
+    {
+     "episode": 223,
+     "stratum": 1,
+     "J_policy_cents": 249087467735802,
+     "J_naive_cents": 368383842534974,
+     "J_clairvoyant_cents": 228789181683548,
+     "excluded": null
+    },
+    {
+     "episode": 224,
+     "stratum": 2,
+     "J_policy_cents": 289665228433220,
+     "J_naive_cents": 360924889827787,
+     "J_clairvoyant_cents": 258080470800608,
+     "excluded": null
+    },
+    {
+     "episode": 225,
+     "stratum": 2,
+     "J_policy_cents": 421537945541770,
+     "J_naive_cents": 520363015274238,
+     "J_clairvoyant_cents": 396881545464467,
+     "excluded": null
+    },
+    {
+     "episode": 226,
+     "stratum": 1,
+     "J_policy_cents": 56061954698752,
+     "J_naive_cents": 145250890774816,
+     "J_clairvoyant_cents": 50432804258420,
+     "excluded": null
+    },
+    {
+     "episode": 227,
+     "stratum": 1,
+     "J_policy_cents": 340505942737611,
+     "J_naive_cents": 461654282209550,
+     "J_clairvoyant_cents": 314195602661848,
+     "excluded": null
+    },
+    {
+     "episode": 228,
+     "stratum": 1,
+     "J_policy_cents": 252510942899269,
+     "J_naive_cents": 341706757272027,
+     "J_clairvoyant_cents": 238905601795361,
+     "excluded": null
+    },
+    {
+     "episode": 229,
+     "stratum": 3,
+     "J_policy_cents": 420193950997314,
+     "J_naive_cents": 471388864819123,
+     "J_clairvoyant_cents": 410465325807607,
+     "excluded": null
+    },
+    {
+     "episode": 230,
+     "stratum": 1,
+     "J_policy_cents": 334209830585392,
+     "J_naive_cents": 357655686089065,
+     "J_clairvoyant_cents": 323440001908948,
+     "excluded": null
+    },
+    {
+     "episode": 231,
+     "stratum": 2,
+     "J_policy_cents": 342974638605339,
+     "J_naive_cents": 379083884311436,
+     "J_clairvoyant_cents": 318363248984428,
+     "excluded": null
+    },
+    {
+     "episode": 232,
+     "stratum": 1,
+     "J_policy_cents": 192990285530608,
+     "J_naive_cents": 257320723741126,
+     "J_clairvoyant_cents": 145677442699043,
+     "excluded": null
+    },
+    {
+     "episode": 233,
+     "stratum": 1,
+     "J_policy_cents": 132600344655712,
+     "J_naive_cents": 219577382194508,
+     "J_clairvoyant_cents": 102344188272628,
+     "excluded": null
+    },
+    {
+     "episode": 234,
+     "stratum": 1,
+     "J_policy_cents": 242287607068095,
+     "J_naive_cents": 340222777542384,
+     "J_clairvoyant_cents": 211948957553892,
+     "excluded": null
+    },
+    {
+     "episode": 235,
+     "stratum": 2,
+     "J_policy_cents": 277200791734218,
+     "J_naive_cents": 375639915125861,
+     "J_clairvoyant_cents": 268892085730111,
+     "excluded": null
+    },
+    {
+     "episode": 236,
+     "stratum": 1,
+     "J_policy_cents": 322191526762892,
+     "J_naive_cents": 375024481054779,
+     "J_clairvoyant_cents": 301111484475857,
+     "excluded": null
+    },
+    {
+     "episode": 237,
+     "stratum": 1,
+     "J_policy_cents": 124877839920246,
+     "J_naive_cents": 225020630341817,
+     "J_clairvoyant_cents": 115396934068315,
+     "excluded": null
+    },
+    {
+     "episode": 238,
+     "stratum": 1,
+     "J_policy_cents": 301494234049832,
+     "J_naive_cents": 336763570714848,
+     "J_clairvoyant_cents": 289590589930004,
+     "excluded": null
+    },
+    {
+     "episode": 239,
+     "stratum": 3,
+     "J_policy_cents": 354925385140835,
+     "J_naive_cents": 486520100071191,
+     "J_clairvoyant_cents": 326128097232374,
+     "excluded": null
+    },
+    {
+     "episode": 240,
+     "stratum": 2,
+     "J_policy_cents": 93441331424888,
+     "J_naive_cents": 169261470744904,
+     "J_clairvoyant_cents": 83209947979944,
+     "excluded": null
+    },
+    {
+     "episode": 241,
+     "stratum": 2,
+     "J_policy_cents": 275259622734287,
+     "J_naive_cents": 337603477373884,
+     "J_clairvoyant_cents": 264243522967651,
+     "excluded": null
+    },
+    {
+     "episode": 242,
+     "stratum": 2,
+     "J_policy_cents": 291025269829700,
+     "J_naive_cents": 354925581455678,
+     "J_clairvoyant_cents": 275113295080569,
+     "excluded": null
+    },
+    {
+     "episode": 243,
+     "stratum": 2,
+     "J_policy_cents": 384854782288684,
+     "J_naive_cents": 437501323532153,
+     "J_clairvoyant_cents": 371249164202089,
+     "excluded": null
+    },
+    {
+     "episode": 244,
+     "stratum": 1,
+     "J_policy_cents": 214759031178412,
+     "J_naive_cents": 259191868245035,
+     "J_clairvoyant_cents": 154847288705181,
+     "excluded": null
+    },
+    {
+     "episode": 245,
+     "stratum": 1,
+     "J_policy_cents": 223630834505720,
+     "J_naive_cents": 260543278985699,
+     "J_clairvoyant_cents": 197697486877842,
+     "excluded": null
+    },
+    {
+     "episode": 246,
+     "stratum": 1,
+     "J_policy_cents": 254181468971573,
+     "J_naive_cents": 278908354243923,
+     "J_clairvoyant_cents": 246521083005069,
+     "excluded": null
+    },
+    {
+     "episode": 247,
+     "stratum": 3,
+     "J_policy_cents": 406006680560794,
+     "J_naive_cents": 468669410574823,
+     "J_clairvoyant_cents": 389077062034032,
+     "excluded": null
+    },
+    {
+     "episode": 248,
+     "stratum": 1,
+     "J_policy_cents": 279181290188617,
+     "J_naive_cents": 356421635833767,
+     "J_clairvoyant_cents": 268802130888259,
+     "excluded": null
+    },
+    {
+     "episode": 249,
+     "stratum": 2,
+     "J_policy_cents": 266278041415964,
+     "J_naive_cents": 325252130666181,
+     "J_clairvoyant_cents": 254906755724700,
+     "excluded": null
+    },
+    {
+     "episode": 250,
+     "stratum": 3,
+     "J_policy_cents": 185194536355820,
+     "J_naive_cents": 221375309014330,
+     "J_clairvoyant_cents": 169872468181623,
+     "excluded": null
+    },
+    {
+     "episode": 251,
+     "stratum": 1,
+     "J_policy_cents": 211798224195910,
+     "J_naive_cents": 288281409369245,
+     "J_clairvoyant_cents": 195214508188626,
+     "excluded": null
+    },
+    {
+     "episode": 252,
+     "stratum": 1,
+     "J_policy_cents": 239826837033472,
+     "J_naive_cents": 327931777240323,
+     "J_clairvoyant_cents": 232505682274289,
+     "excluded": null
+    },
+    {
+     "episode": 253,
+     "stratum": 1,
+     "J_policy_cents": 220810920002581,
+     "J_naive_cents": 307923796568194,
+     "J_clairvoyant_cents": 204290758775680,
+     "excluded": null
+    },
+    {
+     "episode": 254,
+     "stratum": 1,
+     "J_policy_cents": 215252563354828,
+     "J_naive_cents": 238262562116982,
+     "J_clairvoyant_cents": 203345380686849,
+     "excluded": null
+    },
+    {
+     "episode": 255,
+     "stratum": 1,
+     "J_policy_cents": 342170100375642,
+     "J_naive_cents": 386351831509949,
+     "J_clairvoyant_cents": 321904366404682,
+     "excluded": null
+    }
+   ]
+  }
+ }
+}

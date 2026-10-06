@@ -1,0 +1,7 @@
+1. the scorer's checks of fuel_first.zip, and every file's imports (nothing is imported)
+OK: the scorer's checks pass: 1 file(s), 32,153 bytes zipped, 32,039 unpacked
+  sha256 e8086d972ed165a6eebf127d91b37abece665cd1a43c9ad3c47c6a752be3e211 (the submission id; it salts config['policy_seed'])
+2. a timed run in an isolated process (only the submission and the scoring image's packages): 1 dev episode(s) of small, CPU seconds per week (budget 2 s)
+  NOTE: not installed here, so not importable in this run: ['filelock', 'fsspec', 'jinja2', 'markupsafe', 'mpmath', 'setuptools', 'sympy', 'torch'] (--extra rl)
+  episode 0: week 1 (Agent(config) + first act) 0.012 s, median act 0.0020 s, max 0.012 s
+all checks passed; next: uv run sbf upload /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a598484e6f2fc03eb/agents/fuel_first

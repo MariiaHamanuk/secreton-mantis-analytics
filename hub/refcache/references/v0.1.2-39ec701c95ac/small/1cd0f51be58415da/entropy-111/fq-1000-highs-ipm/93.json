@@ -1,0 +1,10 @@
+{
+ "episode": 93,
+ "omega_hash": "8a1d5c6e88be076ce61998d5be61a179f76a7dc95951c77efa833ee110b18618",
+ "generator_id": "1cd0f51be58415da5085c8983ee3632a7291834a0731afaf92495196fdfcb3cf",
+ "harm_usd": 1649750636850.5063,
+ "J_naive_cents": 332948354380581,
+ "J_oracle_cents": 214379644116989,
+ "excluded": null,
+ "seconds": 4.569
+}

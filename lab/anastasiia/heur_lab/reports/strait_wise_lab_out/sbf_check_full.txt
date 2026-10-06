@@ -1,0 +1,7 @@
+1. the scorer's checks of strait_wise.zip, and every file's imports (nothing is imported)
+OK: the scorer's checks pass: 1 file(s), 41,621 bytes zipped, 41,507 unpacked
+  sha256 9f05254814d03bc85bbc9c870feaf0af3bf70b41e788baba3a155b99684560a2 (the submission id; it salts config['policy_seed'])
+2. a timed run in an isolated process (only the submission and the scoring image's packages): 1 dev episode(s) of full, CPU seconds per week (budget 4 s)
+  NOTE: not installed here, so not importable in this run: ['filelock', 'fsspec', 'jinja2', 'markupsafe', 'mpmath', 'setuptools', 'sympy', 'torch'] (--extra rl)
+  episode 0: week 1 (Agent(config) + first act) 0.038 s, median act 0.0082 s, max 0.038 s
+all checks passed; next: uv run sbf upload /Users/anastasiiamazur/Projects/secreton-mantis-analytics/.claude/worktrees/agent-a5dc05bab1c456f1f/agents/strait_wise

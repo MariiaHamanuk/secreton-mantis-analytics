@@ -1,0 +1,5 @@
+# Shared: the reference costs (references/) and the naive rule's model (joblib/). Anything else stays local.
+/*
+!/.gitignore
+!/references/
+!/joblib/
