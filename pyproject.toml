@@ -54,8 +54,15 @@ packages = ["src/sbf_starter"]
 [tool.ruff]
 line-length = 120
 # refcache: joblib keeps the cached functions' source there; sbfv: a copy of shockbench-flow modules;
-# lab/anastasiia/heur_lab: an archive of lab agents and their scripts, kept as they were scored
-extend-exclude = ["hub/refcache", "team/refcache", "agents/*/sbfv", ".claude", "lab/anastasiia/heur_lab"]
+# lab/anastasiia/heur_lab, lab/anastasiia/mpc_lab/planners: archives of lab agents and scripts, kept as they were scored
+extend-exclude = [
+    "hub/refcache",
+    "agents/*/sbfv",
+    "lab/*/agents/*/sbfv",
+    ".claude",
+    "lab/anastasiia/heur_lab",
+    "lab/anastasiia/mpc_lab/planners",
+]
 target-version = "py312"
 
 [tool.ruff.lint]

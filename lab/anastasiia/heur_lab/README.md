@@ -4,7 +4,7 @@ Goal: a rule-based agent (no linear program solved in `act`) with the highest sc
 Baselines on Small, root 111, 64 episodes: `template` 0.414, `pull` 0.497, `mpc` (a weekly LP) 0.689.
 
 `MAIN` below is `/Users/anastasiiamazur/Projects/secreton-mantis-analytics` (the team's checkout). You work in your
-own git worktree, which holds only the upstream starter kit: `agents/pull`, `agents/mpc`, `team/` and this lab are
+own git worktree, which holds only the upstream starter kit: `lab/anastasiia/agents/pull`, `agents/anastasiia_mpc_baseload` and this lab are
 **not** in it, read them from `MAIN` by absolute path.
 
 ## Rules of the lab
@@ -30,7 +30,7 @@ own git worktree, which holds only the upstream starter kit: `agents/pull`, `age
 ```bash
 MAIN=/Users/anastasiiamazur/Projects/secreton-mantis-analytics; PY=$MAIN/.venv/bin/python; LAB=$MAIN/outputs/heur_lab
 # paired comparison with a base agent (the decision tool): about 1 minute per agent on 64 episodes
-$PY $LAB/tools/compare.py --base=$MAIN/agents/pull --episodes=64 /abs/path/to/agents/mine [/abs/path/to/another]
+$PY $LAB/tools/compare.py --base=$MAIN/lab/anastasiia/agents/pull --episodes=64 /abs/path/to/agents/mine [/abs/path/to/another]
 # where an agent loses, physically: costs by component, shed per grid, lots per fab, demand served, flows per commodity
 $PY $LAB/tools/diag.py /abs/path/to/agents/mine --episodes=12 --n_jobs=3          # add --nobest to skip the LP (faster)
 # the network: grids, fabs, markets, every action slot with its route and lead time
@@ -41,9 +41,9 @@ $MAIN/.venv/bin/sbf check /abs/path/to/agents/mine --task=small
 
 A difference is real only when `compare.py`'s 90% interval of the difference excludes 0. Use `--episodes=32` while
 exploring and 64 to confirm. Field reference: `docs/fields/small.md` and `docs/GUIDE.md` in your worktree.
-`$MAIN/agents/pull/agent.py` is the rule agent to start from (copy it into your worktree's `agents/<name>/`).
+`$MAIN/lab/anastasiia/agents/pull/agent.py` is the rule agent to start from (copy it into your worktree's `agents/<name>/`).
 
-## How the simulator turns requests into flows (read from its code, `$MAIN/agents/mpc/sbfv/dynamics/`)
+## How the simulator turns requests into flows (read from its code, `$MAIN/agents/anastasiia_mpc_baseload/sbfv/dynamics/`)
 
 Every week, in this order:
 
@@ -105,7 +105,7 @@ Where `pull` loses to the clairvoyant plan (USD bn per episode, 4 episodes): sho
 against 2,167, tariff 15 against 7, disposal 11 against 0.5, queue holding 7.5 against 0.2. `pull` asks for 656,000
 wafers a week and the clairvoyant plan ships 159,000; it ships 137,000 chip_le to markets against 272,000.
 
-Other facts measured on 2,000 episodes (`$MAIN/team/stats/event_stats_small.md`): most disruptions are already in
+Other facts measured on 2,000 episodes (`$MAIN/hub/findings/data/event_stats_small.md`): most disruptions are already in
 force in week 1 and stay to the end (prohibitions, capacity cuts to 0.25 or 0.06 of an edge's capacity); announced
 sanctions are false alarms half of the time; `warning.score` carries almost no information; demand is nearly constant
 (11% noise, no trend), so the forecast in the observation is all there is to know about it.

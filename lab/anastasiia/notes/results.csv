@@ -1,0 +1,21 @@
+date_utc,who,agent,commit,source,task,episodes,score,lo90,hi90,level1,level2,level3,level4,cost_musd,fallback_weeks,note
+2026-10-05 15:11,Anastasiia Mazur,template,2419c3a,local,tiny,dev,0.7557,0.6621,0.8075,0.6840,0.8301,0.7454,0.7420,2160.0,0,as shipped
+2026-10-05 15:11,Anastasiia Mazur,heuristic,2419c3a,local,tiny,dev,0.7623,0.6712,0.8114,0.6840,0.8301,0.7659,0.8073,2145.1,0,as shipped
+2026-10-05 15:11,Anastasiia Mazur,random,2419c3a,local,tiny,dev,0.3474,0.1614,0.4494,0.0714,0.5563,0.4720,0.4571,2387.1,0,as shipped
+2026-10-05 15:11,Anastasiia Mazur,template,2419c3a,local,small,dev,0.4086,0.2966,0.5109,0.3035,0.4302,0.5904,0.5601,3041554.4,0,as shipped
+2026-10-05 15:11,Anastasiia Mazur,heuristic,2419c3a,local,small,dev,0.4004,0.2937,0.5018,0.3123,0.3983,0.5798,0.5714,3048762.3,0,as shipped
+2026-10-05 15:12,Anastasiia Mazur,random,2419c3a,local,small,dev,-0.3958,-0.5204,-0.2907,-0.7122,-0.0969,-0.1713,-0.3824,3776380.9,0,as shipped
+2026-10-05 15:12,Anastasiia Mazur,template,2419c3a,local,small,entropy-20261005x64,0.4744,0.4271,0.5144,0.4001,0.4802,0.6810,0.5366,2981636.4,0,as shipped; team tuning root
+2026-10-05 16:22,Anastasiia Mazur,template,2419c3a,local,small,entropy-111x64,0.4137,0.3718,0.4560,0.2794,0.4970,0.5998,0.5570,2986897.6,0,as shipped; root 111
+2026-10-05 16:23,Anastasiia Mazur,template,2419c3a,local,small,entropy-222x64,0.4572,0.4073,0.5019,0.4300,0.4192,0.6022,0.5978,2883514.1,0,as shipped; root 222
+2026-10-05 18:29,Anastasiia Mazur,pull,2419c3a+dirty,local,small,entropy-111x64,0.4968,0.4560,0.5391,0.3882,0.5780,0.6243,0.6115,2907007.2,0,tuning root
+2026-10-05 18:30,Anastasiia Mazur,pull,2419c3a+dirty,local,small,entropy-222x64,0.5304,0.4844,0.5725,0.5251,0.4803,0.6246,0.6456,2802523.7,0,final check root
+2026-10-05 18:31,Anastasiia Mazur,pull,2419c3a+dirty,local,small,dev,0.5028,0.3840,0.6174,0.4562,0.4861,0.6258,0.5949,2979531.0,0,dev
+2026-10-05 18:32,Anastasiia Mazur,mpc,2419c3a+dirty,local,small,entropy-111x64,0.6808,0.6499,0.7118,0.5838,0.7685,0.7769,0.7537,2726389.5,0,tuning root
+2026-10-05 18:37,Anastasiia Mazur,mpc,2419c3a+dirty,local,small,entropy-222x64,0.7150,0.6789,0.7472,0.7132,0.6814,0.7782,0.7693,2606330.6,0,final check root
+2026-10-05 18:43,Anastasiia Mazur,mpc,2419c3a+dirty,local,small,dev,0.7283,0.6648,0.7851,0.7050,0.7544,0.7297,0.7636,2799142.5,0,dev
+2026-10-05 21:17,Anastasiia Mazur,mpc,2419c3a+dirty,local,small,entropy-111x64,0.6885,0.6576,0.7196,0.5931,0.7754,0.7824,0.7585,2719087.2,0,"horizon 32, demand x1.1"
+2026-10-05 21:24,Anastasiia Mazur,mpc,2419c3a+dirty,local,small,entropy-222x64,0.7226,0.6869,0.7547,0.7240,0.6864,0.7810,0.7728,2597821.8,0,"horizon 32, demand x1.1"
+2026-10-06 01:47,Anastasiia Mazur,mpc,2419c3a+dirty,local,small,entropy-111x64,0.7330,0.7028,0.7634,0.6500,0.8058,0.8204,0.7901,2677902.8,0,"base load first as integer decisions, 0.8 s"
+2026-10-06 02:16,Anastasiia Mazur,mpc,2419c3a+dirty,local,small,entropy-222x64,0.7696,0.7393,0.7979,0.7614,0.7527,0.8275,0.8060,2548794.1,0,"base load first as integer decisions, 0.8 s"
+2026-10-06 07:21,Anastasiia Mazur,mpc,2419c3a+dirty,local,small,dev,0.7674,0.7082,0.8242,0.7497,0.7807,0.7816,0.7886,2763955.2,0,"dev; base load first as integer decisions, 0.8 s"
