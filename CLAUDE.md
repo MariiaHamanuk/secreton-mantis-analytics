@@ -141,9 +141,9 @@ outputs/              # важкі файли прогонів (локально
 
 ## Перехідний стан (6 жовтня)
 
-- Стара тека `team/` у Анастасії лежить локально і в git не потрапляє; пізніше вона переїде в `lab/anastasiia/`.
-  Нового туди не додаємо.
-- Скрипти, які пишуть таблиці в `hub/findings/data/` (`event_stats.py`, `cost_gap.py`, `plan_stats.py`), поки що
-  там же, у `team/experiments/`, тому в git їх ще немає.
-- `agents/mpc` (щотижневий LP) ще не закомічено: він змінюється, його автор додасть його разом із рядком у Formal
-  Results.
+- Старої теки `team/` більше немає: її вміст переїхав у `lab/anastasiia/` (таблиці й кеш уже були в `hub/`).
+- Скрипти, які пишуть таблиці в `hub/findings/data/` (`event_stats.py`, `cost_gap.py`, `plan_stats.py`), лежать у
+  `lab/anastasiia/stats_lab/`.
+- Щотижневий LP (`agents/anastasiia_mpc_baseload`) є у Formal Results як орієнтир: 0.762 на Small і 0.428 на Full,
+  гірше за правила на обох. Роботу над ним зупинено 6 жовтня; що пробували і чому — у `hub/tried/mpc.md`, код
+  експериментів — у `lab/anastasiia/mpc_lab/`.
