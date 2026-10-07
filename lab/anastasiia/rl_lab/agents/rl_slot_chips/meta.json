@@ -1,0 +1,25 @@
+{
+  "kind": "slot",
+  "sizes": {
+    "node": 35,
+    "edge": 13,
+    "slot": 35,
+    "global": 14
+  },
+  "width": 64,
+  "rounds": 2,
+  "groups": null,
+  "families": [
+    "wafer",
+    "chip_le_raw",
+    "chip_mat_raw",
+    "chip_le",
+    "chip_mat"
+  ],
+  "lo": 0.5,
+  "hi": 2.0,
+  "budget_s": 0.5,
+  "run": "outputs/rl_lab/q4_chips_only",
+  "rules": "anastasiia_rules_v2",
+  "note": "Q4: the correction may touch only the chip chain"
+}

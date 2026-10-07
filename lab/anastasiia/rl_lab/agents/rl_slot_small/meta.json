@@ -1,0 +1,19 @@
+{
+  "kind": "slot",
+  "sizes": {
+    "node": 35,
+    "edge": 13,
+    "slot": 35,
+    "global": 14
+  },
+  "width": 64,
+  "rounds": 2,
+  "groups": null,
+  "families": null,
+  "lo": 0.5,
+  "hi": 2.0,
+  "budget_s": 0.5,
+  "run": "outputs/rl_lab/q1_slot_control",
+  "rules": "anastasiia_rules_v2",
+  "note": "Q1: per-slot MLP, trained on Small with the rules control variate"
+}
