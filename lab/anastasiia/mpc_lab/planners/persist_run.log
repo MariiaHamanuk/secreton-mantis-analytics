@@ -1,0 +1,85 @@
+
+=== persist_plan run 2026-10-07 02:29:18: small root 444 eps 0..7 rules ('base', 'fuel', 'lots') tl 60 gap 0.001 rounds 8 n_jobs 2
+
+--- attribution (rounds 0, tl 20): played J, bn USD; +g = persistence with group g true, -g = true with g persisted ---
+| ep | true | persist | +straits | -straits | +edges | -edges | +bans | -bans | +demand | -demand | +plants | -plants |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 0 | 1838.9 | 2027.4 | 1840.4 | 1851.1 | 1853.8 | 1839.0 | 2024.0 | 1838.8 | 2027.5 | 1838.9 | 2025.1 | 1838.7 |
+| 1 | 3385.2 | 3389.6 | 3389.6 | 3385.2 | 3382.2 | 3376.9 | 3376.1 | 3383.9 | 3384.5 | 3383.2 | 3389.6 | 3385.2 |
+| 2 | 2266.2 | 2379.7 | 2379.7 | 2266.2 | 2291.5 | 2371.4 | 2383.0 | 2269.5 | 2380.1 | 2265.1 | 2372.2 | 2282.2 |
+| 3 | 1580.8 | 1611.7 | 1606.3 | 1585.5 | 1569.8 | 1622.2 | 1614.3 | 1575.7 | 1611.5 | 1581.2 | 1611.7 | 1580.8 |
+| 4 | 1293.0 | 1417.1 | 1412.3 | 1299.6 | 1409.0 | 1315.2 | 1317.9 | 1410.0 | 1418.2 | 1295.0 | 1416.0 | 1297.8 |
+| 5 | 3075.1 | 3075.5 | 3075.5 | 3075.1 | 3075.4 | 3075.2 | 3075.9 | 3072.3 | 3075.0 | 3075.6 | 3072.9 | 3075.3 |
+| 6 | 2728.8 | 3217.4 | 3217.4 | 2728.8 | 2770.5 | 3173.5 | 3168.0 | 2787.7 | 3212.5 | 2731.3 | 3217.4 | 2728.8 |
+| 7 | 1294.8 | 1401.1 | 1402.8 | 1329.7 | 1325.3 | 1364.0 | 1408.4 | 1336.6 | 1401.2 | 1300.2 | 1402.3 | 1298.0 |
+| mean | 2182.9 | 2314.9 | 2290.5 | 2190.2 | 2209.7 | 2267.2 | 2296.0 | 2209.3 | 2313.8 | 2183.8 | 2313.4 | 2185.9 |
+persistence loss +132.1 bn/ep; recovered by making one group true (persist - (+g)): straits +24.4, edges +105.2, bans +19.0, demand +1.1, plants +1.5; caused by persisting one group alone ((-g) - true): straits +7.3, edges +84.3, bans +26.4, demand +1.0, plants +3.0
+ep  0  J hybrid    1857.5  true-plan played    1833.9 (claimed    1819.2, rounds 6, gap 0.000999894279334758)  persist-plan played    2031.5 (claimed    1829.6, rounds 8, gap 0.0009680845616667)  473s
+ep  1  J hybrid    3147.0  true-plan played    3143.1 (claimed    3139.4, rounds 8, gap 0.020230370066209927)  persist-plan played    3163.0 (claimed    3137.5, rounds 8, gap 0.020426802223029193)  967s
+ep  2  J hybrid    2193.1  true-plan played    2170.7 (claimed    2095.5, rounds 8, gap 0.006475747926267929)  persist-plan played    2334.5 (claimed    1907.3, rounds 8, gap 0.0006154575270720868)  757s
+ep  4  J hybrid    1303.4  true-plan played    1292.0 (claimed    1207.2, rounds 5, gap 0.00013018601634601112)  persist-plan played    1411.5 (claimed    1187.0, rounds 8, gap 0.00018259915902751507)  580s
+ep  3  J hybrid    1205.7  true-plan played    1108.1 (claimed    1083.3, rounds 8, gap 0.06666876261173982)  persist-plan played    1203.1 (claimed    1131.2, rounds 8, gap 0.08583376002565095)  965s
+ep  5  J hybrid    3096.9  true-plan played    2989.1 (claimed    2996.9, rounds 8, gap 0.01716179218414406)  persist-plan played    3000.5 (claimed    2933.4, rounds 8, gap 0.016263506829237342)  965s
+ep  6  J hybrid    2613.3  true-plan played    2442.3 (claimed    2454.3, rounds 8, gap 0.038423548439127916)  persist-plan played    3254.0 (claimed    3288.7, rounds 6, gap 0.13055037616901813)  847s
+ep  7  J hybrid    1253.4  true-plan played    1194.8 (claimed    1141.0, rounds 7, gap 0.030338551993523095)  persist-plan played    1350.6 (claimed     808.8, rounds 8, gap 0.01949227232972795)  906s
+
+| ep | J hybrid | J true-plan played | J persist-plan played | persist - true | persist - hybrid | claimed true | claimed persist |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 0 | 1857.5 | 1833.9 | 2031.5 | 197.6 | 174.0 | 1819.2 | 1829.6 |
+| 1 | 3147.0 | 3143.1 | 3163.0 | 20.0 | 16.0 | 3139.4 | 3137.5 |
+| 2 | 2193.1 | 2170.7 | 2334.5 | 163.8 | 141.4 | 2095.5 | 1907.3 |
+| 3 | 1205.7 | 1108.1 | 1203.1 | 95.0 | -2.6 | 1083.3 | 1131.2 |
+| 4 | 1303.4 | 1292.0 | 1411.5 | 119.4 | 108.0 | 1207.2 | 1187.0 |
+| 5 | 3096.9 | 2989.1 | 3000.5 | 11.4 | -96.4 | 2996.9 | 2933.4 |
+| 6 | 2613.3 | 2442.3 | 3254.0 | 811.7 | 640.7 | 2454.3 | 3288.7 |
+| 7 | 1253.4 | 1194.8 | 1350.6 | 155.8 | 97.2 | 1141.0 | 808.8 |
+| mean (8) | 2083.8 | 2021.8 | 2218.6 | 196.8 | 134.8 | 1992.1 | 2027.9 |
+paired (bn USD/ep, mean +- se; negative = first is cheaper): persist-true +196.8 +- 90.9 (median +137.6); persist-hybrid +134.8 +- 78.6; true-hybrid -62.0 +- 20.8
+RSS J_hyb        0.8515
+RSS J_true       0.8955
+RSS J_persist    0.7613
+RSS claim_true   0.9181
+
+mark drift (persistence vs true): rel. L1 per week -> week 1 / mean of weeks 2..T / max (week); prohibited: count of (e,k) differing
+  ep 0: u 0.000/0.026/0.184@39  supply 0.000/0.000/0.000@1  G_bar 0.000/0.001/0.011@10  y_bar 0.000/0.000/0.000@1  R 0.000/0.000/0.000@1  kappa 0.000/0.245/0.352@9  demand 0.103/0.093/0.180@17  prohibited 0.000/1.712/4.000  tariff 0.000/0.450/0.650  true scrap sum 0.000 hits 0
+  ep 1: u 0.000/0.014/0.056@8  supply 0.000/0.000/0.000@1  G_bar 0.000/0.000/0.000@1  y_bar 0.000/0.000/0.000@1  R 0.000/0.000/0.000@1  kappa 0.000/0.002/0.116@7  demand 0.083/0.083/0.153@23  prohibited 0.000/1.673/3.000  tariff 0.000/0.547/1.550  true scrap sum 0.000 hits 0
+  ep 2: u 0.000/0.068/0.115@42  supply 0.000/0.000/0.000@1  G_bar 0.000/0.003/0.057@6  y_bar 0.000/0.000/0.000@1  R 0.000/0.000/0.000@1  kappa 0.000/0.006/0.173@22  demand 0.043/0.085/0.162@23  prohibited 0.000/2.962/5.000  tariff 0.000/0.812/1.300  true scrap sum 0.000 hits 0
+  ep 3: u 0.000/0.026/0.172@52  supply 0.000/0.000/0.000@1  G_bar 0.000/0.000/0.000@1  y_bar 0.000/0.000/0.000@1  R 0.000/0.000/0.000@1  kappa 0.000/0.017/0.562@49  demand 0.174/0.089/0.174@1  prohibited 0.000/1.000/3.000  tariff 0.000/1.010/1.750  true scrap sum 0.000 hits 0
+  ep 4: u 0.000/0.021/0.090@52  supply 0.000/0.007/0.108@50  G_bar 0.000/0.000/0.000@1  y_bar 0.000/0.000/0.000@1  R 0.000/0.000/0.000@1  kappa 0.000/0.000/0.000@1  demand 0.090/0.090/0.195@52  prohibited 0.000/2.231/10.000  tariff 0.000/0.437/0.800  true scrap sum 0.000 hits 0
+  ep 5: u 0.000/0.003/0.019@48  supply 0.000/0.000/0.000@1  G_bar 0.000/0.000/0.019@52  y_bar 0.000/0.000/0.000@1  R 0.000/0.000/0.000@1  kappa 0.000/0.004/0.101@17  demand 0.078/0.092/0.151@14  prohibited 0.000/0.635/1.000  tariff 0.000/0.504/1.050  true scrap sum 0.000 hits 0
+  ep 6: u 0.000/0.070/0.134@48  supply 0.000/0.000/0.000@1  G_bar 0.000/0.000/0.000@1  y_bar 0.000/0.000/0.000@1  R 0.000/0.000/0.000@51  kappa 0.000/0.000/0.000@1  demand 0.061/0.092/0.202@49  prohibited 0.000/2.135/5.000  tariff 0.000/0.129/0.500  true scrap sum 0.000 hits 0
+  ep 7: u 0.000/0.032/0.063@24  supply 0.000/0.084/0.693@48  G_bar 0.000/0.000/0.014@7  y_bar 0.000/0.000/0.000@1  R 0.000/0.000/0.000@1  kappa 0.000/0.030/0.042@9  demand 0.076/0.086/0.181@40  prohibited 0.000/6.135/13.000  tariff 0.000/1.078/2.500  true scrap sum 0.000 hits 0
+
+--- diag ep 6 root 444: bn USD, persist - true (and persist - hybrid) ---
+  vs true: total +811.7 = freight -0.9, tariff -0.5, holding -0.7, queue_holding -0.1, shortage +483.1, shed +330.1, salvage +0.6
+     weeks  1-13: shortage +6.7, shed -137.5
+     weeks 14-26: shortage +95.3, shed +238.2
+     weeks 27-39: shortage +167.1, shed +92.5
+     weeks 40-52: shortage +214.0, shed +136.9
+  vs hyb: total +640.7 = freight +1.9, tariff -0.3, holding +1.7, queue_holding -0.1, shortage +436.2, disposal -0.1, shed +203.5, salvage -2.2
+     weeks  1-13: freight +0.5, shortage +2.3, shed -16.8
+     weeks 14-26: freight +0.6, shortage +100.0, shed +44.1
+     weeks 27-39: freight +0.6, holding +0.6, shortage +149.1, shed +188.5
+     weeks 40-52: holding +0.9, shortage +184.8, shed -12.3
+  shed by grid (energy units, persist - true): [-848.0, -12088.0, 30598.0, 62367.0]
+  lots by fab (persist - true): [-1186755.0, -1354609.0, -7455221.0, -445352.0, -4917.0, -36038.0]
+  served by sink (persist - true): [-7222278.0, -87032.0, -1645290.0, -282746.0, 0.0, -297331.0, -492794.0, -393847.0]
+  worst weeks (persist - true, bn): w37 +72.6, w21 +69.5, w22 +66.3, w20 +52.4, w35 +50.3, w36 +49.3, w34 +46.6, w19 +46.0
+  drift: {'u': (0.0, 0.0700399273775568, 0.1335677818657711, 48), 'supply': (0.0, 0.0, 0.0, 1), 'G_bar': (0.0, 0.0, 0.0, 1), 'y_bar': (0.0, 0.0, 0.0, 1), 'R': (6.235752654977445e-15, 7.93707873571927e-14, 8.978003525800603e-14, 51), 'alpha_bar': (0.0, 0.0, 0.0, 1), 'R_osat': (0.0, 0.0, 0.0, 1), 'kappa': (0.0, 0.0, 0.0, 1), 'c': (0.0, 0.0, 0.0, 1), 'demand': (0.06149051404287842, 0.09237179793296961, 0.20189083368570834, 49), 'prohibited': (0, 2.1346153846153846, 5, -1), 'tariff': (0.0, 0.12884615384615386, 0.5, -1), 'sigma_scr_true_sum': 0.0, 'fab_hits_true': 0}
+
+--- diag ep 2 root 444: bn USD, persist - true (and persist - hybrid) ---
+  vs true: total +163.8 = freight -2.0, tariff -0.6, holding -2.0, queue_holding +0.2, shortage +86.9, disposal -0.2, shed +79.5, salvage +1.9
+     weeks  1-13: freight -0.5, shed -13.3
+     weeks 14-26: freight -0.6, shortage +1.1, shed +37.6
+     weeks 27-39: freight -0.6, holding -0.8, shortage +28.5, shed -16.8
+     weeks 40-52: holding -0.9, shortage +57.0, shed +72.0
+  vs hyb: total +141.4 = freight -0.1, tariff -1.8, holding -1.4, queue_holding +0.1, shortage +147.0, disposal -4.2, shed +1.9, salvage -0.0
+     weeks  1-13: disposal -0.5, shed -77.2
+     weeks 14-26: tariff -1.3, shortage +15.7, disposal -1.2, shed +22.0
+     weeks 27-39: holding -0.6, shortage +25.8, disposal -1.4, shed +19.0
+     weeks 40-52: holding -0.6, shortage +105.3, disposal -1.1, shed +38.2
+  shed by grid (energy units, persist - true): [17492.0, -807.0, 2589.0, 0.0]
+  lots by fab (persist - true): [368492.0, -1320724.0, -1991409.0, -0.0, -18713.0, -958190.0]
+  served by sink (persist - true): [-1249625.0, -175729.0, 173626.0, 23261.0, 0.0, -1508139.0, -282084.0, -133092.0]
+  worst weeks (persist - true, bn): w41 +16.5, w42 +16.3, w44 +15.9, w40 +14.4, w23 +14.2, w26 +13.7, w43 +13.3, w45 +11.5
+  drift: {'u': (0.0, 0.0679599158499046, 0.11485817571068033, 42), 'supply': (0.0, 0.0, 0.0, 1), 'G_bar': (0.0, 0.002738428566651649, 0.05741944303657933, 6), 'y_bar': (0.0, 0.0, 0.0, 1), 'R': (0.0, 0.0, 0.0, 1), 'alpha_bar': (0.0, 0.0, 0.0, 1), 'R_osat': (0.0, 0.0, 0.0, 1), 'kappa': (0.0, 0.006102061469599979, 0.1733160855126469, 22), 'c': (0.0, 0.0, 0.0, 1), 'demand': (0.04336869492801968, 0.08499410055561771, 0.16216319539960578, 23), 'prohibited': (0, 2.9615384615384617, 5, -1), 'tariff': (0.0, 0.8115384615384614, 1.3, -1), 'sigma_scr_true_sum': 0.0, 'fab_hits_true': 0}
