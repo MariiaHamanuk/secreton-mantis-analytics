@@ -1,0 +1,29 @@
+# hub_cem.log: joint static CEM over the numbers of agents/anastasiia_hybrid_hub (tuned_rules_hub.py, hub_cem.py)
+[2026-10-07] check, tuned_rules_hub.py on the shipped numbers vs the folder's agent.py, root 111:
+  small ep 0-3: 2242234568995.07 / 3909905256200.60 / 3026271683527.56 / 3375520622606.88 USD, all four to the cent
+  full ep 0-1 as shipped (solve_share 0.4): DIFFERENT (9526663912541.82 vs 9529382011795.18; 7007695534125.26 vs
+    7007769226722.49) -- the folder itself is not reproducible on Full on this machine: the program needs ~1.6 CPU s
+    a week here, its limit is 0.4 x 4 s = 1.6 s, and 48 of 104 weeks of ep 1 fell back to the rules (a third run of the
+    folder's code gave 7013359054604.48)
+  full ep 0-1 with the program's CPU limit lifted (solve_share 100, both sides): 9509744514666.85 / 7004967674729.53,
+    both to the cent
+  timing (local, CPU s per episode): small ~14 with the program, 0.8 without; full ~150-175 with, ~4 without
+  -> a search with the program in the loop is out of reach on 2 cores (~2000 CPU s a candidate); the search runs on the
+     hub's rules with the program off (lp=False, demand_scale pinned), the result is judged on the real hub agent
+[14:00:28] start /home/user/secreton-mantis-analytics/outputs/rl_lab/hub_cem/run_nolp: 43 knobs, pop 24, elite 6, small x32 + full x12, root 111, program off
+  base 57.368753 (small 38.824665, full 75.912840), 289 CPU s
+  gen  1: best-so-far +0.0476% | gen best +0.0476% (small -0.0218%, full +0.0830%) | centre +0.0000% | sigma 0.161 | 19.8 min, 1904 CPU s
+[14:33:19] resume /home/user/secreton-mantis-analytics/outputs/rl_lab/hub_cem/run_nolp after generation 1
+  gen  2: best-so-far +0.0524% | gen best +0.0524% (small -0.1460%, full +0.1538%) | centre -0.0230% | sigma 0.114 | 23.6 min, 1820 CPU s
+  gen  3: best-so-far +0.1332% | gen best +0.1332% (small -0.0672%, full +0.2358%) | centre -0.0383% | sigma 0.080 | 22.0 min, 1785 CPU s
+  gen  4: best-so-far +0.2079% | gen best +0.2079% (small -0.0767%, full +0.3535%) | centre +0.1256% | sigma 0.054 | 15.9 min, 1759 CPU s
+  gen  5: best-so-far +0.2722% | gen best +0.2722% (small +0.0063%, full +0.4082%) | centre +0.2142% | sigma 0.033 | 15.2 min, 1726 CPU s
+  gen  6: best-so-far +0.2722% | gen best +0.2651% (small -0.0178%, full +0.4098%) | centre +0.2305% | sigma 0.023 | 18.3 min, 1749 CPU s
+  time budget reached: stop
+[16:08:20] done: best +0.2722% -> /home/user/secreton-mantis-analytics/outputs/rl_lab/hub_cem/run_nolp/params.json
+[17:16] paired eval of the best numbers (gen 5) as lab/anastasiia/rl_lab/agents/hub_tuned, hub_paired.py (= compare.py):
+  small 111 x64 (first 32 in the search), folders as shipped: hub 0.8336, tuned 0.8327, -0.0008 (-0.0030 to +0.0013),
+    levels 0.788/0.868/0.882/0.885 vs 0.789/0.867/0.884/0.880, cheaper in 32/64
+  full 111 x16 (first 12 in the search), program limit lifted on both (solve_share 100): hub 0.8756, tuned 0.8820,
+    +0.0065 (+0.0023 to +0.0113), levels 0.906/0.858/0.863/- vs 0.902/0.846/0.857/-, cheaper in 10/16
+  proxy (program off) had predicted small +0.006 %, full +0.408 % of cost; the real hub: small -0.055 %, full +0.218 %
