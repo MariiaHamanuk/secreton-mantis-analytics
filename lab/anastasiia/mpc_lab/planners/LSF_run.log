@@ -1,0 +1,69 @@
+planner_LSF: small root 444 episodes 0..11, budget 20000 replays / 1200s, n_jobs 2
+
+ ep  J before bn   J after bn    dJ bn  acc replays  cpu s  rep/s  lng crude  nuc valve order  1-13 14-39 40-52
+  0     1857.515     1850.958    6.558  412   20000    358   55.9  165   247    0   174   238   108   198   106
+  1     3146.981     3141.893    5.089  279   20000    672   29.7  212    67    0    67   212    78   113    88
+mean dJ 5.823 bn USD/episode (median 5.823, min 5.089, max 6.558)
+by fuel: crude 314 moves 6.60 bn, lng 377 moves 5.05 bn
+by type: valve 241 moves 6.68 bn, order 450 moves 4.97 bn
+by move: x1.5 160 moves 4.18 bn, half+1 100 moves 2.83 bn, drop 170 moves 2.09 bn, shift+1 87 moves 1.11 bn, half-1 30 moves 0.88 bn, shift-1 50 moves 0.26 bn, half 49 moves 0.19 bn, shift+2 32 moves 0.10 bn, shift-2 11 moves 0.00 bn, x2 2 moves 0.00 bn
+by week band: 1-13 186 moves 6.18 bn, 14-39 311 moves 4.13 bn, 40-52 194 moves 1.33 bn
+top slots by gain:
+  valve lng     tg.tb.term_kr.grid_kr                                          17 moves    3.55 bn
+  valve crude   tg.tb.term_jp.grid_jp                                          41 moves    1.79 bn
+  order crude   sea.tb.src_gulf_crude.chk_hormuz [lane.src_gulf_crude.term_kr]   16 moves    1.57 bn
+  order crude   sea.tb.src_gulf_crude.chk_hormuz [lane.src_gulf_crude.term_jp]   17 moves    1.12 bn
+  valve crude   tg.tb.term_kr.grid_kr                                          57 moves    0.73 bn
+  order lng     sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_kr.lombok]   29 moves    0.56 bn
+  order crude   sea.tb.src_gulf_crude.chk_hormuz [lane.src_gulf_crude.term_jp.east]   27 moves    0.47 bn
+  order crude   sea.tb.src_gulf_crude.chk_hormuz [lane.src_gulf_crude.term_kr.east]   43 moves    0.37 bn
+  valve lng     tg.tb.term_jp.grid_jp                                          27 moves    0.35 bn
+  valve lng     tg.tb.term_tw.grid_tw                                          45 moves    0.24 bn
+  order crude   sea.tb.src_gulf_crude.chk_hormuz [lane.src_gulf_crude.term_kr.lombok]   29 moves    0.20 bn
+  order crude   bypass.tb.src_gulf_crude.chk_malacca [lane.src_gulf_crude.term_jp.bypass]    7 moves    0.18 bn
+  order crude   bypass.tb.src_gulf_crude.chk_malacca [lane.src_gulf_crude.term_kr.bypass]    1 moves    0.13 bn
+  order lng     sea.tb.src_au_lng.term_jp                                       6 moves    0.12 bn
+  order lng     sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_kr.east]    35 moves    0.12 bn
+cost components, mean change after - before (bn USD/episode): freight -0.04, war_risk -0.00, tariff +0.00, holding -0.02, queue_holding -0.01, shortage +0.05, disposal -0.03, shed -5.78, salvage +0.02
+moves accepted/tried: x1.5 160/4403, drop 170/4243, shift-1 50/3988, shift+1 87/3986, half 49/3935, x2 2/3886, half-1 30/3806, half+1 100/3818, shift+2 32/3676, shift-2 11/3568
+[probe done 700s]
+
+===== all 12 episodes (3800s wall) =====
+
+ ep  J before bn   J after bn    dJ bn  acc replays  cpu s  rep/s  lng crude  nuc valve order  1-13 14-39 40-52
+  0     1857.515     1850.958    6.558  412   20000    358   55.9  165   247    0   174   238   108   198   106
+  1     3146.981     3141.893    5.089  279   20000    672   29.7  212    67    0    67   212    78   113    88
+  2     2193.087     2149.275   43.811  610   20000    540   37.0  317   293    0   235   375   185   292   133
+  3     1205.707     1199.782    5.926  435   20000    560   35.7  289   146    0   119   316    76   188   171
+  4     1303.429     1266.369   37.060  645   20000    729   27.4  376   269    0   159   486   211   315   119
+  5     3096.949     3084.452   12.497  502   20000    472   42.4  221   281    0   147   355   130   284    88
+  6     2613.290     2532.025   81.266  759   20000    564   35.5  426   333    0   186   573   220   325   214
+  7     1253.412     1244.516    8.896  474   20000    749   26.7  223   251    0   117   357    98   210   166
+  8     2561.081     2547.069   14.012  622   20000    726   27.6  352   270    0   205   417   147   312   163
+  9     4625.396     4592.216   33.181  682   20000    467   42.8  256   426    0   254   428   192   326   164
+ 10     2292.828     2285.073    7.755  423   20000    531   37.7  269   154    0    93   330   114   178   131
+ 11     2809.059     2771.893   37.166  805   20000    491   40.8  460   345    0   208   597   233   449   123
+mean dJ 24.435 bn USD/episode (median 13.255, min 5.089, max 81.266)
+by fuel: lng 3566 moves 214.20 bn, crude 3082 moves 79.02 bn
+by type: order 4684 moves 192.43 bn, valve 1964 moves 100.78 bn
+by move: x1.5 1511 moves 157.35 bn, shift+1 1033 moves 29.29 bn, half+1 1529 moves 27.00 bn, shift-1 548 moves 26.39 bn, drop 898 moves 17.14 bn, shift+2 219 moves 11.18 bn, half 421 moves 11.02 bn, half-1 376 moves 10.30 bn, x2 24 moves 1.98 bn, shift-2 89 moves 1.56 bn
+by week band: 1-13 1792 moves 148.00 bn, 14-39 3190 moves 95.61 bn, 40-52 1666 moves 49.60 bn
+top slots by gain:
+  valve lng     tg.tb.term_kr.grid_kr                                         265 moves   40.22 bn
+  order lng     sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_eu]        375 moves   26.84 bn
+  order lng     sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_kr.lombok]  430 moves   26.55 bn
+  valve crude   tg.tb.term_jp.grid_jp                                         438 moves   20.00 bn
+  order lng     sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_kr.east]   251 moves   19.38 bn
+  order crude   sea.tb.src_gulf_crude.chk_hormuz [lane.src_gulf_crude.term_jp.east]  361 moves   18.99 bn
+  order lng     sea.tb.src_us_lng.term_eu                                      35 moves   17.20 bn
+  valve lng     tg.tb.term_jp.grid_jp                                         245 moves   16.17 bn
+  order lng     sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_eu.cape]   287 moves   11.77 bn
+  valve lng     tg.tb.term_tw.grid_tw                                         220 moves   10.23 bn
+  order lng     sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_tw.lombok]  216 moves   10.18 bn
+  valve crude   tg.tb.term_kr.grid_kr                                         432 moves    9.77 bn
+  order lng     sea.tb.src_us_lng.chk_panama [lane.src_us_lng.term_jp]         72 moves    9.52 bn
+  order crude   sea.tb.src_gulf_crude.chk_hormuz [lane.src_gulf_crude.term_jp.lombok]  381 moves    9.30 bn
+  order lng     sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_tw]        516 moves    7.36 bn
+cost components, mean change after - before (bn USD/episode): freight -0.04, war_risk -0.00, tariff -0.02, holding -0.25, queue_holding +0.01, shortage +1.73, disposal -0.89, shed -25.01, salvage +0.03
+moves accepted/tried: x1.5 1511/27365, drop 898/25854, shift-1 548/24432, shift+1 1033/24171, half 421/23372, x2 24/22949, half-1 376/22452, half+1 1529/22320, shift+2 219/20537, shift-2 89/19900
+RSS (SECONDARY; team references, omega hash equal in 0/12 episodes): before 0.8415 after 0.8667 (+0.0253); gap naive-oracle mean 1076.8 bn
