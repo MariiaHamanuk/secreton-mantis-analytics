@@ -1,0 +1,606 @@
+=== Wed Oct  7 13:43:03 UTC 2026 arith root 111 x64 hub ===
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+rows -> /home/user/secreton-mantis-analytics/outputs/level1/20261007_135516/rows.json;  package RSS 0.8336, by level {1: 0.7894347353279326, 2: 0.8674961436504668, 3: 0.8840839630943569, 4: 0.8795528172055492}
+board-weighted RSS 0.8336; weighted gap sum_s w_s*gap_s = 994.8 bn
+lvl   n    harm    naive   clairv     gap    loss loss/gap  RSS_s RSS_s SE 1 bn->RSS loss share of board deficit
+  1  25    1217   3150.0   2196.4   953.6   200.8   0.2106 0.7894   0.0268   0.00050                       0.606
+  2  25    1834   3422.8   2435.4   987.4   130.8   0.1325 0.8675   0.0197   0.00030                       0.237
+  3   8    2473   3658.9   2471.5  1187.4   137.6   0.1159 0.8841   0.0372   0.00015                       0.125
+  4   6    3266   4186.0   3312.5   873.4   105.2   0.1204 0.8796   0.0427   0.00005                       0.032
+level 1: loss 200.8, gap 953.6;  levels 2-3: loss 132.5, gap 1035.9
+  level-1 loss over level-2/3 gap: RSS would be 0.8062
+  level-2/3 loss over level-1 gap: RSS would be 0.8611
+  per-episode level 1 (episode, harm, gap, loss, rss):
+      1   1209   428.2    32.1  0.925
+      2   1568  1391.9   196.4  0.859
+      5   1227  1121.5   602.1  0.463
+      9   1051   919.2    80.2  0.913
+     13   1489  1258.5   230.8  0.817
+     14    886   483.6    62.3  0.871
+     21   1228   849.0    82.3  0.903
+     23   1372   825.2   250.1  0.697
+     25   1058  1135.7   201.2  0.823
+     26   1199  1252.0   332.6  0.734
+     32   1186  1081.5   446.1  0.588
+     33   1112   940.8   375.6  0.601
+     35   1290  1599.0   327.1  0.795
+     36   1244   795.9    88.0  0.889
+     38   1114  1156.2   228.1  0.803
+     40   1394   458.9    71.6  0.844
+     42   1203   801.3   156.4  0.805
+     43    924  1012.0    51.5  0.949
+     44   1475   420.5    65.3  0.845
+     45   1590   856.1   330.1  0.614
+     47   1621   885.6    79.2  0.911
+     51    999   751.8    35.5  0.953
+     57    382  1270.8   203.6  0.840
+     60   1103   659.3    16.2  0.975
+     61   1497  1485.8   475.5  0.680
+  per-episode level 2-3:
+      0 L3   2267  1601.5    90.9  0.943
+      3 L2   1726  1172.8   397.0  0.662
+      6 L2   1806  1308.0   107.6  0.918
+      7 L3   2544   948.6    60.0  0.937
+      8 L2   1741   888.2   174.8  0.803
+     10 L3   2451  1181.4    42.4  0.964
+     11 L3   2366  1071.7   388.5  0.637
+     12 L2   1803   968.5    23.5  0.976
+     15 L2   1933   709.7    95.0  0.866
+     16 L2   1807   926.9   139.3  0.850
+     17 L2   1969  1362.3   301.1  0.779
+     18 L3   2647  1214.6   125.0  0.897
+     19 L2   1699   654.4    34.0  0.948
+     20 L2   1801   941.1   107.8  0.885
+     22 L3   2557  1264.0   252.4  0.800
+     24 L2   1980  1072.0    67.1  0.937
+     27 L2   1860  1378.2    37.6  0.973
+     28 L2   1704  1812.7   156.4  0.914
+     30 L2   1834   438.2    24.9  0.943
+     31 L2   1670   187.3    39.5  0.789
+     34 L2   1658  1138.8    71.0  0.938
+     37 L2   2096   685.8   194.9  0.716
+     39 L2   1892   762.6    66.0  0.913
+     46 L2   1675   459.0    43.0  0.906
+     48 L2   1844   734.0   252.1  0.657
+     49 L2   2184  1156.8   237.3  0.795
+     52 L2   1852  1128.7   124.2  0.890
+     53 L2   1688  1038.3   289.0  0.722
+     55 L2   1842   965.1    73.2  0.924
+     56 L2   1680  1602.4    69.4  0.957
+     59 L2   2119  1193.6   145.2  0.878
+     62 L3   2677   865.1    64.2  0.926
+     63 L3   2276  1352.3    77.6  0.943
+  corr(gap, loss) on level 1: 0.63; corr(harm, gap) all: -0.03
+--- note (arith): hub small 111 x64, package RSS 0.8336 (L1 0.789, L2 0.867, L3 0.884, L4 0.880).
+    gap (naive-clairv) L1 953.6 vs L2-3 1035.9 bn/ep (ratio 0.92); loss to clairv L1 200.8 vs L2-3 132.5 (x1.52).
+    L1 loss over L2-3 gap -> 0.806: denominator explains ~0.017 of the 0.07-0.08 shortfall; the rest is absolute loss.
+    1 bn/ep on L1 = 0.00050 board RSS (0.01 board = 20 bn/ep on L1). L1 = 60.6% of the board deficit.
+=== Wed Oct  7 13:55:52 UTC 2026 ldiag run tl=120: L1 first 12 + L2/3 first 12 ===
+=== Wed Oct  7 14:06:45 UTC 2026 harmtypes (L1 vs L2-3 scenario features) ===
+feature              L1 mean L2-3 mean corr(loss) all corr(loss) L1 corr(loss/gap) all
+H_tariff               27.55     34.84           0.03          0.00               0.07
+H_sanction           1026.09   1597.28          -0.22          0.10              -0.20
+H_material_outage      65.81     84.90          -0.19         -0.26              -0.19
+H_militarised_closure     58.09    150.54           0.15          0.38               0.21
+H_regional_conflict     16.36    105.06           0.01          0.31               0.03
+H_piracy                0.00      0.00           0.06          0.09               0.12
+H_energy_shock          2.62      2.51           0.08         -0.01               0.17
+H_weather_closure       1.75      4.94           0.05         -0.11               0.06
+H_port_strike          18.66      9.24           0.05         -0.06               0.09
+gen_dip_%wk             2.17      3.04           0.11          0.06               0.18
+wafer_sup_rel           0.91      0.92           0.12          0.17               0.05
+strait_open             0.96      0.92          -0.18         -0.44              -0.22
+prohib_%edge_wk        15.58     17.44          -0.07          0.18               0.06
+
+per level-1 episode: ep loss | H_tariff H_sanction H_material H_militari H_regional H_piracy H_energy_s H_weather_ H_port_str gen_dip_%w wafer_sup_ strait_ope prohib_%ed
+    1   32.1 |      11.69    1186.36      10.64       0.00       0.00       0.00       0.00       0.26       0.13       0.00       0.94       1.00      19.53
+    2  196.4 |      41.28    1459.73      63.18       0.00       0.00       0.00       0.59       0.00       3.70       1.44       1.00       1.00      19.53
+    5  602.1 |      17.51    1153.01      51.61       0.00       0.00       0.00       3.25       0.08       1.50       3.37       0.71       1.00      19.13
+    9   80.2 |      29.50     881.04     114.20       0.00       0.00       0.00       0.00      23.96       2.68       0.00       1.00       0.99      13.96
+   13  230.8 |       0.14    1352.78       0.00      82.41       0.00       0.00       0.63       0.00      53.37       1.44       1.00       0.95      14.06
+   14   62.3 |      18.67     781.83      32.40       0.00       0.00       0.00       0.00       0.00      53.10       0.00       0.82       1.00      14.67
+   21   82.3 |      20.72    1199.12       3.01       0.00       0.00       0.00       3.84       0.89       0.21       2.88       0.98       1.00      16.64
+   23  250.1 |      18.21    1170.35      94.24      84.10       0.00       0.05       0.04       4.74       0.00       0.48       1.00       0.96      17.96
+   25  201.2 |       2.54     887.58       0.00      79.93      69.47       0.00      17.81       0.08       0.88       5.77       1.00       0.95      13.06
+   26  332.6 |      44.48     893.33      23.57     230.32       0.00       0.01       0.02       7.69       0.00       0.48       1.00       0.88      15.23
+   32  446.1 |      10.99    1064.18      19.97      90.04       0.00       0.00       0.00       0.56       0.58       0.00       1.00       0.96      17.94
+   33  375.6 |      16.75    1021.61       0.00      31.14       0.00       0.00       0.42       0.00      42.27       0.48       1.00       0.87      17.14
+   35  327.1 |      71.26    1012.67      19.97       0.51     177.41       0.00       7.46       0.00       0.39       3.85       1.00       1.00      14.93
+   36   88.0 |      30.77    1135.06      78.07       0.00       0.00       0.00       0.00       0.00       0.00       0.00       0.56       1.00      14.68
+   38  228.1 |      71.65     544.19     302.68     180.83       0.00       0.00       3.35       0.88      10.52       2.88       1.00       0.86       8.70
+   40   71.6 |      28.91    1032.84     322.64       0.00       0.22       0.00       2.07       0.00       7.19       2.40       1.00       1.00      11.61
+   42  156.4 |      18.02     948.58      19.97      55.46       0.00       0.00       6.19       0.21     154.84       4.81       1.00       0.98      14.80
+   43   51.5 |      49.28     870.42       0.00       0.00       0.00       0.00       3.40       0.00       0.96       1.92       1.00       1.00      18.11
+   44   65.3 |      54.73    1237.61     151.43      11.36       0.00       0.02       0.62       0.00      18.95       1.92       1.00       1.00      18.06
+   45  330.1 |      43.13    1065.65       0.00     376.15      33.95       0.02       4.75       0.59      65.74       6.25       1.00       0.82      20.67
+   47   79.2 |      39.72    1388.39     103.91      48.02      33.75       0.00       3.76       0.65       3.27       1.92       0.88       0.98      18.51
+   51   35.5 |       7.53     966.80      19.97       0.00       0.00       0.00       4.52       0.12       0.00       2.40       1.00       1.00      15.33
+   57  203.6 |      24.27     357.66       0.00       0.00       0.00       0.00       0.00       0.44       0.00       0.00       1.00       1.00      13.41
+   60   16.2 |       2.30     812.15     177.39      59.97       0.00       0.00       2.72       2.62      45.93       6.73       0.00       0.97       9.31
+   61  475.5 |      14.73    1229.20      36.47     122.06      94.26       0.00       0.11       0.00       0.27       2.88       0.90       0.93      12.47
+=== Wed Oct  7 14:11:30 UTC 2026 account_eps hub L1 ===
+ep1: agent 3909.9  clairv 3877.8  base-first 3882.6 (status 0, gap 0.0008)  [37 s]
+ep2: agent 3026.3  clairv 2829.9  base-first 2911.8 (status 1, gap 0.0025)  [143 s]
+ep0: agent 2242.2  clairv 2151.4  base-first 2154.0 (status 0, gap 0.0012)  [28 s]
+HighsMipSolverData::transformNewIntegerFeasibleSolution tmpSolver.run();
+ep3: agent 3375.5  clairv 2978.6  base-first 3124.1 (status 1, gap 0.0144)  [145 s]
+ep5: agent 4233.4  clairv 3631.4  base-first 4136.7 (status 1, gap 0.0193)  [143 s]
+ep9: agent 832.3  clairv 752.1  base-first 752.2 (status 0, gap 0.0002)  [49 s]
+ep6: agent 2428.6  clairv 2321.0  base-first 2374.7 (status 1, gap 0.0067)  [143 s]
+ep7: agent 3885.6  clairv 3825.6  base-first 3832.4 (status 0, gap 0.0002)  [41 s]
+ep13: agent 1024.6  clairv 793.8  base-first 892.3 (status 1, gap 0.0929)  [146 s]
+ep14: agent 2291.5  clairv 2229.2  base-first 2243.7 (status 0, gap 0.0004)  [43 s]
+ep8: agent 1922.6  clairv 1747.8  base-first 1833.4 (status 1, gap 0.0162)  [143 s]
+ep10: agent 2363.5  clairv 2323.9  base-first 2323.9 (status 0, gap 0.0000)  [42 s]
+ep21: agent 2854.4  clairv 2772.1  base-first 2795.4 (status 0, gap 0.0004)  [49 s]
+ep23: agent 3001.7  clairv 2751.5  base-first 2888.1 (status 1, gap 0.0229)  [146 s]
+ep11: agent 4035.2  clairv 3646.7  base-first 3900.3 (status 0, gap 0.0020)  [66 s]
+ep12: agent 1504.9  clairv 1481.3  base-first 1481.3 (status 0, gap 0.0000)  [48 s]
+HighsMipSolverData::transformNewIntegerFeasibleSolution tmpSolver.run();
+HighsMipSolverData::transformNewIntegerFeasibleSolution tmpSolver.run();
+HighsMipSolverData::transformNewIntegerFeasibleSolution tmpSolver.run();
+HighsMipSolverData::transformNewIntegerFeasibleSolution tmpSolver.run();
+ep25: agent 2497.0  clairv 2295.8  base-first 2415.0 (status 1, gap 0.0035)  [155 s]
+ep26: agent 1905.5  clairv 1572.9  base-first 1631.8 (status 1, gap 0.0344)  [159 s]
+ep15: agent 3423.9  clairv 3328.8  base-first 3348.6 (status 0, gap 0.0020)  [121 s]
+ep16: agent 3029.5  clairv 2890.2  base-first 2912.3 (status 1, gap 0.0076)  [148 s]
+ep32: agent 3937.4  clairv 3491.3  base-first 3875.4 (status 1, gap 0.0228)  [157 s]
+ep33: agent 3391.5  clairv 3015.9  base-first 3303.3 (status 1, gap 0.0508)  [160 s]
+HighsMipSolverData::transformNewIntegerFeasibleSolution tmpSolver.run();
+ep17: agent 1464.4  clairv 1163.3  base-first 1200.7 (status 1, gap 0.0311)  [153 s]
+ep18: agent 1617.4  clairv 1492.3  base-first 1496.9 (status 1, gap 0.0030)  [158 s]
+=== Wed Oct  7 14:18:15 UTC 2026 ldiag extension tl=120: remaining L1 (13) + 8 L2 ===
+anastasiia_hybrid_hub: small, root 111, episodes [1, 2, 5, 9, 13, 14, 21, 23, 25, 26, 32, 33, 35, 36, 38, 40, 42, 43, 44, 45, 47, 51, 57, 60, 61]
+
+1. Cost per episode, USD bn: freight 1.2, war_risk 0.0, tariff 5.0, holding 6.6, queue_holding 0.4, shortage 733.0, disposal 1.9, shed 1649.8; total J 2397.2
+
+2. Fabs, millions of units per episode (energy in GWh)
+   fab               capacity x T  lots  in process at reset  raw shipped  raw disposed  wafers disposed  energy  energy of the disposed
+   fab_tw_leading_1          7.19  3.38                 1.00         4.34          0.02             0.05   6,764                   31.99
+   fab_tw_mature_1           6.12  1.15                 0.64         1.88          0.00             0.03   1,034                    2.19
+   fab_kr_memory_1          15.86  5.36                 2.20         7.64          0.03             0.43   6,759                   33.01
+   fab_jp_memory_1           7.48  1.27                 1.04         2.39          0.03             0.06   1,604                   41.38
+   fab_eu_leading_1          1.28  0.26                 0.18         0.43          0.02             0.00     515                   46.32
+   fab_eu_mature_1           9.37  1.55                 0.97         2.47          0.21             0.00   1,391                     186
+
+3. Why lots were not started, weeks 1..38, share of nominal capacity
+   fab               started  no wafers  no power: grid short of base load  no power: sliver partly there  lots / capacity in weeks without shed
+   fab_tw_leading_1     0.59       0.21                               0.15                           0.05                                   0.71
+   fab_tw_mature_1      0.25       0.61                               0.11                           0.03                                   0.30
+   fab_kr_memory_1      0.44       0.20                               0.33                           0.04                                   0.68
+   fab_jp_memory_1      0.23       0.32                               0.45                           0.00                                   0.80
+   fab_eu_leading_1     0.27       0.25                               0.47                           0.01                                   0.55
+   fab_eu_mature_1      0.21       0.32                               0.46                           0.01                                   0.43
+
+4. Grids, weeks 1..38 (GWh per week; fuels: burned over the segment's cap)
+   grid     weeks without shed %  shed   fabs' energy / need  free segment lost  lng   crude  nucfuel
+   grid_tw                 82.74    237                 0.49              27.08  0.84   0.57  -      
+   grid_kr                 63.89    789                 0.44              14.45  0.70   0.82     1.00
+   grid_jp                 28.74  2,629                 0.23               0.84  0.56   0.62     1.00
+   grid_eu                 49.37  3,700                 0.23              16.56  0.63   0.59     1.00
+   fuel disposed of (storage full) and left at the end, units per episode:
+     term_tw      lng      disposed     8,383   left at the end     1,810
+     term_tw      crude    disposed         0   left at the end        31
+     term_kr      lng      disposed     4,040   left at the end     3,215
+     term_kr      crude    disposed     1,203   left at the end        90
+     term_jp      lng      disposed         0   left at the end     2,982
+     term_jp      crude    disposed       366   left at the end       243
+     term_eu      lng      disposed     7,310   left at the end    10,809
+     term_eu      crude    disposed       816   left at the end       254
+     grid_tw      lng      disposed         0   left at the end     1,647
+     grid_tw      crude    disposed         0   left at the end        20
+     grid_kr      lng      disposed         0   left at the end     1,923
+     grid_kr      crude    disposed         0   left at the end        46
+     grid_kr      nucfuel  disposed         0   left at the end    28,770
+     grid_jp      lng      disposed         0   left at the end     3,075
+     grid_jp      crude    disposed         0   left at the end       112
+     grid_jp      nucfuel  disposed         0   left at the end    11,786
+     grid_eu      lng      disposed         0   left at the end     7,136
+     grid_eu      crude    disposed         0   left at the end       249
+     grid_eu      nucfuel  disposed         0   left at the end    99,916
+     fuel waiting at straits at the end: 12,158
+
+5. Chips and wafers disposed of, by stock slot (units per episode; sales value if they were sellable)
+     osat_my              chip_le            365,659      18.5 bn   (storage 1,189,375)
+     osat_tw              chip_le            242,673      12.3 bn   (storage 395,264)
+     fab_eu_mature_1      chip_mat_raw       207,057       2.2 bn   (storage 648,680)
+     fab_jp_memory_1      chip_le_raw         32,839       1.7 bn   (storage 518,018)
+     osat_kr              chip_le             30,434       1.5 bn   (storage 617,614)
+     fab_kr_memory_1      chip_le_raw         26,202       1.3 bn   (storage 1,097,982)
+     fab_eu_leading_1     chip_le_raw         23,161       1.2 bn   (storage 88,513)
+     osat_tw              chip_mat           109,022       1.1 bn   (storage 423,891)
+     fab_tw_leading_1     chip_le_raw         15,993       0.8 bn   (storage 497,740)
+     osat_my              chip_mat            40,229       0.4 bn   (storage 648,680)
+     sink_us              chip_mat             3,123       0.0 bn   (storage 377,666)
+     fab_tw_mature_1      chip_mat_raw         2,430       0.0 bn   (storage 423,891)
+
+   Demand served per week, thousands: sink_us chip_le 203.0 (60%); sink_us chip_mat 58.0 (61%); sink_eu chip_le 60.9 (50%); sink_eu chip_mat 16.0 (47%); sink_cn chip_mat 30.4 (26%); sink_jp chip_le 43.6 (46%); sink_jp chip_mat 9.6 (36%)
+=== Wed Oct  7 14:20:01 UTC 2026 account_eps hub L23 ===
+anastasiia_hybrid_hub: small, root 111, episodes [0, 3, 6, 7, 8, 10, 11, 12, 15, 16, 17, 18, 19, 20, 22, 24, 27, 28, 30, 31, 34, 37, 39, 46, 48, 49, 52, 53, 55, 56, 59, 62, 63]
+
+1. Cost per episode, USD bn: freight 1.1, war_risk 0.1, tariff 6.7, holding 6.7, queue_holding 0.6, shortage 907.2, disposal 2.9, shed 1652.0; total J 2576.6
+
+2. Fabs, millions of units per episode (energy in GWh)
+   fab               capacity x T  lots  in process at reset  raw shipped  raw disposed  wafers disposed  energy  energy of the disposed
+   fab_tw_leading_1          7.19  1.84                 1.00         2.89          0.03             0.06   3,685                   60.18
+   fab_tw_mature_1           6.12  0.74                 0.64         1.46          0.02             0.01     667                   17.33
+   fab_kr_memory_1          15.86  4.41                 2.20         6.77          0.01             0.12   5,562                   11.80
+   fab_jp_memory_1           7.48  0.82                 1.04         1.59          0.33             0.03   1,027                     411
+   fab_eu_leading_1          1.28  0.21                 0.18         0.36          0.04             0.00     420                   83.73
+   fab_eu_mature_1           9.37  1.30                 0.97         2.19          0.20             0.00   1,166                     176
+
+3. Why lots were not started, weeks 1..38, share of nominal capacity
+   fab               started  no wafers  no power: grid short of base load  no power: sliver partly there  lots / capacity in weeks without shed
+   fab_tw_leading_1     0.34       0.43                               0.20                           0.03                                   0.48
+   fab_tw_mature_1      0.16       0.70                               0.13                           0.01                                   0.23
+   fab_kr_memory_1      0.36       0.33                               0.28                           0.03                                   0.56
+   fab_jp_memory_1      0.15       0.33                               0.51                           0.00                                   0.70
+   fab_eu_leading_1     0.22       0.27                               0.50                           0.01                                   0.51
+   fab_eu_mature_1      0.18       0.38                               0.43                           0.01                                   0.42
+
+4. Grids, weeks 1..38 (GWh per week; fuels: burned over the segment's cap)
+   grid     weeks without shed %  shed   fabs' energy / need  free segment lost  lng   crude  nucfuel
+   grid_tw                 69.70    452                 0.29              23.84  0.72   0.62  -      
+   grid_kr                 64.43    799                 0.36              19.57  0.68   0.75     1.00
+   grid_jp                 21.45  2,650                 0.15               1.62  0.60   0.41     1.00
+   grid_eu                 43.46  3,481                 0.19               6.62  0.66   0.57     1.00
+   fuel disposed of (storage full) and left at the end, units per episode:
+     term_tw      lng      disposed     2,334   left at the end     1,632
+     term_tw      crude    disposed         0   left at the end        46
+     term_kr      lng      disposed     2,992   left at the end     3,017
+     term_kr      crude    disposed       807   left at the end        91
+     term_jp      lng      disposed       638   left at the end     4,302
+     term_jp      crude    disposed         8   left at the end       259
+     term_eu      lng      disposed       445   left at the end     6,220
+     term_eu      crude    disposed       740   left at the end        40
+     grid_tw      lng      disposed         0   left at the end     1,418
+     grid_tw      crude    disposed         0   left at the end        16
+     grid_kr      lng      disposed         0   left at the end     1,947
+     grid_kr      crude    disposed         0   left at the end        51
+     grid_kr      nucfuel  disposed         0   left at the end    28,814
+     grid_jp      lng      disposed         0   left at the end     3,778
+     grid_jp      nucfuel  disposed         0   left at the end    12,145
+     grid_eu      lng      disposed         0   left at the end     6,003
+     grid_eu      crude    disposed         0   left at the end       253
+     grid_eu      nucfuel  disposed         0   left at the end    98,460
+     fuel waiting at straits at the end: 16,998
+
+5. Chips and wafers disposed of, by stock slot (units per episode; sales value if they were sellable)
+     osat_my              chip_le            430,620      21.7 bn   (storage 1,189,375)
+     fab_jp_memory_1      chip_le_raw        325,991      16.5 bn   (storage 518,018)
+     osat_tw              chip_le            246,841      12.5 bn   (storage 395,264)
+     osat_kr              chip_le            220,869      11.1 bn   (storage 617,614)
+     osat_my              chip_mat           223,853       2.3 bn   (storage 648,680)
+     fab_eu_leading_1     chip_le_raw         41,866       2.1 bn   (storage 88,513)
+     fab_eu_mature_1      chip_mat_raw       195,693       2.0 bn   (storage 648,680)
+     fab_tw_leading_1     chip_le_raw         30,091       1.5 bn   (storage 497,740)
+     osat_tw              chip_mat            92,562       1.0 bn   (storage 423,891)
+     fab_kr_memory_1      chip_le_raw          9,364       0.5 bn   (storage 1,097,982)
+     fab_tw_mature_1      chip_mat_raw        19,258       0.2 bn   (storage 423,891)
+     sink_us              chip_mat             1,741       0.0 bn   (storage 377,666)
+
+   Demand served per week, thousands: sink_us chip_le 153.4 (45%); sink_us chip_mat 58.7 (62%); sink_eu chip_le 65.2 (53%); sink_eu chip_mat 14.2 (41%); sink_cn chip_mat 19.5 (17%); sink_jp chip_le 25.4 (27%); sink_jp chip_mat 5.8 (22%)
+HighsMipSolverData::transformNewIntegerFeasibleSolution tmpSolver.run();
+HighsMipSolverData::transformNewIntegerFeasibleSolution tmpSolver.run();
+ep35: agent 2727.9  clairv 2400.8  base-first 2575.2 (status 1, gap 0.0415)  [156 s]
+ep19: agent 3458.3  clairv 3424.2  base-first 3429.7 (status 0, gap 0.0016)  [46 s]
+ep36: agent 1331.8  clairv 1243.8  base-first 1243.8 (status 0, gap 0.0000)  [43 s]
+ep20: agent 1147.5  clairv 1039.7  base-first 1041.3 (status 0, gap 0.0016)  [107 s]
+ep38: agent 967.9  clairv 735.0  base-first 735.0 (status 0, gap 0.0000)  [53 s]
+ep22: agent 2001.6  clairv 1749.2  base-first 1888.2 (status 1, gap 0.0104)  [155 s]
+ep40: agent 1609.2  clairv 1537.6  base-first 1538.0 (status 0, gap 0.0002)  [39 s]
+ep24: agent 1239.7  clairv 1173.2  base-first 1174.9 (status 0, gap 0.0014)  [87 s]
+HighsMipSolverData::transformNewIntegerFeasibleSolution tmpSolver.run();
+ep42: agent 1863.6  clairv 1707.2  base-first 1750.8 (status 1, gap 0.0026)  [156 s]
+ep27: agent 704.2  clairv 666.6  base-first 667.2 (status 0, gap 0.0008)  [54 s]
+ep43: agent 1135.1  clairv 1083.6  base-first 1083.6 (status 0, gap 0.0000)  [107 s]
+HighsMipSolverData::transformNewIntegerFeasibleSolution tmpSolver.run();
+ep28: agent 2230.5  clairv 2074.1  base-first 2156.8 (status 1, gap 0.0130)  [151 s]
+ep44: agent 3118.5  clairv 3053.2  base-first 3082.7 (status 0, gap 0.0015)  [65 s]
+ep30: agent 3069.8  clairv 3045.0  base-first 3054.9 (status 0, gap 0.0019)  [37 s]
+HighsMipSolverData::transformNewIntegerFeasibleSolution tmpSolver.run();
+HighsMipSolverData::transformNewIntegerFeasibleSolution tmpSolver.run();
+ep45: agent 3694.9  clairv 3364.8  base-first 3456.1 (status 1, gap 0.0255)  [156 s]
+ep31: agent 4083.4  clairv 4043.7  base-first 4043.7 (status 0, gap 0.0000)  [45 s]
+ep47: agent 3776.2  clairv 3697.0  base-first 3702.2 (status 0, gap 0.0014)  [67 s]
+ep51: agent 1959.0  clairv 1923.5  base-first 1924.2 (status 0, gap 0.0004)  [30 s]
+ep57: agent 837.9  clairv 634.2  base-first 647.0 (status 1, gap 0.0198)  [149 s]
+ep60: agent 1417.5  clairv 1401.4  base-first 1403.7 (status 0, gap 0.0017)  [24 s]
+ep61: agent 2590.7  clairv 2115.1  base-first 2350.1 (status 1, gap 0.0324)  [146 s]
+=== Wed Oct  7 14:34:44 UTC 2026 refine MILP tl=420 on 10 widest-gap episodes ===
+=== Wed Oct  7 14:35:08 UTC 2026 osat_probe L1 ===
+episodes [1, 2, 5, 9, 13, 14, 21, 23, 25, 26, 32, 33, 35, 36, 38, 40, 42, 43, 44, 45, 47, 51, 57, 60, 61]
+osat / chip: disposed k units per episode by band 1-13 14-26 27-39 40-52 | in weeks with disposal: open out-cap of the chip, agent sent of the chip, all flows on those edges / their total cap (per week)
+osat_kr  chip_le      30.4 =    25.4     1.6     3.4     0.0 | cap    103871 sent    103871 | all    103871 /    244049 | weeks  1.3%  eps>1k [25, 36]
+osat_my  chip_le     365.7 =   157.3   115.8    73.8    18.8 | cap     31849 sent     31849 | all     31849 /    415458 | weeks  8.1%  eps>1k [1, 14, 36, 40, 43, 47, 51]
+osat_my  chip_mat     40.2 =    35.1     0.4     2.3     2.4 | cap    247772 sent     89299 | all    226531 /    452999 | weeks  2.7%  eps>1k [2, 13, 35, 36, 45, 47, 51]
+osat_tw  chip_le     242.7 =    72.1    65.4    61.8    43.4 | cap     33941 sent     33881 | all     33881 /    132986 | weeks  8.5%  eps>1k [2, 14, 25, 32, 35, 36, 42, 43, 44, 51]
+osat_tw  chip_mat    109.0 =    11.9    19.9    36.7    40.4 | cap     97161 sent     34564 | all     87324 /    200875 | weeks  3.2%  eps>1k [1, 2, 35, 43]
+per episode chip_le disposed at OSATs, k units:
+    1 osat_kr:0 osat_my:704 osat_tw:0
+    2 osat_kr:0 osat_my:0 osat_tw:798
+    5 osat_kr:0 osat_my:0 osat_tw:0
+    9 osat_kr:0 osat_my:0 osat_tw:0
+   13 osat_kr:0 osat_my:0 osat_tw:0
+   14 osat_kr:0 osat_my:3091 osat_tw:33
+   21 osat_kr:0 osat_my:0 osat_tw:0
+   23 osat_kr:0 osat_my:0 osat_tw:0
+   25 osat_kr:675 osat_my:0 osat_tw:1147
+   26 osat_kr:0 osat_my:0 osat_tw:0
+   32 osat_kr:0 osat_my:0 osat_tw:1501
+   33 osat_kr:0 osat_my:0 osat_tw:0
+   35 osat_kr:0 osat_my:0 osat_tw:931
+   36 osat_kr:86 osat_my:1034 osat_tw:87
+   38 osat_kr:0 osat_my:0 osat_tw:0
+   40 osat_kr:0 osat_my:196 osat_tw:0
+   42 osat_kr:0 osat_my:0 osat_tw:41
+   43 osat_kr:0 osat_my:126 osat_tw:333
+   44 osat_kr:0 osat_my:0 osat_tw:38
+   45 osat_kr:0 osat_my:0 osat_tw:0
+   47 osat_kr:0 osat_my:102 osat_tw:0
+   51 osat_kr:0 osat_my:3889 osat_tw:1158
+   57 osat_kr:0 osat_my:0 osat_tw:0
+   60 osat_kr:0 osat_my:0 osat_tw:0
+   61 osat_kr:0 osat_my:0 osat_tw:0
+=== Wed Oct  7 14:44:23 UTC 2026 osat_probe L23 ===
+3. Why lots were not started, weeks 1..38, share of nominal capacity
+   fab               started  no wafers  no power: grid short of base load  no power: sliver partly there  lots / capacity in weeks without shed
+   fab_tw_leading_1     0.51       0.08                               0.33                           0.05                                   0.82
+   fab_tw_mature_1      0.41       0.18                               0.34                           0.05                                   0.66
+   fab_kr_memory_1      0.44       0.06                               0.48                           0.02                                   0.89
+   fab_jp_memory_1      0.32       0.00                               0.67                           0.01                                   0.98
+   fab_eu_leading_1     0.36       0.34                               0.27                           0.04                                   0.65
+   fab_eu_mature_1      0.30       0.25                               0.44                           0.02                                   0.54
+
+4. Grids, weeks 1..38 (GWh per week; fuels: burned over the segment's cap)
+   grid     weeks without shed %  shed   fabs' energy / need  free segment lost  lng   crude  nucfuel
+   grid_tw                 62.50    508                 0.48               5.28  0.71   0.62  -      
+   grid_kr                 50.00  1,041                 0.44               0.43  0.57   0.78     1.00
+   grid_jp                 32.89  3,415                 0.32               0.27  0.43   0.65     1.00
+   grid_eu                 55.26  2,459                 0.31               7.21  0.76   0.58     1.00
+   fuel disposed of (storage full) and left at the end, units per episode:
+episodes [0, 3, 6, 7, 8, 10, 11, 12, 15, 16, 17, 18, 19, 20, 22, 24, 27, 28, 30, 31]
+osat / chip: disposed k units per episode by band 1-13 14-26 27-39 40-52 | in weeks with disposal: open out-cap of the chip, agent sent of the chip, all flows on those edges / their total cap (per week)
+osat_kr  chip_le     300.2 =   200.6    18.8    40.6    40.2 | cap     47122 sent     47122 | all     47122 /    220552 | weeks  5.6%  eps>1k [7, 10, 11, 12, 19, 22, 24]
+osat_my  chip_le     513.5 =   195.4   137.9    92.0    88.2 | cap     30087 sent     29382 | all     29382 /    376408 | weeks  9.0%  eps>1k [7, 12, 15, 16, 19, 20, 30]
+osat_my  chip_mat    269.1 =    92.7    88.4    54.5    33.4 | cap    163276 sent     54837 | all    141723 /    468938 | weeks  7.5%  eps>1k [0, 12, 15, 16, 17, 18, 19, 20, 28]
+osat_tw  chip_le     192.4 =    56.4    62.7    35.0    38.3 | cap     46068 sent     46050 | all     46050 /    128317 | weeks  8.0%  eps>1k [0, 12, 16, 17, 19, 30, 31]
+osat_tw  chip_mat    145.9 =    32.7    43.8    48.2    21.2 | cap     69744 sent     19131 | all     69179 /    212503 | weeks  3.1%  eps>1k [8, 17, 22]
+per episode chip_le disposed at OSATs, k units:
+    0 osat_kr:0 osat_my:0 osat_tw:801
+    3 osat_kr:0 osat_my:0 osat_tw:0
+    6 osat_kr:0 osat_my:0 osat_tw:0
+    7 osat_kr:2238 osat_my:542 osat_tw:0
+    8 osat_kr:0 osat_my:0 osat_tw:0
+   10 osat_kr:997 osat_my:0 osat_tw:0
+   11 osat_kr:31 osat_my:0 osat_tw:0
+   12 osat_kr:872 osat_my:4105 osat_tw:1160
+   15 osat_kr:0 osat_my:78 osat_tw:0
+   16 osat_kr:0 osat_my:305 osat_tw:277
+   17 osat_kr:0 osat_my:0 osat_tw:1213
+   18 osat_kr:0 osat_my:0 osat_tw:0
+   19 osat_kr:299 osat_my:4760 osat_tw:99
+   20 osat_kr:0 osat_my:95 osat_tw:0
+   22 osat_kr:545 osat_my:0 osat_tw:0
+   24 osat_kr:1021 osat_my:0 osat_tw:0
+   27 osat_kr:0 osat_my:0 osat_tw:0
+   28 osat_kr:0 osat_my:0 osat_tw:0
+   30 osat_kr:0 osat_my:384 osat_tw:225
+   31 osat_kr:0 osat_my:0 osat_tw:73
+=== Wed Oct  7 14:52:27 UTC 2026 genprobe L1 KR-deficit episodes (bf tl=150) ===
+ep33: bf 3303.3 (gap 0.0508) -> 3240.6 (gap 0.0321)
+ep35: bf 2575.2 (gap 0.0415) -> 2572.3 (gap 0.0404)
+ep32: bf 3875.4 (gap 0.0228) -> 3841.5 (gap 0.0140)
+ep45: bf 3456.1 (gap 0.0255) -> 3456.1 (gap 0.0255)
+HighsMipSolverData::transformNewIntegerFeasibleSolution tmpSolver.run();
+ep13: bf 892.3 (gap 0.0929) -> 892.3 (gap 0.0929)
+ep5: bf 4136.7 (gap 0.0193) -> 4136.7 (gap 0.0193)
+ep61: bf 2350.1 (gap 0.0324) -> 2350.1 (gap 0.0324)
+ep23: bf 2888.1 (gap 0.0229) -> 2888.1 (gap 0.0229)
+HighsMipSolverData::transformNewIntegerFeasibleSolution tmpSolver.run();
+HighsMipSolverData::transformNewIntegerFeasibleSolution tmpSolver.run();
+HighsMipSolverData::transformNewIntegerFeasibleSolution tmpSolver.run();
+ep26: bf 1631.8 (gap 0.0344) -> 1623.3 (gap 0.0291)
+ep3: bf 3124.1 (gap 0.0144) -> 3124.1 (gap 0.0126)
+=== Wed Oct  7 15:12:59 UTC 2026 ldiag report after refine ===
+
+===== harm level(s) [1]: 25 episodes [1, 2, 5, 9, 13, 14, 21, 23, 25, 26, 32, 33, 35, 36, 38, 40, 42, 43, 44, 45, 47, 51, 57, 60, 61]
+J bn/ep: agent 2397.4  clairv 2196.4  base-first plan 2284.5
+  loss to clairv 201.0 = relaxation (bf - clairv) 88.1 + loss to bf 112.9
+  with the MILP's dual bound: relaxation >= 57.9, loss to the base-first optimum <= 143.1
+  MILP: 13 stopped by time; largest gap 0.0929
+
+component         agent   clairv       bf     a-c    a-bf    bf-c
+freight             1.2      1.3      1.1    -0.1     0.1    -0.2
+war_risk            0.0      0.0      0.0     0.0     0.0     0.0
+tariff              5.1      6.4      5.0    -1.3     0.1    -1.4
+holding             6.6      6.1      6.1     0.5     0.5    -0.0
+queue_holding       0.4      0.1      0.1     0.2     0.2     0.0
+shortage          733.1    553.7    655.4   179.4    77.7   101.7
+disposal            1.9      0.1      0.1     1.8     1.8     0.0
+shed             1649.8   1629.5   1617.3    20.3    32.5   -12.2
+-salvage           -0.6     -0.8     -0.6     0.1    -0.0     0.1
+
+week bands, bn/ep:   shed a-c  a-bf  bf-c | shortage a-c  a-bf  bf-c | other a-c  a-bf
+weeks  1-13             54.0  -34.0   88.0 |         1.1   -5.4    6.6 |      1.3    1.6
+weeks 14-26             -4.0   49.6  -53.6 |        26.9    4.3   22.7 |      0.4    0.8
+weeks 27-39            -35.6   10.7  -46.3 |        72.1   35.8   36.3 |     -0.1    0.3
+weeks 40-52              5.9    6.1   -0.3 |        79.3   43.1   36.1 |     -0.4   -0.0
+
+grids: shed bn/ep a-c  a-bf  bf-c | GWh/wk agent clairv bf | weeks with shed % a / c / bf | shed bn a-bf by band
+grid_tw        4.0    4.7   -0.7 |     225     207     203 |  21 /  28 /  18 |    2.3    1.8   -0.6    1.3
+grid_kr        2.3   14.7  -12.4 |     767     756     699 |  42 /  57 /  36 |   -1.8    6.9    9.1    0.5
+grid_jp        8.4    6.8    1.6 |    2679    2639    2647 |  74 /  82 /  70 |    1.8   11.5   -7.4    0.8
+grid_eu        5.6    6.3   -0.7 |    4020    3994    3990 |  53 /  52 /  50 |  -36.3   29.5    9.6    3.5
+
+markets: shortage bn/ep a-c  a-bf  bf-c | a-bf by band
+sink_us  chip_le     108.0   50.2   57.7 |   -4.0    2.7   24.8   26.8
+sink_us  chip_mat      4.6    4.7   -0.1 |    0.3    0.9    1.8    1.8
+sink_eu  chip_le      19.9    9.4   10.4 |   -0.0    0.4    3.7    5.4
+sink_eu  chip_mat      0.7    1.2   -0.6 |   -0.0    0.2    0.1    1.0
+sink_cn  chip_mat      8.3    0.5    7.8 |   -1.5    0.3    0.5    1.2
+sink_jp  chip_le      37.0   10.6   26.4 |   -0.1   -0.4    4.6    6.5
+sink_jp  chip_mat      1.1    1.1   -0.0 |    0.0    0.2    0.4    0.5
+
+fabs (weeks 1-40): lots per week, % of nominal capacity: agent / clairv / bf; clairv lots started while its grid sheds %
+fab_tw_leading_1    56.9 /  50.3 /  48.7     32%
+fab_tw_mature_1     23.9 /  25.3 /  20.9     49%
+fab_kr_memory_1     42.1 /  50.8 /  44.6     65%
+fab_jp_memory_1     21.9 /  38.4 /  21.0     88%
+fab_eu_leading_1    26.2 /  29.0 /  26.8     32%
+fab_eu_mature_1     21.1 /  31.1 /  24.1     42%
+
+per episode, bn: ep  a-c  bf-c  a-bf  (a-bf: shed  shortage  other)  MILP gap
+    1 L1    32.1    4.8    27.3   (  22.4    1.7    3.2)  0.0008
+    2 L1   196.4   81.9   114.5   (  76.7   36.6    1.2)  0.0025
+    5 L1   602.1  505.3    96.8   (   3.3   92.6    0.9)  0.0193
+    9 L1    80.2    0.1    80.1   (  44.6   33.1    2.4)  0.0002
+   13 L1   230.8   98.5   132.4   (   7.5  123.0    1.9)  0.0929
+   14 L1    62.3   14.5    47.8   (  12.8   25.1    9.9)  0.0004
+   21 L1    82.3   23.3    59.0   (  47.8    9.6    1.6)  0.0004
+   23 L1   250.1  136.5   113.6   (   6.6  105.3    1.7)  0.0229
+   25 L1   201.2  119.2    82.1   (  64.6   12.5    5.0)  0.0035
+   26 L1   332.6   50.4   282.2   (  46.2  240.8   -4.8)  0.0291
+   32 L1   446.1  350.2    95.8   (   2.0   88.1    5.7)  0.0140
+   33 L1   375.6  224.7   150.9   (   3.6  140.9    6.4)  0.0321
+   35 L1   327.1  171.5   155.6   (  63.8   88.6    3.2)  0.0404
+   36 L1    88.0    0.0    88.0   (  17.6   66.1    4.3)  0.0000
+   38 L1   232.9    0.0   232.9   ( 103.6  125.8    3.5)  0.0000
+   40 L1    71.6    0.4    71.2   (  24.3   45.6    1.3)  0.0002
+   42 L1   156.4   43.6   112.8   (  76.4   34.3    2.1)  0.0026
+   43 L1    51.5    0.0    51.5   (  26.9   22.3    2.3)  0.0000
+   44 L1    65.3   29.5    35.7   (  16.5   13.6    5.6)  0.0015
+   45 L1   330.1   91.3   238.8   (   9.4  241.4  -12.0)  0.0255
+   47 L1    79.2    5.1    74.1   (  38.5   29.6    6.0)  0.0014
+   51 L1    35.5    0.8    34.7   (  21.5    1.7   11.5)  0.0004
+   57 L1   203.6   12.8   190.8   (  11.0  178.5    1.4)  0.0198
+   60 L1    16.2    2.3    13.8   (  14.8   -2.3    1.3)  0.0017
+   61 L1   475.5  235.0   240.6   (  49.7  189.3    1.5)  0.0324
+  MILP gap < 0.5% only (15 ep): a-c 96.7 = relaxation 21.7 + a-bf 75.0
+
+===== harm level(s) [2, 3]: 20 episodes [0, 3, 6, 7, 8, 10, 11, 12, 15, 16, 17, 18, 19, 20, 22, 24, 27, 28, 30, 31]
+J bn/ep: agent 2461.4  clairv 2328.3  base-first plan 2372.0
+  loss to clairv 133.1 = relaxation (bf - clairv) 43.6 + loss to bf 89.5
+  with the MILP's dual bound: relaxation >= 32.1, loss to the base-first optimum <= 100.9
+  MILP: 8 stopped by time; largest gap 0.0311
+
+component         agent   clairv       bf     a-c    a-bf    bf-c
+freight             1.1      1.2      1.0    -0.1     0.0    -0.2
+war_risk            0.1      0.1      0.1     0.0     0.0     0.0
+tariff              7.1      6.2      5.5     0.9     1.6    -0.7
+holding             6.8      6.3      6.3     0.5     0.5    -0.0
+queue_holding       0.5      0.3      0.3     0.2     0.2     0.0
+shortage          906.8    802.0    854.4   104.8    52.4    52.4
+disposal            3.2      0.3      0.3     2.9     2.9    -0.0
+shed             1536.5   1512.7   1504.6    23.8    31.9    -8.1
+-salvage           -0.6     -0.8     -0.6     0.1    -0.0     0.2
+
+week bands, bn/ep:   shed a-c  a-bf  bf-c | shortage a-c  a-bf  bf-c | other a-c  a-bf
+weeks  1-13             48.4   -7.4   55.8 |         0.2   -1.1    1.3 |      2.2    2.5
+weeks 14-26             -5.4   27.0  -32.4 |         9.3   -5.7   15.0 |      0.9    1.2
+weeks 27-39            -22.8    8.2  -30.9 |        42.3   23.5   18.8 |      0.8    0.8
+weeks 40-52              3.5    4.1   -0.6 |        53.0   35.7   17.4 |      0.5    0.7
+
+grids: shed bn/ep a-c  a-bf  bf-c | GWh/wk agent clairv bf | weeks with shed % a / c / bf | shed bn a-bf by band
+grid_tw        6.7    6.3    0.4 |     491     460     462 |  40 /  53 /  40 |    0.5    3.0    1.4    1.4
+grid_kr        6.6   16.6  -10.0 |     852     821     774 |  43 /  52 /  42 |   -2.2    9.0    7.6    2.2
+grid_jp        5.9    2.2    3.7 |    2829    2801    2819 |  79 /  85 /  81 |    6.7    6.1  -10.1   -0.5
+grid_eu        4.6    6.7   -2.2 |    2990    2969    2959 |  54 /  52 /  49 |  -12.4    8.9    9.3    1.0
+
+markets: shortage bn/ep a-c  a-bf  bf-c | a-bf by band
+sink_us  chip_le      60.4   30.0   30.4 |   -0.5   -2.5   15.7   17.3
+sink_us  chip_mat      4.3    3.3    1.0 |   -0.5    0.1    1.7    1.9
+sink_eu  chip_le      13.0   12.6    0.4 |   -0.0   -0.4    4.2    8.9
+sink_eu  chip_mat      0.6    0.3    0.2 |    0.1    0.3   -0.3    0.2
+sink_cn  chip_mat      3.2   -0.8    4.0 |   -1.5   -0.1    0.4    0.4
+sink_jp  chip_le      22.4    6.4   16.1 |    1.5   -3.5    1.8    6.6
+sink_jp  chip_mat      0.8    0.5    0.4 |   -0.1    0.3    0.1    0.3
+
+fabs (weeks 1-40): lots per week, % of nominal capacity: agent / clairv / bf; clairv lots started while its grid sheds %
+fab_tw_leading_1    32.2 /  30.1 /  25.8     60%
+fab_tw_mature_1     15.0 /  14.6 /   9.6     66%
+fab_kr_memory_1     35.0 /  34.4 /  32.9     51%
+fab_jp_memory_1     14.8 /  16.2 /   8.6     92%
+fab_eu_leading_1    25.0 /  28.8 /  21.3     38%
+fab_eu_mature_1     21.9 /  21.8 /  15.9     50%
+
+per episode, bn: ep  a-c  bf-c  a-bf  (a-bf: shed  shortage  other)  MILP gap
+    0 L3    90.9    2.7    88.2   (  59.8   22.6    5.9)  0.0012
+    3 L2   397.0  145.5   251.4   (  66.1  179.4    5.9)  0.0126
+    6 L2   107.6   53.7    53.9   (   9.4   43.6    1.0)  0.0067
+    7 L3    60.0    6.8    53.2   (  31.6   11.6   10.0)  0.0002
+    8 L2   174.8   85.6    89.2   (   9.0   78.5    1.8)  0.0162
+   10 L3    39.6    0.0    39.6   (  27.7    8.9    3.0)  0.0000
+   11 L3   388.5  253.7   134.9   ( 108.0   20.5    6.4)  0.0020
+   12 L2    23.6    0.0    23.6   (   7.6    4.0   12.1)  0.0000
+   15 L2    95.0   19.8    75.2   (  13.9   60.1    1.2)  0.0020
+   16 L2   139.3   22.1   117.2   (  64.8   49.3    3.1)  0.0076
+   17 L2   301.1   37.4   263.7   (  54.7  201.3    7.7)  0.0311
+   18 L3   125.0    4.5   120.5   (   8.9  109.4    2.2)  0.0030
+   19 L2    34.0    5.4    28.6   (  13.1    0.3   15.2)  0.0016
+   20 L2   107.8    1.6   106.2   (  39.4   65.3    1.5)  0.0016
+   22 L3   252.4  139.0   113.4   (   5.4   99.0    9.0)  0.0104
+   24 L2    66.4    1.6    64.8   (  17.7   42.0    5.1)  0.0014
+   27 L2    37.6    0.5    37.0   (  20.3   11.2    5.5)  0.0008
+   28 L2   156.4   82.7    73.7   (  38.3   34.0    1.4)  0.0130
+   30 L2    24.9   10.0    14.9   (   7.7    2.6    4.6)  0.0019
+   31 L2    39.7    0.0    39.7   (  34.5    3.8    1.4)  0.0000
+  MILP gap < 0.5% only (13 ep): a-c 87.2 = relaxation 23.6 + a-bf 63.6
+HighsMipSolverData::transformNewIntegerFeasibleSolution tmpSolver.run();
+episodes [23, 26, 32, 33, 38, 45, 57, 61]: generation a-bf, GWh per episode, by band 1-13 14-26 27-39 40-52 (and total; agent total)
+  grid_tw  lng          1300      439     -671       -2  |     1066  agent     87224
+  grid_tw  crude         458     -119     -205     -248  |     -114  agent      3013
+  grid_tw  free         -211     -180      -66     -254  |     -711  agent    163026
+  grid_kr  lng          1204    -4661    -5338      355  |    -8441  agent     72734
+  grid_kr  crude         401       77      178     -529  |      127  agent      8893
+  grid_kr  nucfuel       -12        0        0        0  |      -12  agent    171282
+  grid_kr  free          -17        0        0        0  |      -17  agent    245504
+  grid_jp  lng          2122    -5367     3201     -340  |     -384  agent    161966
+  grid_jp  crude         -46      140     -168     -280  |     -354  agent     29666
+  grid_jp  nucfuel        -2        0        0       23  |       21  agent     74569
+  grid_jp  free          -15        0        0        0  |      -15  agent    531305
+  grid_eu  lng         14141    -5242    -8630    -1676  |    -1406  agent    248206
+  grid_eu  crude         485     -623      981      259  |     1103  agent     27913
+  grid_eu  nucfuel       -45      -53      -49      458  |      310  agent    620246
+  grid_eu  free         -114     -135     -226     -578  |    -1053  agent   1564099
+L1: 25 ep, mean naive-clairv gap 953.6 bn
+   lots a - bf, thousand per week, weeks 1-13 / 14-26 / 27-39 (agent level in brackets)
+   fab_tw_leading_1    +26.9 ( 82.9) /   +3.2 ( 79.5) /   +2.0 ( 76.9)
+   fab_tw_mature_1     +18.2 ( 32.2) /   -3.8 ( 26.9) /   -2.9 ( 26.3)
+   fab_kr_memory_1     +21.2 (134.2) /  -14.0 (145.9) /  -33.2 (112.1)
+   fab_jp_memory_1     +11.3 ( 39.9) /   -8.3 ( 25.9) /   +1.1 ( 31.3)
+   fab_eu_leading_1     +2.9 (  9.1) /   -2.7 (  5.8) /   -0.8 (  4.8)
+   fab_eu_mature_1     +17.7 ( 50.1) /  -27.2 ( 34.4) /   -9.7 ( 30.2)
+L2-3: 20 ep, mean naive-clairv gap 1055.1 bn
+   lots a - bf, thousand per week, weeks 1-13 / 14-26 / 27-39 (agent level in brackets)
+   fab_tw_leading_1    +22.3 ( 50.8) /   +3.5 ( 44.3) /   +0.2 ( 40.9)
+   fab_tw_mature_1     +18.6 ( 25.6) /   +3.6 ( 16.2) /   -2.3 ( 12.2)
+   fab_kr_memory_1     +49.4 (121.4) /  -14.8 (108.1) /  -17.5 ( 96.2)
+   fab_jp_memory_1     +20.7 ( 34.3) /   +0.6 ( 16.0) /   +6.0 ( 15.0)
+   fab_eu_leading_1     +4.3 (  9.1) /   -1.9 (  5.2) /   +0.4 (  4.6)
+   fab_eu_mature_1     +37.7 ( 53.4) /   -2.4 ( 38.9) /   -3.4 ( 27.5)
+=== Wed Oct  7 15:13:58 UTC 2026 fab_link after refine ===
+L1: 25 ep, shortage a-bf mean 77.7, shed a-bf 32.5
+   fab_tw_leading_1   lot deficit bf-a  -0.45 M/ep (positive part  0.21), episodes with bf > a by >10% cap-weeks:  5, corr with shortage gap  0.43
+   fab_tw_mature_1    lot deficit bf-a  -0.14 M/ep (positive part  0.10), episodes with bf > a by >10% cap-weeks:  3, corr with shortage gap  0.02
+   fab_kr_memory_1    lot deficit bf-a   0.31 M/ep (positive part  0.83), episodes with bf > a by >10% cap-weeks:  8, corr with shortage gap  0.88
+   fab_jp_memory_1    lot deficit bf-a  -0.05 M/ep (positive part  0.18), episodes with bf > a by >10% cap-weeks:  2, corr with shortage gap  0.45
+   fab_eu_leading_1   lot deficit bf-a   0.01 M/ep (positive part  0.07), episodes with bf > a by >10% cap-weeks:  6, corr with shortage gap  0.03
+   fab_eu_mature_1    lot deficit bf-a   0.22 M/ep (positive part  0.59), episodes with bf > a by >10% cap-weeks:  5, corr with shortage gap -0.17
+   KR shed a-bf 14.7 bn/ep; regression shortage gap ~ 66.1 + 38.0 x KR lot deficit (M) -> KR part 11.6 bn/ep
+L2-3: 20 ep, shortage a-bf mean 52.4, shed a-bf 31.9
+   fab_tw_leading_1   lot deficit bf-a  -0.35 M/ep (positive part  0.13), episodes with bf > a by >10% cap-weeks:  2, corr with shortage gap -0.04
+   fab_tw_mature_1    lot deficit bf-a  -0.25 M/ep (positive part  0.02), episodes with bf > a by >10% cap-weeks:  0, corr with shortage gap -0.55
+   fab_kr_memory_1    lot deficit bf-a  -0.26 M/ep (positive part  0.65), episodes with bf > a by >10% cap-weeks:  4, corr with shortage gap  0.72
+   fab_jp_memory_1    lot deficit bf-a  -0.35 M/ep (positive part  0.08), episodes with bf > a by >10% cap-weeks:  1, corr with shortage gap -0.22
+   fab_eu_leading_1   lot deficit bf-a  -0.04 M/ep (positive part  0.03), episodes with bf > a by >10% cap-weeks:  3, corr with shortage gap  0.11
+   fab_eu_mature_1    lot deficit bf-a  -0.43 M/ep (positive part  0.25), episodes with bf > a by >10% cap-weeks:  2, corr with shortage gap -0.18
+   KR shed a-bf 16.6 bn/ep; regression shortage gap ~ 57.2 + 18.6 x KR lot deficit (M) -> KR part -4.8 bn/ep
+
+KR-deficit episodes (bf starts > a by 10% of capacity x 40 weeks at fab_kr_memory_1):
+  L1: 8 of 25 episodes [23, 26, 32, 33, 38, 45, 57, 61]: a-bf in them 61.8 bn per episode of the level (shortage 52.4, KR shed 8.3) of a-bf 112.9
+  L2-3: 4 of 20 episodes [3, 16, 17, 18]: a-bf in them 37.6 bn per episode of the level (shortage 27.0, KR shed 7.6) of a-bf 89.5
+--- summary (15:30 UTC): L1 loss 201.0 = relaxation 88.1 [>=57.9] + loss to base-first plan 112.9 [<=143.1];
+    L2-3 (20 ep) 133.1 = 43.6 [>=32.1] + 89.5 [<=100.9]. Excess L1 +67.9 = relaxation +44.5 + reachable +23.4.
+    Reachable excess = KR-deficit episodes (strait-cut Malacca/Hormuz/Taiwan): 61.8 of 112.9 on L1 vs 37.6 of 89.5.
+    Write-up: lab/anastasiia/mpc_lab/reports/level1.md
