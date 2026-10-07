@@ -40,11 +40,30 @@ os.environ.setdefault("SBF_CACHE_DIR", os.path.join(ROOT, "hub", "refcache"))
 sys.path[:0] = [HERE, os.path.dirname(HERE)]
 import planner_LS as LS  # noqa: E402
 
-TASK, ENTROPY = "small", 444
+TASK, ENTROPY = "small", 444  # defaults; configure() switches them (also inside every joblib worker)
 AGENT = os.path.join(ROOT, "agents", "anastasiia_hybrid_chiplp")
 CACHE = os.path.join(ROOT, "outputs", "planner_LSF", "cache")
+LOG = None  # optional progress log path (appended to, flushed per line)
 FUELS = ("lng", "crude", "nucfuel")
 OVERRIDE, HOLD = 1, 2  # release_mode codes
+
+
+def configure(task=None, entropy=None, log=None):
+    """Set the module task / root. small@444 keeps the original cache dir; other pairs get their own."""
+    global TASK, ENTROPY, CACHE, LOG
+    TASK = task or TASK
+    ENTROPY = int(entropy) if entropy is not None else ENTROPY
+    sub = "cache" if (TASK, ENTROPY) == ("small", 444) else f"cache_{TASK}_{ENTROPY}"
+    CACHE = os.path.join(ROOT, "outputs", "planner_LSF", sub)
+    if log:
+        LOG = log
+
+
+def logline(msg):
+    print(msg, flush=True)
+    if LOG:
+        with open(LOG, "a") as f:
+            f.write(msg + "\n")
 
 
 def world(n):
@@ -186,7 +205,8 @@ def verify_one(n):
     return d, R, rep
 
 
-def verify(n=0):
+def verify(n=0, task="small", entropy=444):
+    configure(task, entropy)
     _d, _R, rep = verify_one(n)
     print(rep, flush=True)
 
@@ -225,13 +245,30 @@ def moves_of(R, t, s):
             yield name, {(t, s): q * (1.0 - f), (t2, s): R.flows[t2 - 1].get(s, 0.0) + q * f}
 
 
+def bands():
+    """Week bands: the original three for Small (52 weeks), quarters of the year for Full (104 weeks)."""
+    return ["1-13", "14-39", "40-52"] if TASK == "small" else ["1-26", "27-52", "53-78", "79-104"]
+
+
 def band(t):
-    return "1-13" if t <= 13 else ("14-39" if t <= 39 else "40-52")
+    if TASK == "small":
+        return "1-13" if t <= 13 else ("14-39" if t <= 39 else "40-52")
+    return bands()[min((t - 1) // 26, 3)]
 
 
-def search_one(n, budget, secs, sweeps=3, repeat=3):
+def search_one(n, budget, secs, sweeps=3, repeat=3, task=None, entropy=None, log=None):
+    configure(task, entropy, log)
+    done = os.path.join(CACHE, f"lsf_ep{n}.pkl")
+    if os.path.exists(done):  # resume: a finished episode is not searched again
+        with open(done, "rb") as f:
+            out = pickle.load(f)
+        out.pop("flows", None)
+        logline(f"[ep {n}] loaded finished search: dJ {(out['before'] - out['after']) / 1e11:.3f} bn")
+        return out
     t0, c0 = time.time(), time.process_time()
     d, R, rep = verify_one(n)
+    logline(f"[ep {n}] verify: gym J {rep['gym_J']} replay J {rep['replay_J']} equal {rep['equal']} bad weeks {rep['bad_weeks']} "
+            f"dropped {rep['dropped']} fallback weeks {rep['fallback_weeks']} play {rep['play_secs']:.0f}s")
     out = dict(rep, before=R.J, after=R.J, accepted=0, replays=0, cpu=0.0, secs=0.0, moves=[], stats={})
     if not rep["equal"] or rep["bad_weeks"]:
         out["error"] = "replay mismatch"
@@ -243,6 +280,13 @@ def search_one(n, budget, secs, sweeps=3, repeat=3):
     t1, c1 = time.time(), time.process_time()
     calls0 = R.calls
     out_of = lambda: R.calls - calls0 >= budget or time.time() - t1 > secs  # noqa: E731
+    nxt = [500]
+
+    def progress():
+        if R.calls - calls0 >= nxt[0]:
+            nxt[0] += 500
+            logline(f"[ep {n}] replays {R.calls - calls0} accepted {len(moves)} J {R.J / 1e11:.3f} bn "
+                    f"(dJ {(out['before'] - R.J) / 1e11:.3f}) {time.time() - t1:.0f}s")
     sweep = 0
     for sweep in range(sweeps):
         improved = False
@@ -257,6 +301,7 @@ def search_one(n, budget, secs, sweeps=3, repeat=3):
                         break
                     old = {key: R.flows[key[0] - 1].get(key[1], 0.0) for key in ch}
                     J, flows = R.trial(ch)
+                    progress()
                     st = stats.setdefault(name, [0, 0, 0])
                     st[0] += 1
                     if J < R.J:
@@ -278,8 +323,11 @@ def search_one(n, budget, secs, sweeps=3, repeat=3):
                cpu=time.process_time() - c1, total_secs=time.time() - t0, total_cpu=time.process_time() - c0,
                moves=moves, stats=stats, sweeps=sweep + 1, comp0=comp0, comp1=comp1,
                n_fuel_disp=sum(1 for t in range(R.T) for s, q in R.flows[t].items() if s in fs and q > 1e-9))
-    with open(os.path.join(CACHE, f"lsf_ep{n}.pkl"), "wb") as f:
+    with open(done + ".tmp", "wb") as f:
         pickle.dump(dict(out, flows=R.flows), f)
+    os.replace(done + ".tmp", done)
+    logline(f"[ep {n}] DONE J {out['before'] / 1e11:.3f} -> {out['after'] / 1e11:.3f} bn (dJ {(out['before'] - out['after']) / 1e11:.3f}), "
+            f"{out['accepted']} moves, {out['replays']} replays, {out['cpu']:.0f} cpu s")
     return out
 
 
@@ -299,7 +347,7 @@ def references(ns, omega_hashes):
             r = json.load(f)
         same += r["omega_hash"] == omega_hashes[n]
         h = r["harm_usd"]
-        r["stratum"] = 1 + sum(h > (lo + hi) / 2 for lo, hi in LS.GAPS)
+        r["stratum"] = 1 + sum(h > (lo + hi) / 2 for lo, hi in LS.GAPS)  # small cut points; unused for Full
         rows.append(r)
     return rows, same
 
@@ -307,7 +355,7 @@ def references(ns, omega_hashes):
 def report(res, refs=None):
     bn = 1e11  # cents per bn USD
     print(f"\n{'ep':>3} {'J before bn':>12} {'J after bn':>12} {'dJ bn':>8} {'acc':>4} {'replays':>7} {'cpu s':>6} {'rep/s':>6} "
-          f"{'lng':>4} {'crude':>5} {'nuc':>4} {'valve':>5} {'order':>5} {'1-13':>5} {'14-39':>5} {'40-52':>5}", flush=True)
+          f"{'lng':>4} {'crude':>5} {'nuc':>4} {'valve':>5} {'order':>5} " + " ".join(f"{b:>6}" for b in bands()), flush=True)
     for r in res:
         if r.get("error"):
             print(f"{r['n']:>3} ERROR {r['error']}: gym {r['gym_J']} replay {r['replay_J']} bad weeks {r['bad_weeks']}")
@@ -318,7 +366,7 @@ def report(res, refs=None):
         b = collections.Counter(band(x["week"]) for x in m)
         print(f"{r['n']:>3} {r['before'] / bn:12.3f} {r['after'] / bn:12.3f} {(r['before'] - r['after']) / bn:8.3f} {r['accepted']:>4} "
               f"{r['replays']:>7} {r['cpu']:>6.0f} {r['replays'] / max(r['cpu'], 1e-9):>6.1f} {c['lng']:>4} {c['crude']:>5} "
-              f"{c['nucfuel']:>4} {ty['valve']:>5} {ty['order']:>5} {b['1-13']:>5} {b['14-39']:>5} {b['40-52']:>5}")
+              f"{c['nucfuel']:>4} {ty['valve']:>5} {ty['order']:>5} " + " ".join(f"{b[k]:>6}" for k in bands()))
     ok = [r for r in res if not r.get("error")]
     if not ok:
         return
@@ -356,17 +404,22 @@ def report(res, refs=None):
         rows, same = refs
         idx = {r["episode"]: i for i, r in enumerate(rows)}
         sub = [rows[idx[r["n"]]] for r in ok]
-        b0, _ = LS.rss(sub, [r["before"] for r in ok])
-        b1, _ = LS.rss(sub, [r["after"] for r in ok])
-        print(f"RSS (SECONDARY; team references, omega hash equal in {same}/{len(rows)} episodes): before {b0:.4f} after {b1:.4f}"
-              f" (+{b1 - b0:.4f}); gap naive-oracle mean {np.mean([(r['J_naive_cents'] - r['J_oracle_cents']) / bn for r in sub]):.1f} bn")
+        if TASK == "small":
+            b0, _ = LS.rss(sub, [r["before"] for r in ok])
+            b1, _ = LS.rss(sub, [r["after"] for r in ok])
+            print(f"RSS (SECONDARY; team references, omega hash equal in {same}/{len(rows)} episodes): before {b0:.4f} after {b1:.4f}"
+                  f" (+{b1 - b0:.4f})")
+        print(f"references (omega hash equal in {same}/{len(rows)}): gap naive-oracle mean {np.mean([(r['J_naive_cents'] - r['J_oracle_cents']) / bn for r in sub]):.1f} bn")
+        print("episode gain / (naive-oracle gap), mean over episodes (an RSS-like number, ratio of per-episode values): "
+              f"{np.mean([(r['before'] - r['after']) / (x['J_naive_cents'] - x['J_oracle_cents']) for r, x in zip(ok, sub)]):.4f}")
 
 
-def examples(res, k=3, path=os.path.join(HERE, "LSF_examples.md")):
+def examples(res, k=3, path=None):
+    path = path or os.path.join(HERE, "LSF_examples.md" if TASK == "small" else f"LSF_{TASK}_examples.md")
     bn = 1e11
     ok = sorted((r for r in res if not r.get("error")), key=lambda r: r["after"] - r["before"])[:k]
     lines = ["# LSF: прийняті ходи паливного локального пошуку (planner_LSF.py)", "",
-             f"Агент `anastasiia_hybrid_chiplp`, task {TASK}, root {ENTROPY}; три епізоди з найбільшим виграшем. "
+             f"Агент `anastasiia_hybrid_chiplp`, task {TASK}, root {ENTROPY}; {k} епізоди(ів) з найбільшим виграшем. "
              "Ходи в порядку прийняття; «тиждень» — тиждень відправки; кількість — у одиницях товару. "
              "Тип: valve — термінал → система (лаг 0), order — замовлення з джерела. Перевірено одним прогоном.", ""]
     for r in ok:
@@ -381,12 +434,15 @@ def examples(res, k=3, path=os.path.join(HERE, "LSF_examples.md")):
         f.write("\n".join(lines))
 
 
-def run(episodes=12, start=0, budget=20000, secs=1200, n_jobs=2, probe=2, min_gain_bn=0.5):
+def run(episodes=12, start=0, budget=20000, secs=1200, n_jobs=2, probe=2, min_gain_bn=0.5, task="small", entropy=444,
+        log=None, nexamples=3):
     """Episodes start..start+episodes-1; the first ``probe`` first, stopping if they fail or gain < min_gain_bn each."""
+    configure(task, entropy, log)
+    kw = dict(task=task, entropy=entropy, log=log)
     t0 = time.time()
     ns = list(range(start, start + episodes))
     print(f"planner_LSF: {TASK} root {ENTROPY} episodes {ns[0]}..{ns[-1]}, budget {budget} replays / {secs}s, n_jobs {n_jobs}", flush=True)
-    res = Parallel(n_jobs=n_jobs)(delayed(search_one)(n, budget, secs) for n in ns[:probe])
+    res = Parallel(n_jobs=n_jobs)(delayed(search_one)(n, budget, secs, **kw) for n in ns[:probe])
     report(res)
     print(f"[probe done {time.time() - t0:.0f}s]", flush=True)
     if any(r.get("error") for r in res):
@@ -395,11 +451,11 @@ def run(episodes=12, start=0, budget=20000, secs=1200, n_jobs=2, probe=2, min_ga
     if all((r["before"] - r["after"]) / 1e11 < min_gain_bn for r in res):
         print("STOP: near-zero gains on the probe episodes", flush=True)
         return
-    res += Parallel(n_jobs=n_jobs)(delayed(search_one)(n, budget, secs) for n in ns[probe:])
+    res += Parallel(n_jobs=n_jobs)(delayed(search_one)(n, budget, secs, **kw) for n in ns[probe:])
     refs = references(ns, {r["n"]: r["omega_hash"] for r in res})
     print(f"\n===== all {len(res)} episodes ({time.time() - t0:.0f}s wall) =====")
     report(res, refs)
-    examples(res)
+    examples(res, k=nexamples)
     with open(os.path.join(CACHE, "lsf_all.pkl"), "wb") as f:
         pickle.dump(res, f)
 

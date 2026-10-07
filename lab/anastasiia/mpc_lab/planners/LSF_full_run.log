@@ -1,0 +1,155 @@
+[ep 0] verify: gym J 238518406425369 replay J 238518406425369 equal True bad weeks [] dropped 0 fallback weeks 0 play 115s
+[ep 0] replays 500 accepted 0 J 2385.184 bn (dJ 0.000) 91s
+[ep 1] verify: gym J 396754635619422 replay J 396754635619422 equal True bad weeks [] dropped 0 fallback weeks 0 play 91s
+[ep 0] replays 1000 accepted 14 J 2384.303 bn (dJ 0.881) 186s
+[ep 1] replays 500 accepted 2 J 3967.541 bn (dJ 0.006) 121s
+[ep 0] replays 1500 accepted 28 J 2382.946 bn (dJ 2.238) 258s
+[ep 0] replays 2000 accepted 38 J 2382.199 bn (dJ 2.985) 300s
+[ep 1] replays 1000 accepted 13 J 3966.761 bn (dJ 0.785) 270s
+[ep 0] replays 2500 accepted 38 J 2382.199 bn (dJ 2.985) 395s
+[ep 0] replays 3000 accepted 41 J 2382.195 bn (dJ 2.990) 482s
+[ep 1] replays 1500 accepted 27 J 3965.406 bn (dJ 2.141) 397s
+[ep 1] replays 2000 accepted 38 J 3964.584 bn (dJ 2.963) 456s
+[ep 0] replays 3500 accepted 47 J 2382.174 bn (dJ 3.010) 563s
+[ep 0] replays 4000 accepted 47 J 2382.174 bn (dJ 3.010) 637s
+[ep 1] replays 2500 accepted 40 J 3964.579 bn (dJ 2.967) 590s
+[ep 0] replays 4500 accepted 62 J 2370.404 bn (dJ 14.780) 727s
+[ep 0] replays 5000 accepted 67 J 2370.322 bn (dJ 14.862) 792s
+[ep 1] replays 3000 accepted 43 J 3964.578 bn (dJ 2.968) 727s
+[ep 0] replays 5500 accepted 98 J 2370.212 bn (dJ 14.972) 843s
+[ep 0] replays 6000 accepted 99 J 2370.212 bn (dJ 14.972) 891s
+[ep 1] replays 3500 accepted 46 J 3964.577 bn (dJ 2.969) 854s
+[ep 0] replays 6500 accepted 123 J 2370.190 bn (dJ 14.994) 1004s
+[ep 1] replays 4000 accepted 52 J 3964.476 bn (dJ 3.070) 989s
+[ep 0] replays 7000 accepted 159 J 2370.182 bn (dJ 15.003) 1097s
+[ep 0] replays 7500 accepted 191 J 2370.174 bn (dJ 15.011) 1159s
+[ep 0] replays 8001 accepted 223 J 2370.166 bn (dJ 15.019) 1194s
+[ep 1] replays 4500 accepted 67 J 3964.371 bn (dJ 3.175) 1140s
+[ep 0] replays 8500 accepted 258 J 2370.135 bn (dJ 15.049) 1259s
+[ep 0] replays 9000 accepted 281 J 2370.132 bn (dJ 15.052) 1324s
+[ep 1] replays 5000 accepted 110 J 3964.118 bn (dJ 3.428) 1276s
+[ep 0] replays 9500 accepted 296 J 2370.037 bn (dJ 15.147) 1394s
+[ep 1] replays 5500 accepted 139 J 3963.956 bn (dJ 3.591) 1360s
+[ep 0] replays 10000 accepted 298 J 2370.027 bn (dJ 15.157) 1473s
+[ep 0] replays 10500 accepted 301 J 2370.022 bn (dJ 15.162) 1527s
+[ep 1] replays 6000 accepted 142 J 3963.954 bn (dJ 3.592) 1485s
+[ep 0] replays 11000 accepted 301 J 2370.022 bn (dJ 15.162) 1607s
+[ep 1] replays 6500 accepted 142 J 3963.954 bn (dJ 3.592) 1547s
+[ep 0] replays 11500 accepted 324 J 2369.980 bn (dJ 15.204) 1708s
+[ep 1] replays 7000 accepted 153 J 3963.938 bn (dJ 3.608) 1693s
+[ep 0] replays 12000 accepted 377 J 2369.492 bn (dJ 15.692) 1797s
+[ep 0] DONE J 2385.184 -> 2369.472 bn (dJ 15.712), 380 moves, 12030 replays, 1721 cpu s
+[ep 1] replays 7500 accepted 153 J 3963.938 bn (dJ 3.608) 1769s
+[ep 1] DONE J 3967.546 -> 3963.323 bn (dJ 4.224), 158 moves, 7802 replays, 1719 cpu s
+[ep 2] verify: gym J 1135288409164393 replay J 1135288409164393 equal True bad weeks [] dropped 0 fallback weeks 0 play 95s
+[ep 3] verify: gym J 345198963065374 replay J 345198963065374 equal True bad weeks [] dropped 0 fallback weeks 0 play 131s
+[ep 2] replays 500 accepted 0 J 11352.884 bn (dJ 0.000) 66s
+[ep 2] replays 1000 accepted 14 J 11351.979 bn (dJ 0.905) 131s
+[ep 3] replays 500 accepted 0 J 3451.990 bn (dJ 0.000) 121s
+[ep 2] replays 1500 accepted 28 J 11350.623 bn (dJ 2.261) 180s
+[ep 2] replays 2000 accepted 40 J 11349.902 bn (dJ 2.982) 210s
+[ep 2] replays 2500 accepted 40 J 11349.902 bn (dJ 2.982) 281s
+[ep 3] replays 1000 accepted 12 J 3451.210 bn (dJ 0.779) 257s
+[ep 2] replays 3001 accepted 52 J 11349.734 bn (dJ 3.150) 323s
+[ep 2] replays 3500 accepted 56 J 11349.649 bn (dJ 3.235) 401s
+[ep 3] replays 1500 accepted 26 J 3449.851 bn (dJ 2.139) 397s
+[ep 2] replays 4000 accepted 65 J 11349.646 bn (dJ 3.238) 468s
+[ep 3] replays 2000 accepted 39 J 3449.049 bn (dJ 2.940) 474s
+[ep 2] replays 4500 accepted 65 J 11349.646 bn (dJ 3.238) 515s
+[ep 2] replays 5000 accepted 70 J 11349.645 bn (dJ 3.239) 543s
+[ep 2] replays 5500 accepted 72 J 11349.645 bn (dJ 3.239) 622s
+[ep 3] replays 2500 accepted 39 J 3449.049 bn (dJ 2.940) 631s
+[ep 2] replays 6000 accepted 81 J 11349.640 bn (dJ 3.244) 688s
+[ep 2] replays 6500 accepted 81 J 11349.640 bn (dJ 3.244) 741s
+[ep 2] replays 7000 accepted 88 J 11349.639 bn (dJ 3.245) 798s
+[ep 3] replays 3000 accepted 43 J 3449.026 bn (dJ 2.964) 797s
+[ep 2] replays 7500 accepted 101 J 11340.591 bn (dJ 12.293) 839s
+[ep 2] replays 8000 accepted 165 J 11340.583 bn (dJ 12.301) 891s
+[ep 2] replays 8500 accepted 171 J 11340.582 bn (dJ 12.302) 936s
+[ep 3] replays 3500 accepted 48 J 3449.018 bn (dJ 2.972) 960s
+[ep 2] replays 9000 accepted 171 J 11340.582 bn (dJ 12.302) 1003s
+[ep 2] replays 9500 accepted 171 J 11340.582 bn (dJ 12.302) 1026s
+[ep 2] replays 10000 accepted 189 J 11337.375 bn (dJ 15.509) 1071s
+[ep 2] replays 10500 accepted 204 J 11322.902 bn (dJ 29.982) 1119s
+[ep 2] replays 11000 accepted 222 J 11318.914 bn (dJ 33.971) 1151s
+[ep 3] replays 4000 accepted 48 J 3449.018 bn (dJ 2.972) 1117s
+[ep 2] replays 11500 accepted 237 J 11316.967 bn (dJ 35.917) 1209s
+[ep 2] replays 12000 accepted 260 J 11316.727 bn (dJ 36.157) 1275s
+[ep 2] replays 12500 accepted 274 J 11316.593 bn (dJ 36.291) 1312s
+[ep 3] replays 4501 accepted 63 J 3448.895 bn (dJ 3.094) 1291s
+[ep 2] replays 13000 accepted 295 J 11316.202 bn (dJ 36.682) 1364s
+[ep 2] replays 13500 accepted 308 J 11313.730 bn (dJ 39.154) 1423s
+[ep 2] replays 14000 accepted 308 J 11313.730 bn (dJ 39.154) 1462s
+[ep 2] replays 14500 accepted 309 J 11313.730 bn (dJ 39.154) 1502s
+[ep 3] replays 5001 accepted 111 J 3448.595 bn (dJ 3.395) 1470s
+[ep 2] replays 15000 accepted 310 J 11313.730 bn (dJ 39.154) 1534s
+[ep 2] replays 15500 accepted 323 J 11313.721 bn (dJ 39.163) 1593s
+[ep 3] replays 5500 accepted 139 J 3448.446 bn (dJ 3.543) 1568s
+[ep 2] replays 16000 accepted 323 J 11313.721 bn (dJ 39.163) 1628s
+[ep 2] replays 16500 accepted 362 J 11312.487 bn (dJ 40.398) 1670s
+[ep 3] replays 6000 accepted 139 J 3448.446 bn (dJ 3.543) 1667s
+[ep 2] replays 17000 accepted 384 J 11312.466 bn (dJ 40.418) 1748s
+[ep 2] replays 17500 accepted 398 J 11312.434 bn (dJ 40.450) 1793s
+[ep 2] DONE J 11352.884 -> 11312.428 bn (dJ 40.456), 401 moves, 17661 replays, 1760 cpu s
+[ep 3] DONE J 3451.990 -> 3448.414 bn (dJ 3.575), 153 moves, 6495 replays, 1760 cpu s
+[ep 4] verify: gym J 975802473057515 replay J 975802473057515 equal True bad weeks [] dropped 0 fallback weeks 0 play 77s
+[ep 5] verify: gym J 577529996997106 replay J 577529996997106 equal True bad weeks [] dropped 0 fallback weeks 0 play 94s
+[ep 4] replays 500 accepted 1 J 9757.886 bn (dJ 0.139) 95s
+[ep 5] replays 500 accepted 0 J 5775.300 bn (dJ 0.000) 71s
+[ep 4] replays 1000 accepted 13 J 9757.006 bn (dJ 1.018) 192s
+[ep 5] replays 1000 accepted 16 J 5773.943 bn (dJ 1.357) 153s
+[ep 5] replays 1500 accepted 30 J 5772.582 bn (dJ 2.718) 200s
+[ep 4] replays 1500 accepted 28 J 9755.566 bn (dJ 2.458) 257s
+[ep 4] replays 2000 accepted 38 J 9754.812 bn (dJ 3.213) 299s
+[ep 5] replays 2000 accepted 35 J 5772.298 bn (dJ 3.002) 261s
+[ep 4] replays 2500 accepted 38 J 9754.812 bn (dJ 3.213) 373s
+[ep 5] replays 2500 accepted 41 J 5772.284 bn (dJ 3.016) 342s
+[ep 4] replays 3000 accepted 42 J 9754.808 bn (dJ 3.216) 452s
+[ep 5] replays 3000 accepted 41 J 5772.284 bn (dJ 3.016) 420s
+[ep 4] replays 3500 accepted 54 J 9742.324 bn (dJ 15.701) 531s
+[ep 5] replays 3500 accepted 43 J 5772.280 bn (dJ 3.020) 501s
+[ep 4] replays 4000 accepted 60 J 9742.239 bn (dJ 15.786) 622s
+[ep 5] replays 4000 accepted 49 J 5772.181 bn (dJ 3.119) 583s
+[ep 5] replays 4500 accepted 54 J 5772.179 bn (dJ 3.121) 659s
+[ep 4] replays 4500 accepted 80 J 9741.237 bn (dJ 16.788) 729s
+[ep 5] replays 5000 accepted 56 J 5772.161 bn (dJ 3.139) 731s
+[ep 5] replays 5500 accepted 84 J 5772.155 bn (dJ 3.145) 766s
+[ep 4] replays 5000 accepted 106 J 9741.236 bn (dJ 16.788) 822s
+[ep 5] replays 6000 accepted 110 J 5772.143 bn (dJ 3.157) 809s
+[ep 4] replays 5500 accepted 111 J 9741.236 bn (dJ 16.788) 866s
+[ep 4] replays 6000 accepted 113 J 9740.489 bn (dJ 17.536) 907s
+[ep 5] replays 6500 accepted 114 J 5772.126 bn (dJ 3.174) 875s
+[ep 4] replays 6500 accepted 116 J 9740.407 bn (dJ 17.618) 943s
+[ep 5] replays 7000 accepted 115 J 5772.126 bn (dJ 3.174) 907s
+[ep 4] replays 7000 accepted 141 J 9740.097 bn (dJ 17.928) 1031s
+[ep 5] replays 7500 accepted 127 J 5762.913 bn (dJ 12.387) 991s
+[ep 4] replays 7500 accepted 144 J 9740.097 bn (dJ 17.928) 1065s
+[ep 5] replays 8000 accepted 129 J 5762.721 bn (dJ 12.579) 1059s
+[ep 4] replays 8000 accepted 146 J 9740.090 bn (dJ 17.934) 1144s
+[ep 5] replays 8500 accepted 131 J 5762.715 bn (dJ 12.585) 1097s
+[ep 4] replays 8500 accepted 148 J 9740.083 bn (dJ 17.942) 1181s
+[ep 5] replays 9000 accepted 131 J 5762.715 bn (dJ 12.585) 1177s
+[ep 4] replays 9000 accepted 149 J 9740.082 bn (dJ 17.943) 1251s
+[ep 4] replays 9500 accepted 152 J 9740.082 bn (dJ 17.943) 1315s
+[ep 5] replays 9500 accepted 164 J 5762.645 bn (dJ 12.655) 1262s
+[ep 5] replays 10000 accepted 172 J 5762.574 bn (dJ 12.726) 1340s
+[ep 4] replays 10000 accepted 153 J 9740.082 bn (dJ 17.943) 1397s
+[ep 5] replays 10500 accepted 182 J 5762.404 bn (dJ 12.896) 1385s
+[ep 5] replays 11000 accepted 185 J 5762.404 bn (dJ 12.896) 1436s
+[ep 4] replays 10500 accepted 175 J 9737.452 bn (dJ 20.573) 1496s
+[ep 5] replays 11500 accepted 188 J 5762.404 bn (dJ 12.896) 1508s
+[ep 4] replays 11000 accepted 181 J 9736.124 bn (dJ 21.900) 1575s
+[ep 5] replays 12001 accepted 209 J 5762.365 bn (dJ 12.935) 1575s
+[ep 4] replays 11500 accepted 211 J 9730.776 bn (dJ 27.249) 1644s
+[ep 4] replays 12000 accepted 221 J 9730.409 bn (dJ 27.616) 1698s
+[ep 5] replays 12500 accepted 271 J 5762.064 bn (dJ 13.236) 1650s
+[ep 5] replays 13000 accepted 325 J 5762.058 bn (dJ 13.242) 1692s
+[ep 4] replays 12500 accepted 227 J 9730.367 bn (dJ 27.657) 1769s
+[ep 5] replays 13500 accepted 353 J 5761.937 bn (dJ 13.363) 1732s
+[ep 4] DONE J 9758.025 -> 9730.322 bn (dJ 27.703), 233 moves, 12684 replays, 1784 cpu s
+[ep 5] replays 14001 accepted 507 J 5761.443 bn (dJ 13.857) 1797s
+[ep 5] DONE J 5775.300 -> 5761.398 bn (dJ 13.902), 515 moves, 14016 replays, 1784 cpu s
+[ep 6] verify: gym J 903944933690331 replay J 903944933690331 equal True bad weeks [] dropped 0 fallback weeks 0 play 72s
+[ep 6] replays 500 accepted 1 J 9039.380 bn (dJ 0.069) 65s
+[ep 7] verify: gym J 386632073483624 replay J 386632073483624 equal True bad weeks [] dropped 0 fallback weeks 0 play 85s
+[ep 6] replays 1000 accepted 13 J 9038.497 bn (dJ 0.952) 129s
