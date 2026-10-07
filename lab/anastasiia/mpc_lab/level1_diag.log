@@ -901,3 +901,21 @@ auto rule +250, root 111 x64 episodes: 64 changed: 51
     grid_kr stock above the ration threshold). Probe B: LSF on KR gas slots 7.4 bn/ep (pair 8.4; +competitors / +KR wafers
     a few bn more), shed only, vs 193 target; open-loop schedule in closed loop -14.1. State rule (+250/wk on the bypass the
     visible cut calls for, wk 10-39): +8.7 on the 8 episodes, -1.0 on the other 56; board +0.0010 (-0.0013..+0.0032). Closed.
+=== Wed Oct  7 17:32:35 UTC 2026 hub_nopark: park_cut_frac paired compare vs hub, Small 111 x64 ===
+small, 64 episodes of root 111
+  score   vs base   90% interval of the difference         by harm level 1..4 naive weeks  agent
+ 0.8336                                               0.789 0.867 0.884 0.880           0  agents/anastasiia_hybrid_hub (base)
+ 0.8247   -0.0088               -0.0133 to -0.0050    0.781 0.861 0.874 0.859           0  lab/anastasiia/mpc_lab/agents/hub_nopark_30
+ 0.8335   -0.0003               -0.0016 to +0.0010    0.788 0.868 0.886 0.885           0  lab/anastasiia/mpc_lab/agents/hub_nopark_10
+=== Wed Oct  7 18:32:49 UTC 2026 hub_off + hub_nopark(None, sanity) paired vs hub, Small 111 x64 (previous compare killed by the tool's 1 h limit before the sanity line) ===
+small, 64 episodes of root 111
+  score   vs base   90% interval of the difference         by harm level 1..4 naive weeks  agent
+ 0.8336                                               0.789 0.867 0.884 0.880           0  agents/anastasiia_hybrid_hub (base)
+ 0.8247   -0.0089               -0.0133 to -0.0051    0.781 0.861 0.874 0.859           0  lab/anastasiia/mpc_lab/agents/hub_off
+ 0.8335   -0.0001               -0.0003 to +0.0000    0.789 0.867 0.884 0.880           0  lab/anastasiia/mpc_lab/agents/hub_nopark
+small, 64 episodes of root 111
+  score   vs base   90% interval of the difference         by harm level 1..4 naive weeks  agent
+ 0.8336                                               0.789 0.867 0.884 0.880           0  agents/anastasiia_hybrid_hub (base)
+ 0.8247   -0.0088               -0.0133 to -0.0050    0.781 0.861 0.874 0.859           0  lab/anastasiia/mpc_lab/agents/hub_nopark_30
+ 0.8335   -0.0003               -0.0016 to +0.0010    0.788 0.868 0.886 0.885           0  lab/anastasiia/mpc_lab/agents/hub_nopark_10
+--- VERDICT nopark: park 0.3 = hub_off (-0.0088 vs -0.0089): the buffer's whole value is gas parked behind visibly cut edges; park 0.1 neutral. No Full run.
