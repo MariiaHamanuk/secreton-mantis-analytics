@@ -1,0 +1,244 @@
+# delta_margin: dispersion margin on later-week edge capacities in the window LP of hybrid_hub (Claude session, 7 Oct)
+# code: lab/anastasiia/mpc_lab/delta/{measure_sigma.py,grid.py}, agent lab/anastasiia/mpc_lab/agents/hub_delta
+## step 1: sigma from true marks (compute_marks), root 555 eps 0-7, finite-u edges, r = clip((u[t+h]-u[t])/u[t], -1, 1)
+## RMS over (edge, week). 'all' = every finite edge of the pool; 'down' = not the first edge of an action slot.
+| task  | pool       | h=1 all | h=1 down | h=4 all | h=9 all | h=16 all | frac weeks changed (h=1) | median |r| when changed | mean r (h=1) | down-side RMS h=1 |
+| Small | fuel (tb)  | 0.062 | 0.074 | 0.111 | 0.159 | 0.206 | 1.2 % | 0.26 | +0.0007 | 0.036 |
+| Small | chip (ct)  | 0.059 | 0.065 | 0.109 | 0.161 | 0.207 | 1.2 % | 0.24 | +0.0008 | 0.034 |
+| Full  | fuel (tb)  | 0.054 | 0.069 | 0.087 | 0.115 | 0.140 | 0.9 % | 0.29 | +0.0007 | 0.031 |
+| Full  | chip (ct)  | 0.065 | 0.067 | 0.109 | 0.148 | 0.179 | 1.2 % | 0.42 | +0.0016 | 0.034 |
+## sigma is jumps, not diffusion: ~1 % of edge-weeks change, by ~25-40 % when they do; spread grows ~sqrt(h) up to h=4
+## (1.85x vs 2x), sub-sqrt beyond (h=16: 3.3-3.5x vs 4x on Small, 2.6-2.8x on Full). Up and down roughly symmetric.
+## Using sigma_fuel=0.062, sigma_chip=0.059 (Small, 'all'); Full later: 0.054 / 0.065.
+2026-10-07 14:50:37 [check] small root 111 ep 0: stock J 224223456899507 k=0 J 224223456899507 -> SAME  (planned weeks 52/52 of 52)
+2026-10-07 14:50:48 [run smoke] small root 111: 8 plays to go (ks (0, 1), bind_frac 0.9), n_jobs 1
+2026-10-07 14:51:15 [run smoke] ep 0 k 0.0: J 2.2422e+12  q_fuel_end 3564 q_lng_mean 5078 q_chip_end 426184  pass2 0/52 bind 0.0  lp s/wk med 0.25 p95 0.32 max 0.36  (27 s wall, 27 s total)
+2026-10-07 14:51:23 [check] small root 111 ep 1: stock J 390990525620060 k=0 J 390990525620060 -> SAME  (planned weeks 52/52 of 52)
+2026-10-07 14:51:44 [run smoke] ep 0 k 1.0: J 2.2480e+12  q_fuel_end 3560 q_lng_mean 5073 q_chip_end 402465  pass2 50/52 bind 38.0  lp s/wk med 0.42 p95 0.65 max 0.67  (29 s wall, 55 s total)
+2026-10-07 14:52:02 [run smoke] ep 1 k 0.0: J 3.9099e+12  q_fuel_end 29074 q_lng_mean 25162 q_chip_end 71284  pass2 0/52 bind 0.0  lp s/wk med 0.26 p95 0.36 max 0.38  (18 s wall, 74 s total)
+2026-10-07 14:52:28 [run smoke] ep 1 k 1.0: J 3.9292e+12  q_fuel_end 29074 q_lng_mean 25162 q_chip_end 71284  pass2 51/52 bind 32.3  lp s/wk med 0.46 p95 0.61 max 0.66  (26 s wall, 100 s total)
+2026-10-07 14:52:45 [run smoke] ep 2 k 0.0: J 3.0263e+12  q_fuel_end 13222 q_lng_mean 17158 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.21 p95 0.32 max 0.33  (17 s wall, 116 s total)
+2026-10-07 14:53:11 [run smoke] ep 2 k 1.0: J 3.0265e+12  q_fuel_end 13222 q_lng_mean 17158 q_chip_end 0  pass2 51/52 bind 34.8  lp s/wk med 0.44 p95 0.64 max 0.80  (27 s wall, 143 s total)
+2026-10-07 14:53:33 [run smoke] ep 3 k 0.0: J 3.3755e+12  q_fuel_end 7478 q_lng_mean 4219 q_chip_end 485035  pass2 0/52 bind 0.0  lp s/wk med 0.28 p95 0.65 max 0.81  (22 s wall, 165 s total)
+2026-10-07 14:54:05 [run smoke] ep 3 k 1.0: J 3.3752e+12  q_fuel_end 7479 q_lng_mean 4219 q_chip_end 487176  pass2 47/52 bind 36.2  lp s/wk med 0.51 p95 0.82 max 0.84  (32 s wall, 197 s total)
+2026-10-07 14:54:25 [run grid] small root 111: 128 plays to go (ks (0, 0.5, 1, 2), bind_frac 0.9), n_jobs 1
+small root 111, 4 paired episodes (smoke); diff = variant - k=0.0, per-episode RSS points = (J_base - J) / (J_naive - J_oracle)
+    k  bind     RSS     dRSS  dJ bn/ep     SE  d per-ep rss      SE   win q_fuel_end q_lng_mean q_chip_end q_chip_mean  pass2 bind# lp med   p95   max
+ 0.00  0.90  0.8366  +0.0000     +0.00   0.00       +0.0000  0.0000  0/0       13335      12904     245626      425357    0.0   0.0   0.26  0.42  0.81
+ 1.00  0.90  0.8325  -0.0041     -6.24   4.57       -0.0122  0.0110  1/3       13334      12903     240231      414894   49.8  35.3   0.46  0.76  0.84
+2026-10-07 14:54:49 [run grid] ep 0 k 0.0: J 2.2422e+12  q_fuel_end 3564 q_lng_mean 5078 q_chip_end 426184  pass2 0/52 bind 0.0  lp s/wk med 0.27 p95 0.35 max 0.39  (25 s wall, 25 s total)
+2026-10-07 14:55:18 [run grid] ep 0 k 0.5: J 2.2480e+12  q_fuel_end 3560 q_lng_mean 5073 q_chip_end 401364  pass2 51/52 bind 38.1  lp s/wk med 0.47 p95 0.67 max 0.70  (29 s wall, 53 s total)
+2026-10-07 14:55:47 [run grid] ep 0 k 1.0: J 2.2479e+12  q_fuel_end 3560 q_lng_mean 5073 q_chip_end 402219  pass2 51/52 bind 38.1  lp s/wk med 0.47 p95 0.66 max 0.69  (29 s wall, 82 s total)
+2026-10-07 14:56:15 [run grid] ep 0 k 2.0: J 2.2567e+12  q_fuel_end 3560 q_lng_mean 5073 q_chip_end 426630  pass2 51/52 bind 37.8  lp s/wk med 0.51 p95 0.66 max 0.72  (28 s wall, 110 s total)
+2026-10-07 14:56:33 [run grid] ep 1 k 0.0: J 3.9099e+12  q_fuel_end 29074 q_lng_mean 25162 q_chip_end 71284  pass2 0/52 bind 0.0  lp s/wk med 0.23 p95 0.39 max 0.47  (18 s wall, 128 s total)
+2026-10-07 14:56:58 [run grid] ep 1 k 0.5: J 3.9160e+12  q_fuel_end 29074 q_lng_mean 25162 q_chip_end 71284  pass2 51/52 bind 32.0  lp s/wk med 0.42 p95 0.58 max 0.65  (25 s wall, 153 s total)
+2026-10-07 14:57:26 [run grid] ep 1 k 1.0: J 3.9292e+12  q_fuel_end 29074 q_lng_mean 25162 q_chip_end 71284  pass2 51/52 bind 32.3  lp s/wk med 0.50 p95 0.61 max 0.71  (27 s wall, 181 s total)
+2026-10-07 14:57:53 [run grid] ep 1 k 2.0: J 3.9427e+12  q_fuel_end 29074 q_lng_mean 25162 q_chip_end 71284  pass2 51/52 bind 31.4  lp s/wk med 0.44 p95 0.59 max 0.65  (27 s wall, 208 s total)
+2026-10-07 14:58:11 [run grid] ep 2 k 0.0: J 3.0263e+12  q_fuel_end 13222 q_lng_mean 17158 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.26 p95 0.35 max 0.41  (18 s wall, 226 s total)
+2026-10-07 14:58:37 [run grid] ep 2 k 0.5: J 3.0268e+12  q_fuel_end 13222 q_lng_mean 17158 q_chip_end 0  pass2 51/52 bind 34.8  lp s/wk med 0.40 p95 0.56 max 0.61  (26 s wall, 252 s total)
+2026-10-07 14:59:03 [run grid] ep 2 k 1.0: J 3.0265e+12  q_fuel_end 13222 q_lng_mean 17158 q_chip_end 0  pass2 51/52 bind 34.8  lp s/wk med 0.41 p95 0.64 max 0.69  (26 s wall, 278 s total)
+2026-10-07 14:59:30 [run grid] ep 2 k 2.0: J 3.0235e+12  q_fuel_end 13222 q_lng_mean 17158 q_chip_end 0  pass2 51/52 bind 34.9  lp s/wk med 0.41 p95 0.62 max 0.77  (27 s wall, 306 s total)
+2026-10-07 14:59:52 [run grid] ep 3 k 0.0: J 3.3755e+12  q_fuel_end 7478 q_lng_mean 4219 q_chip_end 485035  pass2 0/52 bind 0.0  lp s/wk med 0.34 p95 0.53 max 0.62  (22 s wall, 327 s total)
+2026-10-07 15:00:23 [run grid] ep 3 k 0.5: J 3.3688e+12  q_fuel_end 7482 q_lng_mean 4219 q_chip_end 548810  pass2 51/52 bind 36.2  lp s/wk med 0.48 p95 0.76 max 0.82  (31 s wall, 358 s total)
+2026-10-07 15:00:54 [run grid] ep 3 k 1.0: J 3.3764e+12  q_fuel_end 7480 q_lng_mean 4219 q_chip_end 488237  pass2 49/52 bind 35.9  lp s/wk med 0.50 p95 0.78 max 0.83  (31 s wall, 390 s total)
+2026-10-07 15:01:25 [run grid] ep 3 k 2.0: J 3.3897e+12  q_fuel_end 7480 q_lng_mean 4219 q_chip_end 489958  pass2 51/52 bind 36.1  lp s/wk med 0.51 p95 0.71 max 0.76  (30 s wall, 420 s total)
+2026-10-07 15:01:42 [run grid] ep 4 k 0.0: J 3.7188e+12  q_fuel_end 28566 q_lng_mean 24404 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.23 p95 0.32 max 0.38  (17 s wall, 437 s total)
+2026-10-07 15:02:06 [run grid] ep 4 k 0.5: J 3.7195e+12  q_fuel_end 28566 q_lng_mean 24404 q_chip_end 0  pass2 51/52 bind 29.3  lp s/wk med 0.39 p95 0.50 max 0.58  (24 s wall, 461 s total)
+2026-10-07 15:02:31 [run grid] ep 4 k 1.0: J 3.7199e+12  q_fuel_end 28566 q_lng_mean 24404 q_chip_end 0  pass2 51/52 bind 29.1  lp s/wk med 0.41 p95 0.59 max 0.67  (26 s wall, 487 s total)
+2026-10-07 15:02:57 [run grid] ep 4 k 2.0: J 3.7204e+12  q_fuel_end 28566 q_lng_mean 24404 q_chip_end 0  pass2 51/52 bind 29.1  lp s/wk med 0.43 p95 0.57 max 0.66  (25 s wall, 512 s total)
+2026-10-07 15:03:14 [run grid] ep 5 k 0.0: J 4.2334e+12  q_fuel_end 33087 q_lng_mean 28804 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.22 p95 0.32 max 0.39  (17 s wall, 529 s total)
+2026-10-07 15:03:42 [run grid] ep 5 k 0.5: J 4.2357e+12  q_fuel_end 33087 q_lng_mean 28804 q_chip_end 0  pass2 51/52 bind 37.1  lp s/wk med 0.47 p95 0.64 max 0.86  (28 s wall, 557 s total)
+2026-10-07 15:04:08 [run grid] ep 5 k 1.0: J 4.2374e+12  q_fuel_end 33087 q_lng_mean 28804 q_chip_end 0  pass2 51/52 bind 37.1  lp s/wk med 0.46 p95 0.64 max 0.71  (27 s wall, 584 s total)
+2026-10-07 15:04:34 [run grid] ep 5 k 2.0: J 4.2417e+12  q_fuel_end 33087 q_lng_mean 28804 q_chip_end 0  pass2 51/52 bind 37.1  lp s/wk med 0.40 p95 0.65 max 0.69  (26 s wall, 610 s total)
+2026-10-07 15:04:53 [run grid] ep 6 k 0.0: J 2.4286e+12  q_fuel_end 25316 q_lng_mean 7429 q_chip_end 144021  pass2 0/52 bind 0.0  lp s/wk med 0.25 p95 0.35 max 0.38  (18 s wall, 628 s total)
+2026-10-07 15:05:19 [run grid] ep 6 k 0.5: J 2.4228e+12  q_fuel_end 25316 q_lng_mean 7429 q_chip_end 144021  pass2 51/52 bind 36.8  lp s/wk med 0.43 p95 0.59 max 0.61  (26 s wall, 654 s total)
+2026-10-07 15:05:46 [run grid] ep 6 k 1.0: J 2.4202e+12  q_fuel_end 25316 q_lng_mean 7429 q_chip_end 144021  pass2 51/52 bind 36.6  lp s/wk med 0.49 p95 0.61 max 0.64  (27 s wall, 681 s total)
+2026-10-07 15:06:13 [run grid] ep 6 k 2.0: J 2.4300e+12  q_fuel_end 25316 q_lng_mean 7429 q_chip_end 144021  pass2 51/52 bind 37.1  lp s/wk med 0.39 p95 0.62 max 0.66  (27 s wall, 708 s total)
+2026-10-07 15:06:31 [run grid] ep 7 k 0.0: J 3.8856e+12  q_fuel_end 27222 q_lng_mean 21284 q_chip_end 761497  pass2 0/52 bind 0.0  lp s/wk med 0.25 p95 0.42 max 0.48  (18 s wall, 726 s total)
+2026-10-07 15:06:58 [run grid] ep 7 k 0.5: J 3.8860e+12  q_fuel_end 27222 q_lng_mean 21284 q_chip_end 758614  pass2 51/52 bind 35.6  lp s/wk med 0.47 p95 0.60 max 0.68  (27 s wall, 753 s total)
+2026-10-07 15:07:26 [run grid] ep 7 k 1.0: J 3.8882e+12  q_fuel_end 27222 q_lng_mean 21284 q_chip_end 760117  pass2 51/52 bind 35.4  lp s/wk med 0.51 p95 0.65 max 0.69  (28 s wall, 781 s total)
+2026-10-07 15:07:53 [run grid] ep 7 k 2.0: J 3.9108e+12  q_fuel_end 27222 q_lng_mean 21284 q_chip_end 758710  pass2 51/52 bind 35.2  lp s/wk med 0.44 p95 0.65 max 0.80  (27 s wall, 808 s total)
+2026-10-07 15:08:08 [run grid] ep 8 k 0.0: J 1.9226e+12  q_fuel_end 6135 q_lng_mean 2970 q_chip_end 3496100  pass2 0/52 bind 0.0  lp s/wk med 0.24 p95 0.28 max 0.31  (16 s wall, 823 s total)
+2026-10-07 15:08:33 [run grid] ep 8 k 0.5: J 1.9232e+12  q_fuel_end 6135 q_lng_mean 2970 q_chip_end 3505311  pass2 51/52 bind 34.7  lp s/wk med 0.42 p95 0.57 max 0.65  (25 s wall, 849 s total)
+2026-10-07 15:08:59 [run grid] ep 8 k 1.0: J 1.9253e+12  q_fuel_end 6135 q_lng_mean 2970 q_chip_end 3571664  pass2 51/52 bind 34.4  lp s/wk med 0.40 p95 0.56 max 0.70  (25 s wall, 874 s total)
+2026-10-07 15:09:27 [run grid] ep 8 k 2.0: J 1.9478e+12  q_fuel_end 6135 q_lng_mean 2970 q_chip_end 3559684  pass2 49/52 bind 36.0  lp s/wk med 0.46 p95 0.78 max 0.84  (28 s wall, 902 s total)
+2026-10-07 15:09:48 [run grid] ep 9 k 0.0: J 8.3234e+11  q_fuel_end 1713 q_lng_mean 3884 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.32 p95 0.48 max 0.58  (21 s wall, 923 s total)
+2026-10-07 15:10:22 [run grid] ep 9 k 0.5: J 8.3479e+11  q_fuel_end 1713 q_lng_mean 3884 q_chip_end 0  pass2 43/52 bind 37.3  lp s/wk med 0.53 p95 0.84 max 0.85  (34 s wall, 957 s total)
+2026-10-07 15:10:53 [run grid] ep 9 k 1.0: J 8.4117e+11  q_fuel_end 1713 q_lng_mean 3884 q_chip_end 0  pass2 47/52 bind 36.9  lp s/wk med 0.49 p95 0.84 max 0.88  (31 s wall, 989 s total)
+2026-10-07 15:11:25 [run grid] ep 9 k 2.0: J 8.5948e+11  q_fuel_end 1713 q_lng_mean 3884 q_chip_end 0  pass2 48/52 bind 37.9  lp s/wk med 0.56 p95 0.83 max 0.84  (32 s wall, 1020 s total)
+small root 111, 10 paired episodes (grid); diff = variant - k=0.0, per-episode RSS points = (J_base - J) / (J_naive - J_oracle)
+    k  bind     RSS     dRSS  dJ bn/ep     SE  d per-ep rss      SE   win q_fuel_end q_lng_mean q_chip_end q_chip_mean  pass2 bind# lp med   p95   max
+ 0.00  0.90  0.8105  +0.0000     +0.00   0.00       +0.0000  0.0000  0/0       17538      14039     538412      550256    0.0   0.0   0.24  0.41  0.62
+ 0.50  0.90  0.8098  -0.0007     -0.62   1.32       -0.0015  0.0017  2/8       17538      14039     542940      560807   50.2  35.2   0.44  0.70  0.86
+ 1.00  0.90  0.8065  -0.0041     -3.67   2.24       -0.0064  0.0045  1/9       17538      14039     543754      556554   50.4  35.1   0.47  0.70  0.88
+ 2.00  0.90  0.7958  -0.0147    -14.74   3.95       -0.0191  0.0074  1/9       17538      14039     545029      572992   50.5  35.3   0.44  0.71  0.84
+2026-10-07 15:11:42 [run grid] ep 10 k 0.0: J 2.3663e+12  q_fuel_end 13592 q_lng_mean 10703 q_chip_end 182843  pass2 0/52 bind 0.0  lp s/wk med 0.23 p95 0.34 max 0.37  (17 s wall, 1037 s total)
+2026-10-07 15:12:12 [run grid] ep 10 k 0.5: J 2.3620e+12  q_fuel_end 13592 q_lng_mean 10703 q_chip_end 182843  pass2 49/52 bind 28.9  lp s/wk med 0.50 p95 0.82 max 0.85  (30 s wall, 1068 s total)
+2026-10-07 15:12:39 [run grid] ep 10 k 1.0: J 2.3642e+12  q_fuel_end 13592 q_lng_mean 10703 q_chip_end 182843  pass2 51/52 bind 28.5  lp s/wk med 0.39 p95 0.68 max 0.84  (27 s wall, 1094 s total)
+2026-10-07 15:12:55 grid v0 stopped after 43 plays: queue metric must split wafers (rules) from raw/packaged chips (LP); end-of-episode container queue is mostly wafers at Malacca. Restarting with per-commodity queues; v0 rows kept (rows_v0.jsonl) as a determinism check.
+2026-10-07 15:13:09 [run grid] small root 111: 128 plays to go (ks (0, 0.5, 1, 2), bind_frac 0.9), n_jobs 1
+2026-10-07 15:13:29 [run grid] ep 0 k 0.0: J 2.2422e+12  q_fuel_end 3564 q_lng_mean 5078 q_chip_end 81597  pass2 0/52 bind 0.0  lp s/wk med 0.24 p95 0.40 max 0.48  (19 s wall, 19 s total)
+2026-10-07 15:13:55 [run grid] ep 0 k 0.5: J 2.2480e+12  q_fuel_end 3560 q_lng_mean 5073 q_chip_end 95980  pass2 51/52 bind 38.1  lp s/wk med 0.48 p95 0.64 max 0.65  (26 s wall, 45 s total)
+2026-10-07 15:14:23 [run grid] ep 0 k 1.0: J 2.2479e+12  q_fuel_end 3560 q_lng_mean 5073 q_chip_end 96986  pass2 51/52 bind 38.1  lp s/wk med 0.49 p95 0.69 max 0.77  (28 s wall, 73 s total)
+2026-10-07 15:14:51 [run grid] ep 0 k 2.0: J 2.2567e+12  q_fuel_end 3560 q_lng_mean 5073 q_chip_end 101024  pass2 51/52 bind 37.8  lp s/wk med 0.50 p95 0.62 max 0.65  (28 s wall, 101 s total)
+2026-10-07 15:15:07 [run grid] ep 1 k 0.0: J 3.9099e+12  q_fuel_end 29074 q_lng_mean 25162 q_chip_end 71284  pass2 0/52 bind 0.0  lp s/wk med 0.23 p95 0.35 max 0.41  (17 s wall, 118 s total)
+2026-10-07 15:15:33 [run grid] ep 1 k 0.5: J 3.9160e+12  q_fuel_end 29074 q_lng_mean 25162 q_chip_end 71284  pass2 51/52 bind 32.0  lp s/wk med 0.43 p95 0.63 max 0.72  (25 s wall, 143 s total)
+2026-10-07 15:16:00 [run grid] ep 1 k 1.0: J 3.9292e+12  q_fuel_end 29074 q_lng_mean 25162 q_chip_end 71284  pass2 51/52 bind 32.3  lp s/wk med 0.47 p95 0.68 max 0.74  (27 s wall, 171 s total)
+2026-10-07 15:16:27 [run grid] ep 1 k 2.0: J 3.9427e+12  q_fuel_end 29074 q_lng_mean 25162 q_chip_end 71284  pass2 51/52 bind 31.4  lp s/wk med 0.44 p95 0.66 max 0.68  (26 s wall, 197 s total)
+2026-10-07 15:16:43 [run grid] ep 2 k 0.0: J 3.0263e+12  q_fuel_end 13222 q_lng_mean 17158 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.23 p95 0.31 max 0.32  (16 s wall, 213 s total)
+2026-10-07 15:17:10 [run grid] ep 2 k 0.5: J 3.0268e+12  q_fuel_end 13222 q_lng_mean 17158 q_chip_end 0  pass2 51/52 bind 34.8  lp s/wk med 0.46 p95 0.73 max 0.76  (27 s wall, 240 s total)
+2026-10-07 15:17:35 [run grid] ep 2 k 1.0: J 3.0265e+12  q_fuel_end 13222 q_lng_mean 17158 q_chip_end 0  pass2 51/52 bind 34.8  lp s/wk med 0.40 p95 0.61 max 0.70  (25 s wall, 266 s total)
+2026-10-07 15:18:01 [run grid] ep 2 k 2.0: J 3.0235e+12  q_fuel_end 13222 q_lng_mean 17158 q_chip_end 0  pass2 51/52 bind 34.9  lp s/wk med 0.41 p95 0.65 max 0.69  (26 s wall, 292 s total)
+2026-10-07 15:18:21 [run grid] ep 3 k 0.0: J 3.3755e+12  q_fuel_end 7478 q_lng_mean 4219 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.29 p95 0.47 max 0.56  (21 s wall, 312 s total)
+2026-10-07 15:18:52 [run grid] ep 3 k 0.5: J 3.3688e+12  q_fuel_end 7482 q_lng_mean 4219 q_chip_end 0  pass2 51/52 bind 36.2  lp s/wk med 0.49 p95 0.80 max 0.85  (30 s wall, 342 s total)
+2026-10-07 15:19:22 [run grid] ep 3 k 1.0: J 3.3757e+12  q_fuel_end 7480 q_lng_mean 4219 q_chip_end 0  pass2 51/52 bind 36.3  lp s/wk med 0.48 p95 0.76 max 0.78  (31 s wall, 373 s total)
+2026-10-07 15:19:54 [run grid] ep 3 k 2.0: J 3.3897e+12  q_fuel_end 7480 q_lng_mean 4219 q_chip_end 0  pass2 51/52 bind 36.1  lp s/wk med 0.51 p95 0.78 max 0.84  (31 s wall, 404 s total)
+2026-10-07 15:20:11 [run grid] ep 4 k 0.0: J 3.7188e+12  q_fuel_end 28566 q_lng_mean 24404 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.24 p95 0.35 max 0.42  (17 s wall, 421 s total)
+2026-10-07 15:20:36 [run grid] ep 4 k 0.5: J 3.7195e+12  q_fuel_end 28566 q_lng_mean 24404 q_chip_end 0  pass2 51/52 bind 29.3  lp s/wk med 0.39 p95 0.66 max 0.75  (25 s wall, 447 s total)
+2026-10-07 15:21:04 [run grid] ep 4 k 1.0: J 3.7199e+12  q_fuel_end 28566 q_lng_mean 24404 q_chip_end 0  pass2 51/52 bind 29.1  lp s/wk med 0.45 p95 0.68 max 0.72  (28 s wall, 475 s total)
+2026-10-07 15:21:29 [run grid] ep 4 k 2.0: J 3.7204e+12  q_fuel_end 28566 q_lng_mean 24404 q_chip_end 0  pass2 51/52 bind 29.1  lp s/wk med 0.39 p95 0.67 max 0.84  (25 s wall, 500 s total)
+2026-10-07 15:21:47 [run grid] ep 5 k 0.0: J 4.2334e+12  q_fuel_end 33087 q_lng_mean 28804 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.26 p95 0.35 max 0.37  (18 s wall, 518 s total)
+2026-10-07 15:22:13 [run grid] ep 5 k 0.5: J 4.2357e+12  q_fuel_end 33087 q_lng_mean 28804 q_chip_end 0  pass2 51/52 bind 37.1  lp s/wk med 0.42 p95 0.64 max 0.74  (26 s wall, 544 s total)
+2026-10-07 15:22:41 [run grid] ep 5 k 1.0: J 4.2374e+12  q_fuel_end 33087 q_lng_mean 28804 q_chip_end 0  pass2 51/52 bind 37.1  lp s/wk med 0.48 p95 0.78 max 0.84  (28 s wall, 572 s total)
+2026-10-07 15:23:08 [run grid] ep 5 k 2.0: J 4.2417e+12  q_fuel_end 33087 q_lng_mean 28804 q_chip_end 0  pass2 51/52 bind 37.1  lp s/wk med 0.46 p95 0.68 max 0.70  (27 s wall, 599 s total)
+2026-10-07 15:23:26 [run grid] ep 6 k 0.0: J 2.4286e+12  q_fuel_end 25316 q_lng_mean 7429 q_chip_end 94298  pass2 0/52 bind 0.0  lp s/wk med 0.25 p95 0.39 max 0.57  (18 s wall, 617 s total)
+2026-10-07 15:23:53 [run grid] ep 6 k 0.5: J 2.4228e+12  q_fuel_end 25316 q_lng_mean 7429 q_chip_end 94298  pass2 51/52 bind 36.8  lp s/wk med 0.41 p95 0.73 max 0.80  (27 s wall, 644 s total)
+2026-10-07 15:24:19 [run grid] ep 6 k 1.0: J 2.4202e+12  q_fuel_end 25316 q_lng_mean 7429 q_chip_end 94298  pass2 51/52 bind 36.6  lp s/wk med 0.45 p95 0.59 max 0.67  (26 s wall, 670 s total)
+2026-10-07 15:24:47 [run grid] ep 6 k 2.0: J 2.4300e+12  q_fuel_end 25316 q_lng_mean 7429 q_chip_end 94298  pass2 51/52 bind 37.1  lp s/wk med 0.44 p95 0.67 max 0.80  (28 s wall, 697 s total)
+2026-10-07 15:25:04 [run grid] ep 7 k 0.0: J 3.8856e+12  q_fuel_end 27222 q_lng_mean 21284 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.27 p95 0.35 max 0.39  (17 s wall, 715 s total)
+2026-10-07 15:25:33 [run grid] ep 7 k 0.5: J 3.8860e+12  q_fuel_end 27222 q_lng_mean 21284 q_chip_end 0  pass2 51/52 bind 35.6  lp s/wk med 0.45 p95 0.81 max 0.86  (29 s wall, 743 s total)
+2026-10-07 15:25:59 [run grid] ep 7 k 1.0: J 3.8882e+12  q_fuel_end 27222 q_lng_mean 21284 q_chip_end 0  pass2 51/52 bind 35.4  lp s/wk med 0.44 p95 0.61 max 0.64  (26 s wall, 769 s total)
+2026-10-07 15:26:25 [run grid] ep 7 k 2.0: J 3.9108e+12  q_fuel_end 27222 q_lng_mean 21284 q_chip_end 0  pass2 51/52 bind 35.2  lp s/wk med 0.46 p95 0.63 max 0.66  (26 s wall, 796 s total)
+2026-10-07 15:26:41 [run grid] ep 8 k 0.0: J 1.9226e+12  q_fuel_end 6135 q_lng_mean 2970 q_chip_end 3152980  pass2 0/52 bind 0.0  lp s/wk med 0.21 p95 0.31 max 0.35  (16 s wall, 811 s total)
+2026-10-07 15:27:06 [run grid] ep 8 k 0.5: J 1.9232e+12  q_fuel_end 6135 q_lng_mean 2970 q_chip_end 3162192  pass2 51/52 bind 34.7  lp s/wk med 0.42 p95 0.68 max 0.81  (25 s wall, 837 s total)
+2026-10-07 15:27:30 [run grid] ep 8 k 1.0: J 1.9253e+12  q_fuel_end 6135 q_lng_mean 2970 q_chip_end 3228545  pass2 51/52 bind 34.4  lp s/wk med 0.38 p95 0.57 max 0.64  (24 s wall, 861 s total)
+2026-10-07 15:27:54 [run grid] ep 8 k 2.0: J 1.9537e+12  q_fuel_end 6135 q_lng_mean 2970 q_chip_end 3156614  pass2 51/52 bind 36.1  lp s/wk med 0.40 p95 0.50 max 0.53  (24 s wall, 885 s total)
+2026-10-07 15:28:16 [run grid] ep 9 k 0.0: J 8.3234e+11  q_fuel_end 1713 q_lng_mean 3884 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.33 p95 0.57 max 0.69  (22 s wall, 906 s total)
+2026-10-07 15:28:46 [run grid] ep 9 k 0.5: J 8.3528e+11  q_fuel_end 1713 q_lng_mean 3884 q_chip_end 0  pass2 46/52 bind 37.4  lp s/wk med 0.53 p95 0.82 max 0.83  (31 s wall, 937 s total)
+2026-10-07 15:29:18 [run grid] ep 9 k 1.0: J 8.4148e+11  q_fuel_end 1713 q_lng_mean 3884 q_chip_end 0  pass2 44/52 bind 37.4  lp s/wk med 0.57 p95 0.83 max 0.85  (32 s wall, 969 s total)
+2026-10-07 15:29:49 [run grid] ep 9 k 2.0: J 8.4811e+11  q_fuel_end 1713 q_lng_mean 3884 q_chip_end 0  pass2 48/52 bind 37.8  lp s/wk med 0.58 p95 0.82 max 0.87  (31 s wall, 1000 s total)
+2026-10-07 15:30:06 [run grid] ep 10 k 0.0: J 2.3663e+12  q_fuel_end 13592 q_lng_mean 10703 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.22 p95 0.34 max 0.42  (17 s wall, 1016 s total)
+2026-10-07 15:30:32 [run grid] ep 10 k 0.5: J 2.3620e+12  q_fuel_end 13592 q_lng_mean 10703 q_chip_end 0  pass2 51/52 bind 28.8  lp s/wk med 0.44 p95 0.68 max 0.71  (26 s wall, 1043 s total)
+2026-10-07 15:31:00 [run grid] ep 10 k 1.0: J 2.3642e+12  q_fuel_end 13592 q_lng_mean 10703 q_chip_end 0  pass2 51/52 bind 28.5  lp s/wk med 0.45 p95 0.69 max 0.74  (28 s wall, 1071 s total)
+2026-10-07 15:31:28 [run grid] ep 10 k 2.0: J 2.3708e+12  q_fuel_end 13592 q_lng_mean 10703 q_chip_end 0  pass2 51/52 bind 29.2  lp s/wk med 0.51 p95 0.69 max 0.77  (28 s wall, 1099 s total)
+2026-10-07 15:31:47 [run grid] ep 11 k 0.0: J 4.0352e+12  q_fuel_end 29150 q_lng_mean 15465 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.25 p95 0.46 max 0.57  (19 s wall, 1118 s total)
+2026-10-07 15:32:17 [run grid] ep 11 k 0.5: J 4.0356e+12  q_fuel_end 29150 q_lng_mean 15465 q_chip_end 0  pass2 49/52 bind 35.8  lp s/wk med 0.45 p95 0.82 max 0.86  (29 s wall, 1147 s total)
+2026-10-07 15:32:46 [run grid] ep 11 k 1.0: J 4.0361e+12  q_fuel_end 29150 q_lng_mean 15465 q_chip_end 0  pass2 50/52 bind 35.8  lp s/wk med 0.52 p95 0.77 max 0.83  (29 s wall, 1177 s total)
+2026-10-07 15:33:14 [run grid] ep 11 k 2.0: J 4.0391e+12  q_fuel_end 29150 q_lng_mean 15465 q_chip_end 0  pass2 51/52 bind 35.7  lp s/wk med 0.44 p95 0.77 max 0.83  (28 s wall, 1205 s total)
+2026-10-07 15:33:31 [run grid] ep 12 k 0.0: J 1.5047e+12  q_fuel_end 9672 q_lng_mean 3491 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.24 p95 0.37 max 0.41  (17 s wall, 1222 s total)
+2026-10-07 15:33:56 [run grid] ep 12 k 0.5: J 1.5057e+12  q_fuel_end 9672 q_lng_mean 3491 q_chip_end 0  pass2 51/52 bind 35.5  lp s/wk med 0.46 p95 0.60 max 0.64  (25 s wall, 1247 s total)
+2026-10-07 15:34:22 [run grid] ep 12 k 1.0: J 1.5053e+12  q_fuel_end 9672 q_lng_mean 3491 q_chip_end 0  pass2 51/52 bind 35.4  lp s/wk med 0.42 p95 0.58 max 0.69  (26 s wall, 1273 s total)
+2026-10-07 15:34:47 [run grid] ep 12 k 2.0: J 1.5058e+12  q_fuel_end 9672 q_lng_mean 3491 q_chip_end 429  pass2 51/52 bind 35.6  lp s/wk med 0.41 p95 0.57 max 0.64  (24 s wall, 1297 s total)
+2026-10-07 15:35:07 [run grid] ep 13 k 0.0: J 1.0246e+12  q_fuel_end 8420 q_lng_mean 7220 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.30 p95 0.47 max 0.59  (20 s wall, 1317 s total)
+2026-10-07 15:35:36 [run grid] ep 13 k 0.5: J 1.0282e+12  q_fuel_end 8420 q_lng_mean 7220 q_chip_end 0  pass2 51/52 bind 41.3  lp s/wk med 0.45 p95 0.79 max 0.87  (29 s wall, 1347 s total)
+2026-10-07 15:36:05 [run grid] ep 13 k 1.0: J 1.0305e+12  q_fuel_end 8420 q_lng_mean 7220 q_chip_end 0  pass2 50/52 bind 41.0  lp s/wk med 0.51 p95 0.74 max 0.83  (29 s wall, 1376 s total)
+2026-10-07 15:36:33 [run grid] ep 13 k 2.0: J 1.0444e+12  q_fuel_end 8420 q_lng_mean 7220 q_chip_end 0  pass2 51/52 bind 41.9  lp s/wk med 0.44 p95 0.69 max 0.87  (28 s wall, 1404 s total)
+2026-10-07 15:36:52 [run grid] ep 14 k 0.0: J 2.2915e+12  q_fuel_end 17582 q_lng_mean 7247 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.25 p95 0.37 max 0.41  (18 s wall, 1422 s total)
+2026-10-07 15:37:17 [run grid] ep 14 k 0.5: J 2.3025e+12  q_fuel_end 17582 q_lng_mean 7247 q_chip_end 0  pass2 51/52 bind 40.9  lp s/wk med 0.44 p95 0.59 max 0.65  (26 s wall, 1448 s total)
+2026-10-07 15:37:42 [run grid] ep 14 k 1.0: J 2.3203e+12  q_fuel_end 17582 q_lng_mean 7247 q_chip_end 0  pass2 51/52 bind 40.8  lp s/wk med 0.41 p95 0.55 max 0.57  (25 s wall, 1473 s total)
+2026-10-07 15:38:10 [run grid] ep 14 k 2.0: J 2.2991e+12  q_fuel_end 17582 q_lng_mean 7247 q_chip_end 0  pass2 50/52 bind 41.0  lp s/wk med 0.42 p95 0.80 max 0.83  (28 s wall, 1501 s total)
+2026-10-07 15:38:27 [run grid] ep 15 k 0.0: J 3.4239e+12  q_fuel_end 11158 q_lng_mean 5099 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.24 p95 0.36 max 0.39  (17 s wall, 1517 s total)
+2026-10-07 15:38:53 [run grid] ep 15 k 0.5: J 3.4221e+12  q_fuel_end 11158 q_lng_mean 5099 q_chip_end 0  pass2 51/52 bind 27.2  lp s/wk med 0.43 p95 0.67 max 0.75  (26 s wall, 1544 s total)
+2026-10-07 15:39:19 [run grid] ep 15 k 1.0: J 3.4319e+12  q_fuel_end 11158 q_lng_mean 5099 q_chip_end 0  pass2 51/52 bind 27.1  lp s/wk med 0.45 p95 0.66 max 0.75  (26 s wall, 1570 s total)
+2026-10-07 15:39:45 [run grid] ep 15 k 2.0: J 3.4333e+12  q_fuel_end 11158 q_lng_mean 5099 q_chip_end 0  pass2 51/52 bind 26.9  lp s/wk med 0.38 p95 0.65 max 0.68  (26 s wall, 1596 s total)
+small root 111, 16 paired episodes (grid); diff = variant - k=0.0, per-episode RSS points = (J_base - J) / (J_naive - J_oracle)
+    k  bind     RSS     dRSS  dJ bn/ep     SE  d per-ep rss      SE   win q_fuel_end q_lng_mean q_chip_end q_chip_mean q_waf_mean  pass2 bind# lp med   p95   max
+ 0.00  0.90  0.8223  +0.0000     +0.00   0.00       +0.0000  0.0000  0/0       16560      11851     212510      176047     257934    0.0   0.0   0.25  0.42  0.69
+ 0.50  0.90  0.8207  -0.0016     -1.03   1.12       -0.0023  0.0018  4/12      16560      11851     213985      181715     259475   50.6  35.1   0.44  0.75  0.87
+ 1.00  0.90  0.8161  -0.0062     -4.90   2.18       -0.0087  0.0044  2/14      16559      11851     218195      181987     255493   50.4  35.0   0.45  0.73  0.85
+ 2.00  0.90  0.8100  -0.0124    -11.75   2.72       -0.0149  0.0048  1/15      16559      11851     213978      190101     256396   50.8  35.2   0.45  0.73  0.87
+2026-10-07 15:40:02 [run grid] ep 16 k 0.0: J 3.0295e+12  q_fuel_end 24447 q_lng_mean 13871 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.23 p95 0.36 max 0.46  (17 s wall, 1613 s total)
+2026-10-07 15:40:28 [run grid] ep 16 k 0.5: J 3.0352e+12  q_fuel_end 24447 q_lng_mean 13871 q_chip_end 0  pass2 51/52 bind 34.7  lp s/wk med 0.42 p95 0.65 max 0.76  (25 s wall, 1638 s total)
+2026-10-07 15:40:53 [run grid] ep 16 k 1.0: J 3.0339e+12  q_fuel_end 24447 q_lng_mean 13871 q_chip_end 0  pass2 51/52 bind 34.2  lp s/wk med 0.41 p95 0.58 max 0.59  (25 s wall, 1663 s total)
+2026-10-07 15:41:20 [run grid] ep 16 k 2.0: J 3.0367e+12  q_fuel_end 24447 q_lng_mean 13871 q_chip_end 0  pass2 50/52 bind 34.8  lp s/wk med 0.37 p95 0.74 max 0.82  (27 s wall, 1690 s total)
+2026-10-07 15:41:38 [run grid] ep 17 k 0.0: J 1.4644e+12  q_fuel_end 8864 q_lng_mean 7863 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.28 p95 0.37 max 0.44  (19 s wall, 1709 s total)
+2026-10-07 15:42:06 [run grid] ep 17 k 0.5: J 1.4657e+12  q_fuel_end 8864 q_lng_mean 7863 q_chip_end 0  pass2 51/52 bind 34.1  lp s/wk med 0.47 p95 0.72 max 0.79  (28 s wall, 1736 s total)
+2026-10-07 15:42:33 [run grid] ep 17 k 1.0: J 1.4662e+12  q_fuel_end 8864 q_lng_mean 7863 q_chip_end 0  pass2 51/52 bind 33.8  lp s/wk med 0.44 p95 0.66 max 0.69  (27 s wall, 1764 s total)
+2026-10-07 15:42:59 [run grid] ep 17 k 2.0: J 1.4699e+12  q_fuel_end 8864 q_lng_mean 7863 q_chip_end 0  pass2 51/52 bind 34.3  lp s/wk med 0.43 p95 0.66 max 0.74  (26 s wall, 1790 s total)
+2026-10-07 15:43:18 [run grid] ep 18 k 0.0: J 1.6174e+12  q_fuel_end 12253 q_lng_mean 8116 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.28 p95 0.43 max 0.43  (19 s wall, 1809 s total)
+2026-10-07 15:43:49 [run grid] ep 18 k 0.5: J 1.6163e+12  q_fuel_end 12253 q_lng_mean 8116 q_chip_end 0  pass2 50/52 bind 42.0  lp s/wk med 0.49 p95 0.80 max 0.89  (31 s wall, 1839 s total)
+2026-10-07 15:44:17 [run grid] ep 18 k 1.0: J 1.6224e+12  q_fuel_end 12253 q_lng_mean 8116 q_chip_end 0  pass2 51/52 bind 41.8  lp s/wk med 0.42 p95 0.69 max 0.77  (28 s wall, 1867 s total)
+2026-10-07 15:44:46 [run grid] ep 18 k 2.0: J 1.6178e+12  q_fuel_end 12253 q_lng_mean 8116 q_chip_end 0  pass2 51/52 bind 41.6  lp s/wk med 0.50 p95 0.78 max 0.84  (29 s wall, 1896 s total)
+2026-10-07 15:45:03 [run grid] ep 19 k 0.0: J 3.4583e+12  q_fuel_end 21039 q_lng_mean 18911 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.22 p95 0.35 max 0.49  (17 s wall, 1913 s total)
+2026-10-07 15:45:27 [run grid] ep 19 k 0.5: J 3.4586e+12  q_fuel_end 21039 q_lng_mean 18911 q_chip_end 0  pass2 51/52 bind 37.7  lp s/wk med 0.38 p95 0.59 max 0.67  (24 s wall, 1937 s total)
+2026-10-07 15:45:55 [run grid] ep 19 k 1.0: J 3.4592e+12  q_fuel_end 21039 q_lng_mean 18911 q_chip_end 0  pass2 51/52 bind 37.4  lp s/wk med 0.45 p95 0.71 max 0.77  (28 s wall, 1965 s total)
+2026-10-07 15:46:20 [run grid] ep 19 k 2.0: J 3.4618e+12  q_fuel_end 21039 q_lng_mean 18911 q_chip_end 0  pass2 51/52 bind 37.5  lp s/wk med 0.41 p95 0.63 max 0.72  (25 s wall, 1991 s total)
+2026-10-07 15:46:39 [run grid] ep 20 k 0.0: J 1.1475e+12  q_fuel_end 10146 q_lng_mean 5204 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.23 p95 0.45 max 0.48  (18 s wall, 2009 s total)
+2026-10-07 15:47:07 [run grid] ep 20 k 0.5: J 1.1435e+12  q_fuel_end 10146 q_lng_mean 5204 q_chip_end 0  pass2 51/52 bind 40.7  lp s/wk med 0.45 p95 0.76 max 0.84  (28 s wall, 2037 s total)
+2026-10-07 15:47:36 [run grid] ep 20 k 1.0: J 1.1423e+12  q_fuel_end 10146 q_lng_mean 5204 q_chip_end 0  pass2 50/52 bind 40.8  lp s/wk med 0.40 p95 0.83 max 0.86  (29 s wall, 2066 s total)
+2026-10-07 15:48:05 [run grid] ep 20 k 2.0: J 1.1524e+12  q_fuel_end 10146 q_lng_mean 5204 q_chip_end 0  pass2 44/52 bind 41.1  lp s/wk med 0.43 p95 0.82 max 0.83  (29 s wall, 2096 s total)
+2026-10-07 15:48:24 [run grid] ep 21 k 0.0: J 2.8544e+12  q_fuel_end 21737 q_lng_mean 9455 q_chip_end 26291  pass2 0/52 bind 0.0  lp s/wk med 0.29 p95 0.44 max 0.47  (19 s wall, 2115 s total)
+2026-10-07 15:48:51 [run grid] ep 21 k 0.5: J 2.8768e+12  q_fuel_end 21737 q_lng_mean 9455 q_chip_end 18572  pass2 51/52 bind 35.4  lp s/wk med 0.43 p95 0.70 max 0.74  (27 s wall, 2142 s total)
+2026-10-07 15:49:18 [run grid] ep 21 k 1.0: J 2.8809e+12  q_fuel_end 21737 q_lng_mean 9455 q_chip_end 10854  pass2 50/52 bind 35.1  lp s/wk med 0.41 p95 0.71 max 0.81  (27 s wall, 2169 s total)
+2026-10-07 15:49:44 [run grid] ep 21 k 2.0: J 2.8812e+12  q_fuel_end 21737 q_lng_mean 9455 q_chip_end 0  pass2 51/52 bind 35.5  lp s/wk med 0.42 p95 0.62 max 0.70  (26 s wall, 2194 s total)
+2026-10-07 15:50:00 [run grid] ep 22 k 0.0: J 2.0016e+12  q_fuel_end 13405 q_lng_mean 12331 q_chip_end 71284  pass2 0/52 bind 0.0  lp s/wk med 0.24 p95 0.39 max 0.47  (17 s wall, 2211 s total)
+2026-10-07 15:50:14 [run full_timing] full root 111: 0 plays to go (ks (0, 1), bind_frac 0.9), n_jobs 1
+2026-10-07 15:50:26 [run grid] ep 22 k 0.5: J 2.0042e+12  q_fuel_end 13405 q_lng_mean 12331 q_chip_end 71284  pass2 51/52 bind 36.0  lp s/wk med 0.48 p95 0.59 max 0.70  (25 s wall, 2237 s total)
+2026-10-07 15:50:52 [run grid] ep 22 k 1.0: J 2.0081e+12  q_fuel_end 13405 q_lng_mean 12331 q_chip_end 71284  pass2 51/52 bind 36.0  lp s/wk med 0.43 p95 0.63 max 0.84  (26 s wall, 2263 s total)
+2026-10-07 15:51:18 [run grid] ep 22 k 2.0: J 2.0149e+12  q_fuel_end 13404 q_lng_mean 12331 q_chip_end 71284  pass2 51/52 bind 36.2  lp s/wk med 0.45 p95 0.57 max 0.64  (26 s wall, 2288 s total)
+2026-10-07 15:51:36 [run grid] ep 23 k 0.0: J 3.0017e+12  q_fuel_end 27677 q_lng_mean 24153 q_chip_end 23242  pass2 0/52 bind 0.0  lp s/wk med 0.23 p95 0.45 max 0.48  (19 s wall, 2307 s total)
+2026-10-07 15:52:05 [run grid] ep 23 k 0.5: J 3.0014e+12  q_fuel_end 27677 q_lng_mean 24153 q_chip_end 23242  pass2 51/52 bind 35.4  lp s/wk med 0.43 p95 0.67 max 0.71  (28 s wall, 2335 s total)
+2026-10-07 15:52:32 [run grid] ep 23 k 1.0: J 3.0041e+12  q_fuel_end 27677 q_lng_mean 24153 q_chip_end 23242  pass2 51/52 bind 34.9  lp s/wk med 0.43 p95 0.72 max 0.76  (27 s wall, 2362 s total)
+2026-10-07 15:52:59 [run grid] ep 23 k 2.0: J 3.0096e+12  q_fuel_end 27677 q_lng_mean 24153 q_chip_end 23242  pass2 51/52 bind 34.6  lp s/wk med 0.44 p95 0.73 max 0.76  (28 s wall, 2390 s total)
+2026-10-07 15:53:19 [run grid] ep 24 k 0.0: J 1.2403e+12  q_fuel_end 11933 q_lng_mean 6649 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.30 p95 0.43 max 0.48  (20 s wall, 2410 s total)
+2026-10-07 15:53:49 [run grid] ep 24 k 0.5: J 1.2400e+12  q_fuel_end 11933 q_lng_mean 6649 q_chip_end 0  pass2 51/52 bind 37.5  lp s/wk med 0.52 p95 0.76 max 0.83  (30 s wall, 2440 s total)
+2026-10-07 15:54:21 [run grid] ep 24 k 1.0: J 1.2406e+12  q_fuel_end 11933 q_lng_mean 6649 q_chip_end 0  pass2 51/52 bind 37.7  lp s/wk med 0.61 p95 0.77 max 0.79  (32 s wall, 2472 s total)
+2026-10-07 15:54:51 [run grid] ep 24 k 2.0: J 1.2410e+12  q_fuel_end 11933 q_lng_mean 6649 q_chip_end 0  pass2 51/52 bind 38.2  lp s/wk med 0.46 p95 0.80 max 0.88  (29 s wall, 2501 s total)
+2026-10-07 15:55:08 [run grid] ep 25 k 0.0: J 2.4970e+12  q_fuel_end 4459 q_lng_mean 2507 q_chip_end 24765  pass2 0/52 bind 0.0  lp s/wk med 0.27 p95 0.37 max 0.39  (17 s wall, 2519 s total)
+2026-10-07 15:55:37 [run grid] ep 25 k 0.5: J 2.4993e+12  q_fuel_end 4459 q_lng_mean 2507 q_chip_end 22836  pass2 51/52 bind 37.9  lp s/wk med 0.52 p95 0.75 max 0.82  (29 s wall, 2548 s total)
+2026-10-07 15:56:05 [run grid] ep 25 k 1.0: J 2.5009e+12  q_fuel_end 4459 q_lng_mean 2507 q_chip_end 20906  pass2 51/52 bind 38.2  lp s/wk med 0.44 p95 0.66 max 0.71  (28 s wall, 2575 s total)
+2026-10-07 15:56:31 [run grid] ep 25 k 2.0: J 2.5099e+12  q_fuel_end 4459 q_lng_mean 2507 q_chip_end 17047  pass2 51/52 bind 39.2  lp s/wk med 0.42 p95 0.69 max 0.81  (27 s wall, 2602 s total)
+2026-10-07 15:56:52 [run grid] ep 26 k 0.0: J 1.9055e+12  q_fuel_end 3103 q_lng_mean 892 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.30 p95 0.58 max 0.71  (21 s wall, 2623 s total)
+2026-10-07 15:57:22 [run grid] ep 26 k 0.5: J 1.9061e+12  q_fuel_end 3103 q_lng_mean 892 q_chip_end 0  pass2 48/52 bind 42.9  lp s/wk med 0.44 p95 0.81 max 0.82  (29 s wall, 2652 s total)
+2026-10-07 15:57:52 [run grid] ep 26 k 1.0: J 1.9026e+12  q_fuel_end 3103 q_lng_mean 892 q_chip_end 0  pass2 48/52 bind 43.1  lp s/wk med 0.51 p95 0.79 max 0.82  (30 s wall, 2682 s total)
+2026-10-07 15:58:21 [run grid] ep 26 k 2.0: J 1.9250e+12  q_fuel_end 3103 q_lng_mean 892 q_chip_end 0  pass2 48/52 bind 42.4  lp s/wk med 0.45 p95 0.82 max 0.87  (29 s wall, 2712 s total)
+2026-10-07 15:58:40 [run grid] ep 27 k 0.0: J 7.0419e+11  q_fuel_end 5396 q_lng_mean 5451 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.27 p95 0.40 max 0.47  (19 s wall, 2730 s total)
+2026-10-07 15:59:06 [run grid] ep 27 k 0.5: J 7.0930e+11  q_fuel_end 5396 q_lng_mean 5451 q_chip_end 0  pass2 51/52 bind 44.2  lp s/wk med 0.43 p95 0.69 max 0.74  (26 s wall, 2757 s total)
+2026-10-07 15:59:33 [run grid] ep 27 k 1.0: J 7.1296e+11  q_fuel_end 5396 q_lng_mean 5451 q_chip_end 0  pass2 51/52 bind 45.0  lp s/wk med 0.47 p95 0.68 max 0.71  (27 s wall, 2784 s total)
+2026-10-07 16:00:01 [run grid] ep 27 k 2.0: J 7.3491e+11  q_fuel_end 5396 q_lng_mean 5451 q_chip_end 0  pass2 51/52 bind 45.3  lp s/wk med 0.42 p95 0.67 max 0.78  (28 s wall, 2811 s total)
+2026-10-07 16:00:18 [run grid] ep 28 k 0.0: J 2.2305e+12  q_fuel_end 12792 q_lng_mean 10712 q_chip_end 89696  pass2 0/52 bind 0.0  lp s/wk med 0.24 p95 0.34 max 0.36  (17 s wall, 2828 s total)
+2026-10-07 16:00:29 [run full_timing] full root 111: 2 plays to go (ks (0, 1), bind_frac 0.9), n_jobs 1
+2026-10-07 16:00:46 [run grid] ep 28 k 0.5: J 2.2324e+12  q_fuel_end 12792 q_lng_mean 10685 q_chip_end 89696  pass2 51/52 bind 39.0  lp s/wk med 0.48 p95 0.71 max 0.85  (29 s wall, 2857 s total)
+2026-10-07 16:01:13 [run grid] ep 28 k 1.0: J 2.2322e+12  q_fuel_end 12792 q_lng_mean 10687 q_chip_end 89696  pass2 51/52 bind 39.0  lp s/wk med 0.41 p95 0.62 max 0.70  (27 s wall, 2884 s total)
+2026-10-07 16:01:41 [run grid] ep 28 k 2.0: J 2.2376e+12  q_fuel_end 12774 q_lng_mean 10674 q_chip_end 89696  pass2 51/52 bind 38.8  lp s/wk med 0.44 p95 0.68 max 0.76  (28 s wall, 2912 s total)
+2026-10-07 16:02:00 [run grid] ep 29 k 0.0: J 4.4871e+12  q_fuel_end 36805 q_lng_mean 29647 q_chip_end 91427  pass2 0/52 bind 0.0  lp s/wk med 0.23 p95 0.38 max 0.40  (18 s wall, 2930 s total)
+2026-10-07 16:02:27 [run grid] ep 29 k 0.5: J 4.4882e+12  q_fuel_end 36805 q_lng_mean 29647 q_chip_end 91427  pass2 51/52 bind 34.5  lp s/wk med 0.49 p95 0.66 max 0.72  (28 s wall, 2958 s total)
+2026-10-07 16:02:54 [run grid] ep 29 k 1.0: J 4.4911e+12  q_fuel_end 36805 q_lng_mean 29647 q_chip_end 91427  pass2 51/52 bind 34.1  lp s/wk med 0.43 p95 0.65 max 0.66  (27 s wall, 2985 s total)
+2026-10-07 16:02:58 [run full_timing] ep 0 k 0.0: J 9.5218e+12  q_fuel_end 1861 q_lng_mean 1845 q_chip_end 297001  pass2 0/104 bind 0.0  lp s/wk med 1.54 p95 1.62 max 1.69  (149 s wall, 149 s total)
+2026-10-07 16:03:21 [run grid] ep 29 k 2.0: J 4.4956e+12  q_fuel_end 36805 q_lng_mean 29647 q_chip_end 91427  pass2 51/52 bind 33.9  lp s/wk med 0.45 p95 0.59 max 0.62  (26 s wall, 3011 s total)
+2026-10-07 16:03:37 [run grid] ep 30 k 0.0: J 3.0698e+12  q_fuel_end 25509 q_lng_mean 19344 q_chip_end 0  pass2 0/52 bind 0.0  lp s/wk med 0.26 p95 0.32 max 0.35  (17 s wall, 3028 s total)
+2026-10-07 16:04:05 [run grid] ep 30 k 0.5: J 3.0696e+12  q_fuel_end 25509 q_lng_mean 19344 q_chip_end 0  pass2 51/52 bind 37.0  lp s/wk med 0.43 p95 0.68 max 0.70  (28 s wall, 3056 s total)
+2026-10-07 16:04:34 [run grid] ep 30 k 1.0: J 3.0725e+12  q_fuel_end 25509 q_lng_mean 19344 q_chip_end 0  pass2 51/52 bind 36.7  lp s/wk med 0.46 p95 0.71 max 0.81  (29 s wall, 3085 s total)
+2026-10-07 16:05:01 [run grid] ep 30 k 2.0: J 3.0790e+12  q_fuel_end 25509 q_lng_mean 19344 q_chip_end 0  pass2 51/52 bind 36.9  lp s/wk med 0.42 p95 0.68 max 0.71  (27 s wall, 3112 s total)
+2026-10-07 16:05:19 [run grid] ep 31 k 0.0: J 4.0832e+12  q_fuel_end 26955 q_lng_mean 23480 q_chip_end 71284  pass2 0/52 bind 0.0  lp s/wk med 0.24 p95 0.40 max 0.41  (18 s wall, 3130 s total)
+2026-10-07 16:05:38 [run full_timing] ep 0 k 1.0: J 9.5364e+12  q_fuel_end 1861 q_lng_mean 1845 q_chip_end 296719  pass2 22/104 bind 157.7  lp s/wk med 1.59 p95 1.68 max 1.71  (160 s wall, 309 s total)
+2026-10-07 16:05:44 [run grid] ep 31 k 0.5: J 4.0832e+12  q_fuel_end 26955 q_lng_mean 23480 q_chip_end 71284  pass2 51/52 bind 18.4  lp s/wk med 0.39 p95 0.61 max 0.73  (25 s wall, 3155 s total)
+2026-10-07 16:06:09 [run grid] ep 31 k 1.0: J 4.0833e+12  q_fuel_end 26955 q_lng_mean 23480 q_chip_end 71284  pass2 51/52 bind 18.1  lp s/wk med 0.42 p95 0.67 max 0.86  (25 s wall, 3180 s total)
+2026-10-07 16:06:34 [run grid] ep 31 k 2.0: J 4.0838e+12  q_fuel_end 26955 q_lng_mean 23480 q_chip_end 71284  pass2 51/52 bind 18.3  lp s/wk med 0.37 p95 0.64 max 0.73  (25 s wall, 3205 s total)
+small root 111, 32 paired episodes (grid); diff = variant - k=0.0, per-episode RSS points = (J_base - J) / (J_naive - J_oracle)
+    k  bind     RSS     dRSS  dJ bn/ep     SE  d per-ep rss      SE   win q_fuel_end q_lng_mean q_chip_end q_chip_mean q_waf_mean  pass2 bind# lp med   p95   max
+ 0.00  0.90  0.8268  +0.0000     +0.00   0.00       +0.0000  0.0000  0/0       16609      12131     118692      122218     263106    0.0   0.0   0.25  0.42  0.71
+ 0.50  0.90  0.8242  -0.0026     -1.69   0.91       -0.0023  0.0012  9/23      16609      12130     119128      124717     263995   50.7  35.9   0.45  0.73  0.89
+ 1.00  0.90  0.8210  -0.0058     -4.34   1.37       -0.0064  0.0024  4/28      16609      12130     120931      124717     262878   50.6  35.8   0.44  0.73  0.86
+ 2.00  0.90  0.8148  -0.0120    -10.84   1.74       -0.0125  0.0026  1/31      16608      12130     118363      128875     264273   50.5  36.0   0.43  0.73  0.88
+split grid: per-episode RSS points (J_base - J)/(J_naive - J_oracle), mean +- SE (n)
+k=0.5: queue-heavy (q_fuel_mean >= median): -0.0032 +- 0.0018 (n=16, dq_fuel -0) | queue-light: -0.0014 +- 0.0016 (n=16, dq_fuel -0) | drift mostly DOWN (down > up): -0.0029 +- 0.0019 (n=18, dq_fuel -0) | drift mostly UP (recoveries): -0.0015 +- 0.0012 (n=14, dq_fuel -0)
+k=1.0: queue-heavy (q_fuel_mean >= median): -0.0068 +- 0.0032 (n=16, dq_fuel -0) | queue-light: -0.0059 +- 0.0038 (n=16, dq_fuel -0) | drift mostly DOWN (down > up): -0.0067 +- 0.0036 (n=18, dq_fuel -0) | drift mostly UP (recoveries): -0.0059 +- 0.0032 (n=14, dq_fuel -0)
+k=2.0: queue-heavy (q_fuel_mean >= median): -0.0138 +- 0.0048 (n=16, dq_fuel -2) | queue-light: -0.0112 +- 0.0023 (n=16, dq_fuel -0) | drift mostly DOWN (down > up): -0.0108 +- 0.0025 (n=18, dq_fuel -1) | drift mostly UP (recoveries): -0.0147 +- 0.0051 (n=14, dq_fuel -0)
+drift per ep (down, up): 0:0.002/0.031, 1:0.001/0.002, 2:0.010/0.029, 3:0.006/0.009, 4:0.044/0.012, 5:0.002/0.035, 6:0.001/0.001, 7:0.019/0.011, 8:0.031/0.016, 9:0.007/0.056, 10:0.007/0.000, 11:0.026/0.014, 12:0.014/0.006, 13:0.015/0.007, 14:0.019/0.000, 15:0.014/0.000, 16:0.008/0.000, 17:0.000/0.003, 18:0.013/0.010, 19:0.001/0.021, 20:0.103/0.006, 21:0.059/0.000, 22:0.002/0.009, 23:0.003/0.014, 24:0.008/0.004, 25:0.004/0.026, 26:0.058/0.025, 27:0.005/0.034, 28:0.007/0.000, 29:0.028/0.008, 30:0.003/0.008, 31:0.017/0.009
+## k=0 cent check (root 111, eps 0,1): stock hybrid_hub J == hub_delta k=0 J to the cent (224223456899507, 390990525620060).
+## Re-run determinism (grid vs grid_v0, 17 common plays): 16 identical; k=1 ep 3 differs (337636671793937 vs 337571257020188;
+## smoke gave a third value 337520280453967): with k>0 the two-pass LP reaches the solve_share cap (0.8 s) in heavy weeks,
+## so whether pass 2 finishes depends on machine load -> k>0 is NOT reproducible to the cent in ep 3-like episodes.
+## Cost components of the grid (variant - k=0, bn USD/ep): k=0.5 shortage +1.47 tariff +0.19; k=1 shortage +4.11;
+## k=2 shortage +10.37 disposal +0.23. Queues (mean over weeks, units): fuel unchanged (LP fuel not executed: rules),
+## raw+packaged chips UP: k=0.5 +2.5k, k=1 +2.5k, k=2 +6.7k on a base of 122k (chip_mat 90k, chip_le_raw 21k).
+## Strong down-drift episodes (20,21,26,4,8,11) dJ bn at k=1: +5.2, -26.4, +2.9, -1.1, -2.7, -0.9 -> no gain where delta should help.
+## Timing Small (32 eps, CPU s per week, loaded machine): LP pass1 only med 0.25 p95 0.42 max 0.71; two-pass med 0.45 p95 0.73
+## p99 0.82 max 0.86 (cap 0.8 + overhead); 3.5 % of weeks >0.75 s. pass 2 done in 50.6/52 weeks.
+## Full timing probe (root 111 ep 0, sigma 0.054/0.065, loaded machine): stock LP already med 1.54 s / cap 1.6 s, plan in only
+## 50/104 weeks; k=1 pass 2 completes in 22/104 weeks, plan 49/104 -> two-pass does not fit on Full.
+## VERDICT: no. dRSS monotone negative in k (k=0.5 -0.0026, 1 -0.0058, 2 -0.0120; per-episode SE excludes 0 for k>=1),
+## and the mechanism metric does not move the right way (LP-chip queues up, fuel queues untouched by construction).
+## Hypothesis wrong at the root for a weekly-replanned agent: the shaved later-week capacity only makes the LP ship less
+## now -> shortage. bind_frac tuning not indicated (the mechanism-works case did not occur).
