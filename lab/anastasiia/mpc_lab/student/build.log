@@ -1,0 +1,126 @@
+2026-10-07T11:54:03Z start: student BC session; reading rl_lab, teacher data (small_555: 22 eps)
+2026-10-07T11:55:19Z prep: outputs/teacher/small_555 -> outputs/student/prep_small_555, 22 episodes [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 18, 19, 20, 21, 22, 23]
+2026-10-07T11:55:34Z prep ep0: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=14.8s
+2026-10-07T11:55:49Z prep ep1: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=14.2s
+2026-10-07T11:56:02Z prep ep2: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=12.4s
+2026-10-07T11:56:14Z prep ep3: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=11.9s
+2026-10-07T11:56:27Z prep ep4: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=12.7s
+2026-10-07T11:56:39Z prep ep5: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=12.4s
+2026-10-07T11:56:53Z prep ep6: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=13.6s
+2026-10-07T11:57:05Z prep ep7: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=11.8s
+2026-10-07T11:57:20Z prep ep8: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=14.6s
+2026-10-07T11:57:31Z prep ep9: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=11.3s
+2026-10-07T11:57:45Z prep ep10: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=13.0s
+2026-10-07T11:57:58Z prep ep11: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=13.5s
+2026-10-07T11:58:11Z prep ep12: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=12.3s
+2026-10-07T11:58:27Z prep ep13: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=15.8s
+2026-10-07T11:58:41Z prep ep14: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=13.6s
+2026-10-07T11:58:58Z prep ep15: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=17.5s
+2026-10-07T11:59:12Z prep ep18: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=13.0s
+2026-10-07T11:59:24Z prep ep19: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=12.4s
+2026-10-07T11:59:39Z prep ep20: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=14.6s
+2026-10-07T11:59:51Z prep ep21: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=12.2s
+2026-10-07T12:00:03Z prep ep22: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=11.6s
+2026-10-07T12:00:16Z prep ep23: T=52 slot_feat=35 node=35 edge=13 glob=14 cpu=12.6s
+2026-10-07T12:00:16Z gate:
+  episodes 22, weeks 1144, slots 108
+  (a) teacher flow on anchor-zero slots: 0.077 of volume, 0.059 of value | anchor-zero share of masked slot-weeks 0.470 | of teacher-positive slot-weeks 0.115 | (mirror) anchor value on teacher-zero slots 0.177
+      lng           share of teacher value 0.075; on anchor-zero 0.053; teacher/anchor total volume 0.862
+      crude         share of teacher value 0.007; on anchor-zero 0.234; teacher/anchor total volume 0.812
+      nucfuel       share of teacher value 0.001; on anchor-zero 1.000; teacher/anchor total volume 78722000000.000
+      wafer         share of teacher value 0.037; on anchor-zero 0.051; teacher/anchor total volume 0.272
+      chip_le_raw   share of teacher value 0.383; on anchor-zero 0.096; teacher/anchor total volume 0.926
+      chip_mat_raw  share of teacher value 0.021; on anchor-zero 0.274; teacher/anchor total volume 1.131
+      chip_le       share of teacher value 0.445; on anchor-zero 0.008; teacher/anchor total volume 1.022
+      chip_mat      share of teacher value 0.030; on anchor-zero 0.134; teacher/anchor total volume 1.033
+  (b) both>0 slot-weeks 28347; ratio quantiles 5/10/25/50/75/90/95% = 0.506 / 0.775 / 1 / 1 / 1 / 1.52 / 3.13; outside [0.5,2]: 0.126 (value-weighted 0.108); within ±5%: 0.678
+  (c) release_mode differs in 0.560 of pair-weeks; anchor modes [13545, 2471, 0] teacher modes [4576, 11440, 0] (default/override/hold)
+      chk_hormuz/lng               differs 0.903  override: anchor 0.097 teacher 1.000  teacher hold 0.000
+      chk_hormuz/crude             differs 0.795  override: anchor 0.205 teacher 1.000  teacher hold 0.000
+      chk_malacca/lng              differs 0.548  override: anchor 0.452 teacher 1.000  teacher hold 0.000
+      chk_malacca/crude            differs 0.656  override: anchor 0.344 teacher 1.000  teacher hold 0.000
+      chk_suez/lng                 differs 0.570  override: anchor 0.430 teacher 1.000  teacher hold 0.000
+      chk_suez/crude               differs 0.000  override: anchor 0.000 teacher 0.000  teacher hold 0.000
+      chk_cape/lng                 differs 1.000  override: anchor 0.000 teacher 1.000  teacher hold 0.000
+      chk_cape/crude               differs 0.000  override: anchor 0.000 teacher 0.000  teacher hold 0.000
+      chk_taiwan/lng               differs 1.000  override: anchor 0.000 teacher 1.000  teacher hold 0.000
+      chk_taiwan/crude             differs 0.617  override: anchor 0.383 teacher 1.000  teacher hold 0.000
+      chk_panama/lng               differs 0.751  override: anchor 0.249 teacher 1.000  teacher hold 0.000
+      chk_panama/crude             differs 1.000  override: anchor 0.000 teacher 1.000  teacher hold 0.000
+      chk_turkish/lng              differs 0.000  override: anchor 0.000 teacher 0.000  teacher hold 0.000
+      chk_turkish/crude            differs 0.000  override: anchor 0.000 teacher 0.000  teacher hold 0.000
+      override_qty value per episode: teacher 1.67e+10 USD-v, anchor 4.41e+09; teacher flows value per episode 6.56e+11
+  (d) |teacher-anchor|/cap0: mean over masked slot-weeks 0.1244; over not-both-zero 0.2189 (signed -0.1137); quantiles 50/75/90/95/99% 0.0502 / 0.284 / 1 / 1 / 1; max 2.93
+      teacher/cap0 where >0, q50/90/99: [0.41631807435526036, 1.0, 1.0]; anchor/cap0 where >0: [0.25, 1.0, 1.0]
+      lng           mean |d|/cap0 0.1560  (n=14820)
+      crude         mean |d|/cap0 0.1623  (n=9031)
+      nucfuel       mean |d|/cap0 0.8395  (n=15)
+      wafer         mean |d|/cap0 0.4210  (n=13105)
+      chip_le_raw   mean |d|/cap0 0.2021  (n=5514)
+      chip_mat_raw  mean |d|/cap0 0.2131  (n=1798)
+      chip_le       mean |d|/cap0 0.0575  (n=6156)
+      chip_mat      mean |d|/cap0 0.1927  (n=4587)
+2026-10-07T12:02:17Z gate_play ep0: teacher J ok=True; bn USD vs teacher: anchor -105.7, t_flows+a_rel +893.2, t_flows+def +1382.4, a_flows+t_rel -158.2; exec share teacher 0.876 anchor 0.999 (61s)
+2026-10-07T12:03:11Z gate_play ep1: teacher J ok=True; bn USD vs teacher: anchor +64.5, t_flows+a_rel +722.1, t_flows+def +1140.8, a_flows+t_rel +40.7; exec share teacher 0.997 anchor 1.000 (55s)
+2026-10-07T12:03:11Z gate_play summary (bn USD/ep, + = worse than teacher): {"anchor": {"mean_bn_vs_teacher": -20.590296941669997, "se": 85.10112023243998}, "t_flows+a_rel": {"mean_bn_vs_teacher": 807.6127030146799, "se": 85.54472259138998}, "t_flows+def": {"mean_bn_vs_teacher": 1261.56654535106, "se": 120.78969364525994}, "a_flows+t_rel": {"mean_bn_vs_teacher": -58.771234982885, "se": 99.458553907605}, "release_share_of_gap": -39.22297504026077, "exec_share_teacher": {"lng": 0.9792777507919976, "crude": 0.9920793322418389, "nucfuel": NaN, "wafer": 0.9659571243853919, "chip_le_raw": 0.9298787677378539, "chip_mat_raw": 0.8671435541136593, "chip_le": 0.9461487478752251, "chip_mat": 0.8878133343640694}, "exec_share_anchor": {"lng": 1.0, "crude": 0.9994386658211165, "nucfuel": NaN, "wafer": 0.9942061308923207, "chip_le_raw": 0.9993503231498468, "chip_mat_raw": 0.9987108109540603, "chip_le": 1.0, "chip_mat": 1.0}}
+2026-10-07T12:05:20Z gate_play ep0: teacher J ok=True; bn USD vs teacher: anchor -105.7, t_flows+a_rel +893.2, t_flows+def +1382.4, a_flows+t_rel -158.2, t_chips +105.4, t_fuel+t_rel -26.2; exec share teacher 0.876 anchor 0.999 (95s)
+2026-10-07T12:06:59Z gate_play ep1: teacher J ok=True; bn USD vs teacher: anchor +64.5, t_flows+a_rel +722.1, t_flows+def +1140.8, a_flows+t_rel +40.7, t_chips +77.3, t_fuel+t_rel +14.2; exec share teacher 0.997 anchor 1.000 (98s)
+2026-10-07T12:08:33Z gate_play ep2: teacher J ok=True; bn USD vs teacher: anchor +28.9, t_flows+a_rel +271.6, t_flows+def +528.8, a_flows+t_rel +33.5, t_chips +15.8, t_fuel+t_rel -0.8; exec share teacher 0.970 anchor 0.989 (94s)
+2026-10-07T12:10:05Z gate_play ep3: teacher J ok=True; bn USD vs teacher: anchor +119.7, t_flows+a_rel +822.8, t_flows+def +889.9, a_flows+t_rel +59.4, t_chips +151.6, t_fuel+t_rel +4.9; exec share teacher 0.989 anchor 1.000 (92s)
+2026-10-07T12:11:34Z gate_play ep4: teacher J ok=True; bn USD vs teacher: anchor +143.4, t_flows+a_rel +557.7, t_flows+def +679.6, a_flows+t_rel +67.4, t_chips +162.5, t_fuel+t_rel +11.0; exec share teacher 0.989 anchor 1.000 (90s)
+2026-10-07T12:13:03Z gate_play ep5: teacher J ok=True; bn USD vs teacher: anchor +41.6, t_flows+a_rel +807.5, t_flows+def +893.4, a_flows+t_rel +42.2, t_chips +93.2, t_fuel+t_rel +18.1; exec share teacher 0.956 anchor 1.000 (89s)
+2026-10-07T12:14:40Z gate_play ep6: teacher J ok=True; bn USD vs teacher: anchor +62.9, t_flows+a_rel +872.5, t_flows+def +877.7, a_flows+t_rel +29.2, t_chips +110.8, t_fuel+t_rel -1.3; exec share teacher 0.983 anchor 0.999 (96s)
+2026-10-07T12:16:10Z gate_play ep7: teacher J ok=True; bn USD vs teacher: anchor +66.5, t_flows+a_rel +475.0, t_flows+def +641.8, a_flows+t_rel +47.9, t_chips +93.3, t_fuel+t_rel +23.3; exec share teacher 0.905 anchor 0.999 (90s)
+2026-10-07T12:17:46Z gate_play ep8: teacher J ok=True; bn USD vs teacher: anchor -137.0, t_flows+a_rel +921.3, t_flows+def +1102.9, a_flows+t_rel -132.7, t_chips +73.3, t_fuel+t_rel -16.9; exec share teacher 0.995 anchor 0.998 (96s)
+2026-10-07T12:19:14Z gate_play ep9: teacher J ok=True; bn USD vs teacher: anchor -4.8, t_flows+a_rel +415.4, t_flows+def +646.3, a_flows+t_rel +3.6, t_chips +24.5, t_fuel+t_rel -20.3; exec share teacher 0.904 anchor 0.999 (88s)
+2026-10-07T12:19:14Z gate_play summary (bn USD/ep, + = worse than teacher): {"anchor": {"mean_bn_vs_teacher": 28.013977766602, "se": 28.306819220654535}, "t_flows+a_rel": {"mean_bn_vs_teacher": 675.9133709887021, "se": 72.47619812325102}, "t_flows+def": {"mean_bn_vs_teacher": 878.347228033299, "se": 84.669449172519}, "a_flows+t_rel": {"mean_bn_vs_teacher": 3.297662261177004, "se": 25.46157826548673}, "t_chips": {"mean_bn_vs_teacher": 90.76970754791901, "se": 14.89412191187213}, "t_fuel+t_rel": {"mean_bn_vs_teacher": 0.5930133096540005, "se": 5.3722584162761855}, "release_share_of_gap": 24.127718548935228, "exec_share_teacher": {"lng": 0.9851438855669008, "crude": 0.9930101190796912, "nucfuel": NaN, "wafer": 0.9799953503439378, "chip_le_raw": 0.9546903570115592, "chip_mat_raw": 0.9642142254556922, "chip_le": 0.9561539678139324, "chip_mat": 0.897516012180566}, "exec_share_anchor": {"lng": 0.9997187565127312, "crude": 0.9998753514177345, "nucfuel": NaN, "wafer": 0.9851001874267762, "chip_le_raw": 0.9989284543522254, "chip_mat_raw": 0.9996565774357966, "chip_le": 0.9998492739135116, "chip_mat": 0.9998743628521627}}
+2026-10-07T12:25:26Z gate_play[t_fuel+a_rel] ep0: bn USD vs teacher: anchor -105.7, t_fuel+a_rel +910.0
+2026-10-07T12:26:06Z gate_play[t_fuel+a_rel] ep1: bn USD vs teacher: anchor +64.5, t_fuel+a_rel +717.1
+2026-10-07T12:26:45Z gate_play[t_fuel+a_rel] ep2: bn USD vs teacher: anchor +28.9, t_fuel+a_rel +246.5
+2026-10-07T12:27:23Z gate_play[t_fuel+a_rel] ep3: bn USD vs teacher: anchor +119.7, t_fuel+a_rel +814.1
+2026-10-07T12:28:01Z gate_play[t_fuel+a_rel] ep4: bn USD vs teacher: anchor +143.4, t_fuel+a_rel +556.1
+2026-10-07T12:28:38Z gate_play[t_fuel+a_rel] ep5: bn USD vs teacher: anchor +41.6, t_fuel+a_rel +803.4
+2026-10-07T12:29:19Z gate_play[t_fuel+a_rel] ep6: bn USD vs teacher: anchor +62.9, t_fuel+a_rel +868.2
+2026-10-07T12:29:53Z gate_play[t_fuel+a_rel] ep7: bn USD vs teacher: anchor +66.5, t_fuel+a_rel +473.3
+2026-10-07T12:30:31Z gate_play[t_fuel+a_rel] ep8: bn USD vs teacher: anchor -137.0, t_fuel+a_rel +907.3
+2026-10-07T12:31:05Z gate_play[t_fuel+a_rel] ep9: bn USD vs teacher: anchor -4.8, t_fuel+a_rel +352.4
+2026-10-07T12:31:05Z gate_play[t_fuel+a_rel] summary: {"anchor": {"mean_bn_vs_teacher": 28.013977766602, "se": 28.306819220654535}, "t_fuel+a_rel": {"mean_bn_vs_teacher": 664.8304947442391, "se": 76.41768053704891}}
+2026-10-07T12:36:10Z GATE verdict: delta-on-flows form cannot express teacher (gain in fuel+override releases; t_fuel+a_rel -637 bn/ep 0/10; releases alone +24.7±9.6). STOP after step 1; no training. See GATE.md
+2026-10-07T12:36:30Z gate:
+  episodes 22, weeks 1144, slots 108
+  (a) teacher flow on anchor-zero slots: 0.077 of volume, 0.059 of value | anchor-zero share of masked slot-weeks 0.470 | of teacher-positive slot-weeks 0.115 | (mirror) anchor value on teacher-zero slots 0.177
+      lng           share of teacher value 0.075; on anchor-zero 0.053; teacher/anchor total volume 0.862
+      crude         share of teacher value 0.007; on anchor-zero 0.234; teacher/anchor total volume 0.812
+      nucfuel       share of teacher value 0.001; on anchor-zero 1.000; teacher/anchor total volume 78722000000.000
+      wafer         share of teacher value 0.037; on anchor-zero 0.051; teacher/anchor total volume 0.272
+      chip_le_raw   share of teacher value 0.383; on anchor-zero 0.096; teacher/anchor total volume 0.926
+      chip_mat_raw  share of teacher value 0.021; on anchor-zero 0.274; teacher/anchor total volume 1.131
+      chip_le       share of teacher value 0.445; on anchor-zero 0.008; teacher/anchor total volume 1.022
+      chip_mat      share of teacher value 0.030; on anchor-zero 0.134; teacher/anchor total volume 1.033
+  (b) both>0 slot-weeks 28347; ratio quantiles 5/10/25/50/75/90/95% = 0.506 / 0.775 / 1 / 1 / 1 / 1.52 / 3.13; outside [0.5,2]: 0.126 (value-weighted 0.108); within ±5%: 0.678
+  (c) release_mode differs in 0.560 of pair-weeks; anchor modes [13545, 2471, 0] teacher modes [4576, 11440, 0] (default/override/hold)
+      chk_hormuz/lng               differs 0.903  override: anchor 0.097 teacher 1.000  teacher hold 0.000
+      chk_hormuz/crude             differs 0.795  override: anchor 0.205 teacher 1.000  teacher hold 0.000
+      chk_malacca/lng              differs 0.548  override: anchor 0.452 teacher 1.000  teacher hold 0.000
+      chk_malacca/crude            differs 0.656  override: anchor 0.344 teacher 1.000  teacher hold 0.000
+      chk_suez/lng                 differs 0.570  override: anchor 0.430 teacher 1.000  teacher hold 0.000
+      chk_suez/crude               differs 0.000  override: anchor 0.000 teacher 0.000  teacher hold 0.000
+      chk_cape/lng                 differs 1.000  override: anchor 0.000 teacher 1.000  teacher hold 0.000
+      chk_cape/crude               differs 0.000  override: anchor 0.000 teacher 0.000  teacher hold 0.000
+      chk_taiwan/lng               differs 1.000  override: anchor 0.000 teacher 1.000  teacher hold 0.000
+      chk_taiwan/crude             differs 0.617  override: anchor 0.383 teacher 1.000  teacher hold 0.000
+      chk_panama/lng               differs 0.751  override: anchor 0.249 teacher 1.000  teacher hold 0.000
+      chk_panama/crude             differs 1.000  override: anchor 0.000 teacher 1.000  teacher hold 0.000
+      chk_turkish/lng              differs 0.000  override: anchor 0.000 teacher 0.000  teacher hold 0.000
+      chk_turkish/crude            differs 0.000  override: anchor 0.000 teacher 0.000  teacher hold 0.000
+      override_qty value per episode: teacher 1.67e+10 USD-v, anchor 4.41e+09; teacher flows value per episode 6.56e+11
+  (d) |teacher-anchor|/cap0: mean over masked slot-weeks 0.1244; over not-both-zero 0.2189 (signed -0.1137); quantiles 50/75/90/95/99% 0.0502 / 0.284 / 1 / 1 / 1; max 2.93
+      teacher/cap0 where >0, q50/90/99: [0.41631807435526036, 1.0, 1.0]; anchor/cap0 where >0: [0.25, 1.0, 1.0]
+      lng           mean |d|/cap0 0.1560  (n=14820)
+      crude         mean |d|/cap0 0.1623  (n=9031)
+      nucfuel       mean |d|/cap0 0.8395  (n=15)
+      wafer         mean |d|/cap0 0.4210  (n=13105)
+      chip_le_raw   mean |d|/cap0 0.2021  (n=5514)
+      chip_mat_raw  mean |d|/cap0 0.2131  (n=1798)
+      chip_le       mean |d|/cap0 0.0575  (n=6156)
+      chip_mat      mean |d|/cap0 0.1927  (n=4587)
