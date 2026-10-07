@@ -1,0 +1,78 @@
+
+=== replan_curve 2026-10-07 03:35:10: small root 444 eps 0..7 schedules ['{1}', '{1,27}', '{1,14,27,40}', 'step4', 'step2', 'weekly']
+ep 1 {1}            J   3389.6  (true LP blind   3385.2, hybrid   3147.0)  solves 1 fails 0 cpu 1s churn 0.000  1s
+ep 0 {1}            J   2027.4  (true LP blind   1838.9, hybrid   1857.5)  solves 1 fails 0 cpu 1s churn 0.000  1s
+ep 1 {1,27}         J   3384.0  (true LP blind   3385.2, hybrid   3147.0)  solves 2 fails 0 cpu 1s churn 0.729  1s
+ep 0 {1,27}         J   1950.2  (true LP blind   1838.9, hybrid   1857.5)  solves 2 fails 0 cpu 1s churn 0.739  1s
+ep 1 {1,14,27,40}   J   3382.8  (true LP blind   3385.2, hybrid   3147.0)  solves 4 fails 0 cpu 1s churn 0.637  1s
+ep 0 {1,14,27,40}   J   1872.5  (true LP blind   1838.9, hybrid   1857.5)  solves 4 fails 0 cpu 1s churn 0.524  1s
+ep 1 step4          J   3364.3  (true LP blind   3385.2, hybrid   3147.0)  solves 13 fails 0 cpu 3s churn 0.245  3s
+ep 0 step4          J   1843.2  (true LP blind   1838.9, hybrid   1857.5)  solves 13 fails 0 cpu 4s churn 0.167  4s
+ep 1 step2          J   3369.6  (true LP blind   3385.2, hybrid   3147.0)  solves 26 fails 0 cpu 6s churn 0.259  6s
+ep 0 step2          J   1846.7  (true LP blind   1838.9, hybrid   1857.5)  solves 26 fails 0 cpu 7s churn 0.125  7s
+ep 1 weekly         J   3371.0  (true LP blind   3385.2, hybrid   3147.0)  solves 52 fails 0 cpu 11s churn 0.203  11s
+ep 2 {1}            J   2379.7  (true LP blind   2266.2, hybrid   2193.1)  solves 1 fails 0 cpu 1s churn 0.000  1s
+ep 2 {1,27}         J   2278.3  (true LP blind   2266.2, hybrid   2193.1)  solves 2 fails 0 cpu 1s churn 0.497  1s
+ep 2 {1,14,27,40}   J   2277.0  (true LP blind   2266.2, hybrid   2193.1)  solves 4 fails 0 cpu 1s churn 0.432  1s
+ep 0 weekly         J   1840.0  (true LP blind   1838.9, hybrid   1857.5)  solves 52 fails 0 cpu 13s churn 0.095  14s
+ep 3 {1}            J   1611.7  (true LP blind   1580.8, hybrid   1205.7)  solves 1 fails 0 cpu 1s churn 0.000  1s
+ep 2 step4          J   2251.8  (true LP blind   2266.2, hybrid   2193.1)  solves 13 fails 0 cpu 3s churn 0.180  3s
+ep 3 {1,27}         J   1611.0  (true LP blind   1580.8, hybrid   1205.7)  solves 2 fails 0 cpu 1s churn 0.945  1s
+ep 3 {1,14,27,40}   J   1609.6  (true LP blind   1580.8, hybrid   1205.7)  solves 4 fails 0 cpu 1s churn 0.822  1s
+ep 3 step4          J   1604.5  (true LP blind   1580.8, hybrid   1205.7)  solves 13 fails 0 cpu 3s churn 0.480  4s
+ep 2 step2          J   2287.6  (true LP blind   2266.2, hybrid   2193.1)  solves 26 fails 0 cpu 6s churn 0.164  6s
+ep 3 step2          J   1591.2  (true LP blind   1580.8, hybrid   1205.7)  solves 26 fails 0 cpu 7s churn 0.354  8s
+ep 2 weekly         J   2280.8  (true LP blind   2266.2, hybrid   2193.1)  solves 52 fails 0 cpu 12s churn 0.154  13s
+ep 4 {1}            J   1417.1  (true LP blind   1293.0, hybrid   1303.4)  solves 1 fails 0 cpu 0s churn 0.000  1s
+ep 4 {1,27}         J   1404.5  (true LP blind   1293.0, hybrid   1303.4)  solves 2 fails 0 cpu 1s churn 0.189  1s
+ep 4 {1,14,27,40}   J   1373.2  (true LP blind   1293.0, hybrid   1303.4)  solves 4 fails 0 cpu 1s churn 0.213  1s
+ep 4 step4          J   1344.6  (true LP blind   1293.0, hybrid   1303.4)  solves 13 fails 0 cpu 3s churn 0.143  3s
+ep 3 weekly         J   1593.7  (true LP blind   1580.8, hybrid   1205.7)  solves 52 fails 0 cpu 14s churn 0.319  14s
+ep 5 {1}            J   3075.5  (true LP blind   3075.1, hybrid   3096.9)  solves 1 fails 0 cpu 0s churn 0.000  0s
+ep 5 {1,27}         J   3076.7  (true LP blind   3075.1, hybrid   3096.9)  solves 2 fails 0 cpu 1s churn 0.511  1s
+ep 4 step2          J   1337.4  (true LP blind   1293.0, hybrid   1303.4)  solves 26 fails 0 cpu 5s churn 0.125  5s
+ep 5 {1,14,27,40}   J   3076.1  (true LP blind   3075.1, hybrid   3096.9)  solves 4 fails 0 cpu 1s churn 0.347  1s
+ep 5 step4          J   3062.3  (true LP blind   3075.1, hybrid   3096.9)  solves 13 fails 0 cpu 3s churn 0.193  3s
+ep 5 step2          J   3058.2  (true LP blind   3075.1, hybrid   3096.9)  solves 26 fails 0 cpu 5s churn 0.222  5s
+ep 4 weekly         J   1338.7  (true LP blind   1293.0, hybrid   1303.4)  solves 52 fails 0 cpu 10s churn 0.116  11s
+ep 6 {1}            J   3217.4  (true LP blind   2728.8, hybrid   2613.3)  solves 1 fails 0 cpu 1s churn 0.000  1s
+ep 6 {1,27}         J   3020.5  (true LP blind   2728.8, hybrid   2613.3)  solves 2 fails 0 cpu 2s churn 0.768  2s
+ep 5 weekly         J   3055.8  (true LP blind   3075.1, hybrid   3096.9)  solves 52 fails 0 cpu 10s churn 0.174  10s
+ep 6 {1,14,27,40}   J   2976.7  (true LP blind   2728.8, hybrid   2613.3)  solves 4 fails 0 cpu 2s churn 0.631  2s
+ep 7 {1}            J   1401.1  (true LP blind   1294.8, hybrid   1253.4)  solves 1 fails 0 cpu 1s churn 0.000  1s
+ep 7 {1,27}         J   1404.3  (true LP blind   1294.8, hybrid   1253.4)  solves 2 fails 0 cpu 1s churn 0.609  1s
+ep 7 {1,14,27,40}   J   1397.2  (true LP blind   1294.8, hybrid   1253.4)  solves 4 fails 0 cpu 1s churn 0.452  2s
+ep 6 step4          J   2910.6  (true LP blind   2728.8, hybrid   2613.3)  solves 13 fails 0 cpu 6s churn 0.245  6s
+ep 7 step4          J   1405.7  (true LP blind   1294.8, hybrid   1253.4)  solves 13 fails 0 cpu 4s churn 0.194  4s
+ep 6 step2          J   2918.8  (true LP blind   2728.8, hybrid   2613.3)  solves 26 fails 0 cpu 11s churn 0.201  11s
+ep 7 step2          J   1447.2  (true LP blind   1294.8, hybrid   1253.4)  solves 26 fails 0 cpu 8s churn 0.192  9s
+ep 7 weekly         J   1423.7  (true LP blind   1294.8, hybrid   1253.4)  solves 52 fails 0 cpu 16s churn 0.156  16s
+ep 6 weekly         J   2897.3  (true LP blind   2728.8, hybrid   2613.3)  solves 52 fails 0 cpu 20s churn 0.194  21s
+
+| ep | hybrid | true_lp | {1} | {1,27} | {1,14,27,40} | step4 | step2 | weekly |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 0 | 1857.5 | 1838.9 | 2027.4 | 1950.2 | 1872.5 | 1843.2 | 1846.7 | 1840.0 |
+| 1 | 3147.0 | 3385.2 | 3389.6 | 3384.0 | 3382.8 | 3364.3 | 3369.6 | 3371.0 |
+| 2 | 2193.1 | 2266.2 | 2379.7 | 2278.3 | 2277.0 | 2251.8 | 2287.6 | 2280.8 |
+| 3 | 1205.7 | 1580.8 | 1611.7 | 1611.0 | 1609.6 | 1604.5 | 1591.2 | 1593.7 |
+| 4 | 1303.4 | 1293.0 | 1417.1 | 1404.5 | 1373.2 | 1344.6 | 1337.4 | 1338.7 |
+| 5 | 3096.9 | 3075.1 | 3075.5 | 3076.7 | 3076.1 | 3062.3 | 3058.2 | 3055.8 |
+| 6 | 2613.3 | 2728.8 | 3217.4 | 3020.5 | 2976.7 | 2910.6 | 2918.8 | 2897.3 |
+| 7 | 1253.4 | 1294.8 | 1401.1 | 1404.3 | 1397.2 | 1405.7 | 1447.2 | 1423.7 |
+| mean | 2083.8 | 2182.9 | 2314.9 | 2266.2 | 2245.6 | 2223.4 | 2232.1 | 2225.1 |
+| RSS | 0.8515 | 0.7344 | 0.6454 | 0.6772 | 0.6912 | 0.7102 | 0.7028 | 0.7074 |
+  {1}            - true LP blind  +132.1 +-  55.9 (median  +109.9);  - hybrid  +231.1 +-  68.2;  solves/ep 1, cpu/solve 0.65s, churn 0.000
+  {1,27}         - true LP blind   +83.3 +-  34.7 (median   +69.8);  - hybrid  +182.4 +-  55.0;  solves/ep 2, cpu/solve 0.43s, churn 0.623
+  {1,14,27,40}   - true LP blind   +62.8 +-  29.6 (median   +31.2);  - hybrid  +161.8 +-  55.8;  solves/ep 4, cpu/solve 0.33s, churn 0.507
+  step4          - true LP blind   +40.5 +-  25.4 (median   +14.0);  - hybrid  +139.6 +-  54.9;  solves/ep 13, cpu/solve 0.27s, churn 0.231
+  step2          - true LP blind   +49.2 +-  27.7 (median   +15.8);  - hybrid  +148.3 +-  54.3;  solves/ep 26, cpu/solve 0.27s, churn 0.205
+  weekly         - true LP blind   +42.3 +-  24.5 (median   +13.7);  - hybrid  +141.3 +-  53.7;  solves/ep 52, cpu/solve 0.26s, churn 0.176
+  floor diag: ep6 weekly - true_lp: total +168.4; tariff -1.5, shortage +95.0, disposal -2.9, shed +78.1 | by band (all comps): 1-13 +8.9, 14-26 +5.1, 27-39 +76.4, 40-52 +78.6
+  floor diag: ep6 {1} - true_lp: total +488.5; tariff -1.1, shortage +129.5, shed +360.3 | by band (all comps): 1-13 +15.9, 14-26 +64.6, 27-39 +202.7, 40-52 +205.3
+  floor diag:    weekly churn first weeks [0.14, 0.06, 0.09, 0.09, 0.12, 0.17, 0.16, 0.16, 0.18, 0.29, 0.23, 0.19]
+  floor diag: ep7 weekly - true_lp: total +128.9; shortage +83.8, shed +45.4 | by band (all comps): 1-13 -5.8, 14-26 +23.6, 27-39 +18.4, 40-52 +92.7
+  floor diag: ep7 {1} - true_lp: total +106.3; tariff +2.6, queue_holding +1.2, shortage +57.3, shed +44.9 | by band (all comps): 1-13 -13.3, 14-26 +14.4, 27-39 +31.8, 40-52 +73.5
+  floor diag:    weekly churn first weeks [0.18, 0.04, 0.09, 0.1, 0.14, 0.25, 0.11, 0.13, 0.09, 0.14, 0.19, 0.16]
+  floor diag: ep4 weekly - true_lp: total +45.7; shortage +11.2, shed +34.9 | by band (all comps): 1-13 -5.0, 14-26 +7.6, 27-39 -27.7, 40-52 +71.0
+  floor diag: ep4 {1} - true_lp: total +124.1; shortage +95.0, shed +28.5 | by band (all comps): 1-13 +2.5, 14-26 +1.3, 27-39 +2.1, 40-52 +118.3
+  floor diag:    weekly churn first weeks [0.08, 0.23, 0.23, 0.08, 0.11, 0.23, 0.14, 0.22, 0.21, 0.03, 0.01, 0.11]
