@@ -38,7 +38,7 @@ def pick_lane(inst, obs):
     return None
 
 
-def play(n, delta, lanes, w0, w1, valve_too):
+def play(n, delta, lanes, w0, w1, valve_too, strict_weeks=0, stock_lt=0.0):
     import gymnasium as gym
     import shockbench_flow_gym  # noqa: F401
     from shockbench_flow_agent.convert import agent_config
@@ -54,16 +54,24 @@ def play(n, delta, lanes, w0, w1, valve_too):
     valve = next(s for s, (e, k, lane) in enumerate(inst.action_slots)
                  if inst.edges[e].id.endswith("term_kr.grid_kr") and inst.commodities[k].id == "lng")
     ag = load(AGENT)(agent_config(info["static"], info["policy_seed"], u.layout, obs))
-    done, t = False, 1
+    nid = {nd.id: i for i, nd in enumerate(inst.nodes)}
+    gk_lng = next(i for i, st in enumerate(inst.stock_slots)
+                  if st.node == nid["grid_kr"] and inst.commodities[st.k].id == "lng")
+    done, t, cut_run, fired = False, 1, 0, 0
     while not done:
         a = {k: np.array(v, copy=True) for k, v in ag.act(obs).items()}
+        if lanes == ("auto",):
+            want = pick_lane(inst, obs)
+            cut_run = cut_run + 1 if want else 0
         if lanes == ("auto",) and w0 <= t <= w1 and delta > 0:
             mask = np.asarray(obs["action_mask"]) == 1
-            want = pick_lane(inst, obs)
+            # strict gate: the cut must have persisted and KR must actually be starving (stock under rationing)
+            armed = cut_run >= strict_weeks and (stock_lt <= 0.0 or float(obs["stock.qty"][gk_lng]) < stock_lt)
             for s in range(len(inst.action_slots)):
                 lane = inst.action_slots[s][2]
-                if want and lane is not None and inst.lanes[lane].id == want and mask[s]:
+                if armed and want and lane is not None and inst.lanes[lane].id == want and mask[s]:
                     a["flows"][s] += delta
+                    fired += 1
         elif w0 <= t <= w1 and delta > 0:
             mask = np.asarray(obs["action_mask"]) == 1
             for s in slots:
@@ -78,6 +86,7 @@ def play(n, delta, lanes, w0, w1, valve_too):
     kr_f = next(i for i, f in enumerate(inst.fabs) if inst.nodes[f].id == "fab_kr_memory_1")
     lng = [c.id for c in inst.commodities].index("lng")
     return dict(
+        fired=fired,
         J=u.core._ep.traj.J_cents / 1e11,
         shortage=sum(r.costs.shortage for r in recs) / 1e9,
         shed=sum(r.costs.shed for r in recs) / 1e9,
@@ -87,21 +96,23 @@ def play(n, delta, lanes, w0, w1, valve_too):
 
 
 def main(eps, deltas="0,250,500,750", lanes="lane.src_qa_lng.term_kr.lombok", w0: int = 10, w1: int = 39,
-         valve_too: bool = False) -> None:
+         valve_too: bool = False, strict_weeks: int = 0, stock_lt: float = 0.0) -> None:
     which = [int(e) for e in eps] if isinstance(eps, (list, tuple)) else [int(e) for e in str(eps).split(",")]
     ds = [float(d) for d in deltas] if isinstance(deltas, (list, tuple)) else [float(d) for d in str(deltas).split(",")]
     ln = tuple(lanes) if isinstance(lanes, (list, tuple)) else tuple(str(lanes).split(","))
-    print(f"lanes {ln}, weeks {w0}-{w1}, valve too: {valve_too}; dJ = hub - variant (positive = better), bn/ep")
+    print(f"lanes {ln}, weeks {w0}-{w1}, valve too: {valve_too}, strict_weeks {strict_weeks}, stock_lt {stock_lt}; "
+          f"dJ = hub - variant (positive = better), bn/ep")
     tot = {d: [] for d in ds}
     for n in which:
         base = None
         row = f"{n:3d}"
         for d in ds:
-            r = play(n, d, ln, w0, w1, valve_too)
+            r = play(n, d, ln, w0, w1, valve_too, strict_weeks, stock_lt)
             if base is None:
                 base = r
             tot[d].append(base["J"] - r["J"])
-            row += (f" | +{d:.0f}: dJ {base['J'] - r['J']:+6.1f} (short {r['shortage'] - base['shortage']:+6.1f}, shed "
+            row += (f" | +{d:.0f}: dJ {base['J'] - r['J']:+6.1f} (fired {r['fired']:2d}, short "
+                    f"{r['shortage'] - base['shortage']:+6.1f}, shed "
                     f"{r['shed'] - base['shed']:+6.1f}, KR lots {r['kr_lots'] - base['kr_lots']:+.2f} M, KR burn "
                     f"{r['kr_burn'] - base['kr_burn']:+6.0f})")
         print(row, flush=True)
