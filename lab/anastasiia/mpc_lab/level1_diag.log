@@ -604,3 +604,300 @@ KR-deficit episodes (bf starts > a by 10% of capacity x 40 weeks at fab_kr_memor
     L2-3 (20 ep) 133.1 = 43.6 [>=32.1] + 89.5 [<=100.9]. Excess L1 +67.9 = relaxation +44.5 + reachable +23.4.
     Reachable excess = KR-deficit episodes (strait-cut Malacca/Hormuz/Taiwan): 61.8 of 112.9 on L1 vs 37.6 of 89.5.
     Write-up: lab/anastasiia/mpc_lab/reports/level1.md
+=== Wed Oct  7 15:19:18 UTC 2026 PROBE A (KR gas sources), base-first MILP tl=150, n_jobs=1 ===
+ep45: hub 3694.9  plan 3456.1 (status 1, gap 0.0255)
+ep57: hub 837.9  plan 647.0 (status 1, gap 0.0198)
+ep61: hub 2590.7  plan 2350.1 (status 1, gap 0.0324)
+ep26: hub 1905.5  plan 1623.3 (status 1, gap 0.0293)
+ep38: hub 963.1  plan 735.0 (status 0, gap 0.0000)
+ep23: hub 3001.7  plan 2888.1 (status 1, gap 0.0229)
+ep32: hub 3937.4  plan 3868.9 (status 1, gap 0.0211)
+ep33: hub 3391.5  plan 3281.1 (status 1, gap 0.0442)
+=== Wed Oct  7 15:40:23 UTC 2026 PROBE B (LSF on KR gas + Hormuz/Malacca lng releases), budget 10000 / 900 s, n_jobs=1 ===
+episodes [23, 26, 32, 33, 38, 45, 57, 61]: lng GWh per episode, plan - hub by week band 1-13 / 14-26 / 27-39 / 40-52 (hub total)
+  Qatar dispatch (all lanes)               -16354    -2690    -9826    -7536   |   -36407  (hub   185334)
+  Hormuz -> Malacca (TW+KR lanes)           -7101    -3408    -2814    -1584   |   -14908  (hub    70384)
+  Hormuz -> Taiwan (KR lombok bypass)        4982     5491     2855     -603   |    12725  (hub    18038)
+  Hormuz -> term_tw (TW lombok)               997     -341    -2170    -1572   |    -3086  (hub    31485)
+  Malacca -> Taiwan (KR main)               -2375    -2913    -2502    -2973   |   -10763  (hub    19703)
+  Malacca -> term_kr (KR east bypass)        1208      342      369    -1232   |      688  (hub    16460)
+  Malacca -> term_tw                        -2578    -1924    -1001     1007   |    -4496  (hub    35095)
+  Taiwan -> term_kr (KR main+lombok)         2724     2461     1135    -1876   |     4445  (hub    36184)
+  Australia -> term_kr                          0        0        0     -723   |     -723  (hub    11686)
+  Australia -> term_jp                          0        0        0    -6905   |    -6905  (hub   117564)
+  term_kr -> grid_kr (valve)                 3398     3050     2044    -1349   |     7143  (hub    69866)
+  KR lng burned                             -1204     4661     5107     -352   |     8213
+  Qatar dispatch by lane, plan - hub (hub total):
+    lane.src_qa_lng.term_tw                 31550    32982    31501    19771   |   115803  (hub    33123)
+    lane.src_qa_lng.term_kr                 -4610    -5392    -4729    -4179   |   -18910  (hub    18910)
+    lane.src_qa_lng.term_eu                -19384   -11986   -14363    -8599   |   -54332  (hub    54332)
+    lane.src_qa_lng.term_eu.cape            -4641    -2893    -3441    -2073   |   -13048  (hub    13048)
+    lane.src_qa_lng.term_tw.lombok          -8783    -8079    -9147    -5212   |   -31221  (hub    31221)
+    lane.src_qa_lng.term_kr.lombok          -4766    -3732    -5749    -3897   |   -18145  (hub    18145)
+    lane.src_qa_lng.term_kr.east            -5720    -3591    -3897    -3346   |   -16555  (hub    16555)
+  lng queue at straits, mean over weeks (plan / hub) and stock at term_kr, grid_kr:
+    chk_hormuz   plan        0   hub      220
+    chk_malacca  plan        0   hub     2198
+    chk_taiwan   plan        0   hub     1111
+    term_kr      plan     3559   hub     3033
+    grid_kr      plan     3350   hub     1216
+
+  Visibility (weeks 1-45): plan's extra flow over the hub on each KR-bound edge, split by whether it fits
+  under the capacity an agent saw at dispatch time (u_now at week t - lead, lead = weeks from Qatar/AU to this edge),
+  under the true capacity only, or neither (plan used queue release capacity / other):
+    Hormuz -> Malacca (TW+KR lanes)        extra     3317  visible 100.0%  true-only   0.0%  other   0.0%
+    Hormuz -> Taiwan (KR lombok bypass)    extra    15140  visible 100.0%  true-only   0.0%  other   0.0%
+    Hormuz -> term_tw (TW lombok)          extra     3009  visible 100.0%  true-only   0.0%  other   0.0%
+    Malacca -> Taiwan (KR main)            extra     1049  visible 100.0%  true-only   0.0%  other   0.0%
+    Malacca -> term_kr (KR east bypass)    extra     3626  visible  97.0%  true-only   3.0%  other   0.0%
+    Malacca -> term_tw                     extra     1783  visible  99.2%  true-only   0.8%  other   0.0%
+    Taiwan -> term_kr (KR main+lombok)     extra     8460  visible  99.9%  true-only   0.1%  other  -0.0%
+
+  Capacity seen vs true on KR edges, mean over weeks 14-39 (u_now at t-lead / u at t / hub flow / plan flow):
+    Hormuz -> Malacca (TW+KR lanes)            4724     4724     1379     1140
+    Hormuz -> Taiwan (KR lombok bypass)        1266     1265      359      680
+    Hormuz -> term_tw (TW lombok)               821      820      669      572
+    Malacca -> Taiwan (KR main)                1932     1954      413      205
+    Malacca -> term_kr (KR east bypass)         507      508      302      330
+    Malacca -> term_tw                         1283     1297      712      600
+    Taiwan -> term_kr (KR main+lombok)         1248     1246      770      908
+    Australia -> term_kr                       1820     1820      228      228
+
+  Strait tanker throughput, weeks 14-39 (kappa_now at t-1 / kappa at t):
+    chk_hormuz       6842     6862
+    chk_malacca      3347     3323
+    chk_taiwan       2820     2840
+
+  per episode: plan - hub KR lng burned (GWh), AU->KR, Taiwan->KR, Malacca->KR, Hormuz->Taiwan; MILP gap
+     23     1628        0    -1530    -1452     -783   0.0229
+     26    16358        0     6040     6755    40226   0.0293
+     32     2801        0    -5290     3781     9023   0.0211
+     33     5033        0     4801      232     6754   0.0442
+     38     -715    -5784    -2440      677     -658   0.0000
+     45    18799        0    14529     -248    14391   0.0255
+     57     7499        0     3800    -1722    17474   0.0198
+     61    14301        0    15650    -2521    15372   0.0324
+--- note (probe A): plan's extra KR lng burn +8.2k GWh/ep (wk14-39 +9.8k). Comes from the Lombok bypass Hormuz->Taiwan->term_kr
+    (+12.7k; hub uses 359 of 1266/wk visible capacity in wk14-39, plan 680) while the plan avoids Malacca->Taiwan (-10.8k) and
+    keeps no gas in strait queues (hub: Malacca 2.2k, Taiwan 1.1k, Hormuz 0.2k on average). ~100% of plan's extra flow on every
+    KR edge fits under the capacity visible at dispatch (u_now = u in wk14-39). Capacity-wise honest-reachable.
+[ep 45] dJ 3.83 bn, 188 moves, 3992 replays, 141 s
+[ep 26] dJ 37.83 bn, 269 moves, 2920 replays, 113 s
+[ep 61] dJ 3.59 bn, 143 moves, 4471 replays, 174 s
+[ep 57] dJ 5.73 bn, 75 moves, 4694 replays, 177 s
+[ep 38] dJ 6.02 bn, 65 moves, 4396 replays, 198 s
+[ep 23] dJ 1.06 bn, 124 moves, 3398 replays, 145 s
+[ep 32] dJ 1.30 bn, 77 moves, 3495 replays, 137 s
+[ep 33] dJ 0.01 bn, 36 moves, 2043 replays, 59 s
+ ep   dJ bn moves replays  secs   shortage / shed change, bn   KR lng burned change GWh
+ 45    3.83   188    3992   141      +0.0 /    -3.5
+ 26   37.83   269    2920   113      +0.0 /   -38.0
+ 61    3.59   143    4471   174      +0.0 /    -3.3
+ 57    5.73    75    4694   177      +0.0 /    -5.7
+ 38    6.02    65    4396   198      +0.0 /    -6.1
+ 23    1.06   124    3398   145      +0.0 /    -0.9
+ 32    1.30    77    3495   137      +0.0 /    -0.8
+ 33    0.01    36    2043    59      +0.0 /    -0.0
+mean dJ 7.42 bn/episode (median 3.71); target 61.8 per L1 episode = 193 per KR-deficit episode
+by kind: order 820 moves 5.72 bn/ep; valve 137 moves 1.48 bn/ep; override 20 moves 0.22 bn/ep
+by what: sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_kr.lombok] 209 moves 3.30 bn/ep; tg.tb.term_kr.grid_kr 137 moves 1.48 bn/ep; sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_kr.east] 277 moves 1.30 bn/ep; sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_kr] 334 moves 1.12 bn/ep; chk_malacca east.tb.chk_malacca.term_kr 4 moves 0.19 bn/ep; chk_malacca sea.tb.chk_malacca.chk_taiwan 5 moves 0.02 bn/ep; chk_hormuz sea.tb.chk_hormuz.chk_malacca 11 moves 0.00 bn/ep
+by week band: 1-13 266 moves 4.36 bn/ep; 14-26 309 moves 1.22 bn/ep; 27-39 273 moves 1.57 bn/ep; 40-52 129 moves 0.28 bn/ep
+by move: x1.5 183 3.48; set635 8 1.27; set500 28 0.64; shift-1 65 0.51; shift+1 286 0.42; drop 68 0.22; half-1 38 0.18; x2 6 0.15; set392 2 0.12; half 33 0.11; half+1 211 0.11; set203 1 0.07; set217 3 0.07; shift+2 19 0.02; move0.5->15 3 0.02; shift-2 7 0.01; set98 5 0.01; move1.0->15 1 0.00; move0.5->5 4 0.00; x0.0 4 0.00; x0.5 2 0.00
+=== Wed Oct  7 16:07:25 UTC 2026 PROBE B wide (all Qatar/AU lng lanes) ===
+=== Wed Oct  7 16:07:25 UTC 2026 closed loop: hub + probe B KR gas schedule ===
+ep  hub J | open-loop probe B J (dJ) | closed loop: hub + probe B KR gas J (dJ), shortage / shed change, KR lots wk1-40 (M)
+ 45   3694.9 |   3691.1 (   3.8) |   3715.8 ( -20.9),  +15.4 /   +6.0, KR lots 4.36
+ 26   1905.5 |   1867.7 (  37.8) |   1862.7 (  42.8),  -19.4 /  -23.2, KR lots 4.20
+ 61   2590.7 |   2587.1 (   3.6) |   2605.3 ( -14.6),   +0.3 /  +14.7, KR lots 6.47
+ 57    837.9 |    832.1 (   5.7) |    896.3 ( -58.4),  +36.6 /  +22.4, KR lots 4.71
+ 38    963.1 |    957.1 (   6.0) |    945.9 (  17.2),   +0.4 /  -17.7, KR lots 4.87
+ 23   3001.7 |   3000.6 (   1.1) |   3036.7 ( -35.1),  +30.4 /   +4.9, KR lots 3.04
+ 32   3937.4 |   3936.1 (   1.3) |   3960.5 ( -23.1),  +16.6 /   +6.5, KR lots 3.71
+ 33   3391.5 |   3391.5 (   0.0) |   3411.9 ( -20.4),  +23.9 /   -3.6, KR lots 1.11
+=== Wed Oct  7 16:21:25 UTC 2026 PROBE B +wafers to fab_kr_memory_1 (narrow KR gas + KR wafers) ===
+--- wide variant stopped after 2 episodes (45: 4.77, 26: 37.98 vs narrow 3.83, 37.83) to free the core for paired order+valve moves
+=== Wed Oct  7 16:22:21 UTC 2026 PROBE B pair (KR orders + matching term_kr valve opening as one move) ===
+=== Wed Oct  7 16:33:50 UTC 2026 closed-loop regime probe: +delta/wk on KR lombok lane, weeks 10-39 (hub reacts) ===
+lanes ('lane.src_qa_lng.term_kr.lombok',), weeks 10-39, valve too: False; dJ = hub - variant (positive = better), bn/ep
+ 23 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -5.7 (short   +5.7, shed   -0.1, KR lots -0.11 M, KR burn  -2674) | +500: dJ  -12.1 (short  +12.3, shed   -0.3, KR lots -0.24 M, KR burn  -2874) | +750: dJ  -35.5 (short  +12.3, shed  +23.0, KR lots -0.24 M, KR burn  -3741) | +1000: dJ  -70.4 (short  +12.3, shed  +57.8, KR lots -0.24 M, KR burn  -4278)
+ 26 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  +10.6 (short   +0.0, shed  -10.8, KR lots +0.01 M, KR burn  +2308) | +500: dJ  +47.0 (short  -33.3, shed  -14.4, KR lots +0.67 M, KR burn  +4054) | +750: dJ  +55.8 (short  -37.0, shed  -19.4, KR lots +0.83 M, KR burn  +5212) | +1000: dJ  +24.0 (short   +4.3, shed  -27.7, KR lots -0.08 M, KR burn  +5850)
+ 32 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -2.3 (short   +1.0, shed   +0.7, KR lots -0.02 M, KR burn    -83) | +500: dJ  -12.7 (short  +11.0, shed   +0.8, KR lots -0.22 M, KR burn    -13) | +750: dJ   -8.9 (short   +3.5, shed   +4.2, KR lots -0.07 M, KR burn   -438) | +1000: dJ  -12.9 (short   +5.8, shed   +5.7, KR lots -0.11 M, KR burn   -748)
+ 33 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -2.7 (short   +2.9, shed   -0.1, KR lots +0.30 M, KR burn  +7275) | +500: dJ   -7.2 (short   +5.9, shed   +1.2, KR lots +0.91 M, KR burn +14775) | +750: dJ  -24.2 (short  +23.6, shed   -0.2, KR lots +1.22 M, KR burn +22275) | +1000: dJ  -46.4 (short  +49.8, shed   -4.6, KR lots +1.22 M, KR burn +29377)
+ 38 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +6.2 (short   +7.7, shed  -14.4, KR lots -0.00 M, KR burn   +179) | +500: dJ  -47.1 (short  +53.0, shed   -6.2, KR lots -0.97 M, KR burn  -2350) | +750: dJ  -69.3 (short  +60.1, shed   +8.7, KR lots -0.97 M, KR burn  -5669) | +1000: dJ  -77.5 (short  +51.6, shed  +25.4, KR lots -1.04 M, KR burn  -8109)
+ 45 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  +12.3 (short  -12.9, shed   +0.6, KR lots +0.26 M, KR burn  +2155) | +500: dJ  +11.9 (short  -14.9, shed   +2.7, KR lots +0.30 M, KR burn  +3234) | +750: dJ  +13.1 (short  -22.1, shed   +5.7, KR lots +0.55 M, KR burn  +5759) | +1000: dJ  -10.6 (short   +4.8, shed   +3.8, KR lots -0.10 M, KR burn  +7785)
+ 57 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -7.0 (short   +3.5, shed   +3.5, KR lots -0.01 M, KR burn  +2441) | +500: dJ   +0.6 (short   -2.6, shed   +1.6, KR lots -0.03 M, KR burn  +1706) | +750: dJ   -9.5 (short   -8.5, shed  +17.9, KR lots +0.10 M, KR burn   -164) | +1000: dJ  -24.7 (short   -1.6, shed  +26.5, KR lots -0.02 M, KR burn  -2001)
+ 61 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +9.3 (short   +1.6, shed  -10.9, KR lots -0.04 M, KR burn  +1273) | +500: dJ  +15.0 (short   -5.9, shed   -9.3, KR lots -0.30 M, KR burn    +53) | +750: dJ   -1.9 (short   +4.6, shed   -2.6, KR lots -0.52 M, KR burn  -1498) | +1000: dJ   +5.4 (short   -2.6, shed   -2.7, KR lots -0.36 M, KR burn   -852)
+mean dJ: +0: +0.0 (better in 0/8), +250: +2.6 (better in 4/8), +500: -0.6 (better in 4/8), +750: -10.1 (better in 2/8), +1000: -26.6 (better in 2/8)
+=== Wed Oct  7 16:47:19 UTC 2026 closed-loop regime probe, lane picked from the visible cut (auto) ===
+lanes ('auto',), weeks 10-39, valve too: False; dJ = hub - variant (positive = better), bn/ep
+ 23 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +4.4 (short   -9.0, shed   +4.3, KR lots +0.18 M, KR burn   +685) | +500: dJ   -7.2 (short   +5.1, shed   +2.1, KR lots -0.10 M, KR burn   +859)
+ 26 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  +10.9 (short   -0.3, shed  -10.8, KR lots +0.01 M, KR burn  +2308) | +500: dJ  +47.2 (short  -33.7, shed  -14.4, KR lots +0.67 M, KR burn  +4054)
+ 32 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  +15.5 (short  -17.2, shed   +1.2, KR lots +0.34 M, KR burn  +3286) | +500: dJ  +16.0 (short  -18.1, shed   +1.6, KR lots +0.36 M, KR burn  +3904)
+ 33 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +500: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+ 38 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  +24.6 (short   +1.1, shed  -25.9, KR lots +0.00 M, KR burn  +3948) | +500: dJ  -17.8 (short  +36.6, shed  -19.5, KR lots -0.80 M, KR burn  +6297)
+ 45 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  +12.3 (short  -12.9, shed   +0.6, KR lots +0.26 M, KR burn  +2155) | +500: dJ  +11.9 (short  -14.9, shed   +2.7, KR lots +0.30 M, KR burn  +3234)
+ 57 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -7.0 (short   +3.5, shed   +3.5, KR lots -0.01 M, KR burn  +2441) | +500: dJ   +0.6 (short   -2.6, shed   +1.6, KR lots -0.03 M, KR burn  +1706)
+ 61 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +9.3 (short   +1.6, shed  -10.9, KR lots -0.04 M, KR burn  +1273) | +500: dJ  +15.0 (short   -5.9, shed   -9.3, KR lots -0.30 M, KR burn    +53)
+mean dJ: +0: +0.0 (better in 0/8), +250: +8.7 (better in 6/8), +500: +8.2 (better in 5/8)
+=== Wed Oct  7 16:54:56 UTC 2026 auto rule +250 on the other 56 episodes of 111 x64 (safety / trigger rate) ===
+== --pair
+ ep   dJ bn moves replays  secs   shortage / shed change, bn   KR lng burned change GWh
+ 45    5.42   211    5440   192      +0.0 /    -5.1      +3814
+ 26   36.99   300    3484   141      +0.0 /   -37.2     +10151
+ 61    4.55   102    6562   255      +0.0 /    -4.3      +1488
+ 57    5.97    93    7168   275      +0.1 /    -6.0      +2270
+ 38   10.58   141    6423   303      +0.0 /   -10.9      +6338
+ 23    1.90   203    4019   165      +0.0 /    -1.8       +603
+ 32    1.30    77    5295   179      +0.0 /    -0.8       +237
+ 33    0.60    99    2996    79      +0.0 /    -0.6      +1109
+mean dJ 8.41 bn/episode (median 4.99); target 61.8 per L1 episode = 193 per KR-deficit episode
+by kind: order 1053 moves 7.89 bn/ep; valve 141 moves 0.29 bn/ep; override 32 moves 0.23 bn/ep
+by what: sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_kr.lombok] 266 moves 4.35 bn/ep; sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_kr.east] 395 moves 2.16 bn/ep; sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_kr] 389 moves 1.39 bn/ep; tg.tb.term_kr.grid_kr 141 moves 0.29 bn/ep; chk_malacca east.tb.chk_malacca.term_kr 5 moves 0.18 bn/ep; chk_hormuz sea.tb.chk_hormuz.chk_malacca 14 moves 0.02 bn/ep; chk_malacca sea.tb.chk_malacca.chk_taiwan 10 moves 0.02 bn/ep; sea.tb.src_au_lng.term_kr 3 moves 0.00 bn/ep; chk_malacca sea.tb.chk_malacca.term_tw 3 moves 0.00 bn/ep
+== --wafers
+ ep   dJ bn moves replays  secs   shortage / shed change, bn   KR lng burned change GWh
+ 45    4.39   460    8312   311      +0.0 /    -3.4      +1268
+ 26   39.00   393    5699   222      +0.0 /   -38.4     +10234
+ 61    4.50   233    7189   288      +0.0 /    -4.2      +1375
+ 57    6.58   243    9251   342      +0.0 /    -6.1      +1856
+mean dJ 13.62 bn/episode (median 5.54); target 61.8 per L1 episode = 193 per KR-deficit episode
+by kind: order 536 moves 9.75 bn/ep; valve 105 moves 2.87 bn/ep; wafer 671 moves 0.77 bn/ep; override 17 moves 0.23 bn/ep
+by what: sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_kr.lombok] 144 moves 5.44 bn/ep; tg.tb.term_kr.grid_kr 105 moves 2.87 bn/ep; sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_kr] 195 moves 2.29 bn/ep; sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_kr.east] 197 moves 2.02 bn/ep; sea.ct.mat_jp_wafer.fab_kr_memory_1 149 moves 0.20 bn/ep; sea.ct.mat_ua_neon.chk_turkish [lane.mat_ua_neon.fab_kr_memory_1.cape] 55 moves 0.18 bn/ep; chk_malacca east.tb.chk_malacca.term_kr 3 moves 0.18 bn/ep; sea.ct.mat_ua_neon.chk_turkish [lane.mat_ua_neon.fab_kr_memory_1.lombok] 76 moves 0.16 bn/ep; sea.ct.mat_ua_neon.chk_turkish [lane.mat_ua_neon.fab_kr_memory_1] 130 moves 0.09 bn/ep; sea.ct.mat_ua_neon.chk_turkish [lane.mat_ua_neon.fab_kr_memory_1.east] 93 moves 0.09 bn/ep; air.ct.mat_jp_wafer.fab_kr_memory_1 138 moves 0.04 bn/ep; chk_malacca sea.tb.chk_malacca.chk_taiwan 7 moves 0.04 bn/ep; chk_hormuz sea.tb.chk_hormuz.chk_malacca 6 moves 0.01 bn/ep; air.ct.mat_ua_neon.fab_kr_memory_1 30 moves 0.01 bn/ep; chk_hormuz lombok.tb.chk_hormuz.chk_taiwan 1 moves 0.00 bn/ep
+by week band: 1-13 464 moves 7.54 bn/ep; 14-26 456 moves 3.02 bn/ep; 27-39 317 moves 2.38 bn/ep; 40-52 92 moves 0.67 bn/ep
+by move: x1.5 206 7.42; set500 18 1.54; shift-1 64 1.03; set635 5 0.96; drop 154 0.55; shift+1 399 0.50; half 53 0.38; half+1 174 0.30; set871 1 0.26; half-1 37 0.22; set91498 4 0.16; set98 5 0.15; shift+2 184 0.04; move0.5->15 3 0.04; shift-2 6 0.03; set352 1 0.02; x0.5 3 0.01; set75486 1 0.00; set22874 5 0.00; x0.0 3 0.00; set18871 1 0.00; move0.5->5 1 0.00; move1.0->15 1 0.00
+== --wide
+ ep   dJ bn moves replays  secs   shortage / shed change, bn   KR lng burned change GWh
+ 45    4.77   516    7961   279      +0.0 /    -3.5      +2789
+ 26   37.98   367    7205   275      +0.0 /   -38.1     +10165
+ 61    7.46   245    8961   322      +0.0 /    -7.0      +2584
+mean dJ 16.74 bn/episode (median 7.46); target 61.8 per L1 episode = 193 per KR-deficit episode
+by kind: order 529 moves 12.36 bn/ep; valve 94 moves 2.85 bn/ep; other 492 moves 1.29 bn/ep; override 13 moves 0.24 bn/ep
+by what: sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_kr.lombok] 150 moves 7.61 bn/ep; tg.tb.term_kr.grid_kr 94 moves 2.85 bn/ep; sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_kr.east] 174 moves 2.39 bn/ep; sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_kr] 205 moves 2.36 bn/ep; sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_tw] 159 moves 0.62 bn/ep; sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_tw.lombok] 54 moves 0.33 bn/ep; sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_eu] 151 moves 0.29 bn/ep; chk_malacca sea.tb.chk_malacca.chk_taiwan 6 moves 0.21 bn/ep; sea.tb.src_qa_lng.chk_hormuz [lane.src_qa_lng.term_eu.cape] 128 moves 0.05 bn/ep; chk_hormuz sea.tb.chk_hormuz.chk_malacca 6 moves 0.02 bn/ep; chk_malacca east.tb.chk_malacca.term_kr 1 moves 0.00 bn/ep
+by week band: 1-13 312 moves 10.23 bn/ep; 14-26 350 moves 3.47 bn/ep; 27-39 328 moves 2.84 bn/ep; 40-52 138 moves 0.20 bn/ep
+by move: x1.5 158 7.60; set500 20 2.12; set635 5 2.05; shift+1 469 1.25; drop 115 0.92; shift-1 33 0.77; half+1 219 0.39; set871 1 0.35; set98 6 0.34; half 34 0.31; shift+2 26 0.25; half-1 25 0.17; move0.5->15 2 0.08; set88 1 0.05; shift-2 7 0.03; set352 1 0.02; x0.5 1 0.01; move0.5->2 1 0.01; x2 1 0.00; set196 2 0.00; x0.0 1 0.00
+lanes ('auto',), weeks 10-39, valve too: False; dJ = hub - variant (positive = better), bn/ep
+  0 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  -16.7 (short  +14.0, shed   +3.1, KR lots +0.13 M, KR burn  -1053)
+  1 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +3.1 (short   +0.0, shed   -3.2, KR lots +0.01 M, KR burn  +2983)
+  2 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -6.2 (short   +1.8, shed   +4.5, KR lots +0.00 M, KR burn   -288)
+  3 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  -11.5 (short   +9.5, shed   +1.4, KR lots -0.20 M, KR burn  -2473)
+  4 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -4.2 (short   +0.0, shed   +4.2, KR lots +0.00 M, KR burn   +639)
+  5 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +6.1 (short   -7.5, shed   +1.3, KR lots +0.15 M, KR burn  +2477)
+  6 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+  7 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +2.6 (short   +0.0, shed   -3.1, KR lots +0.26 M, KR burn  +2354)
+  8 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +6.3 (short   -0.0, shed   -6.4, KR lots +0.00 M, KR burn  +3090)
+  9 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -1.5 (short   +3.0, shed   -1.5, KR lots -0.20 M, KR burn    -63)
+ 10 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -1.3 (short   -2.2, shed   +3.4, KR lots +0.00 M, KR burn  +3310)
+ 11 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  +14.2 (short   +2.4, shed  -16.6, KR lots +0.00 M, KR burn  +3382)
+ 12 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -0.2 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn  -1160)
+ 13 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  +15.5 (short  -15.7, shed   -0.3, KR lots +0.00 M, KR burn  +1422)
+ 14 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +1.0 (short   -1.0, shed   +0.1, KR lots +0.02 M, KR burn    +30)
+ 15 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -1.2 (short   -0.0, shed   +1.2, KR lots +0.00 M, KR burn   +333)
+ 16 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +1.7 (short   -7.1, shed   +5.6, KR lots +0.14 M, KR burn  +3274)
+ 17 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  +38.3 (short  -30.6, shed   -7.6, KR lots +0.61 M, KR burn  +7105)
+ 18 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +7.1 (short   -9.3, shed   +1.3, KR lots +0.32 M, KR burn   -319)
+ 19 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+ 20 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +2.2 (short   +0.2, shed   -2.5, KR lots -0.05 M, KR burn   +321)
+ 21 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+ 22 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +0.1 (short   +0.0, shed   -0.2, KR lots +0.00 M, KR burn   -346)
+ 24 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  -11.4 (short   +0.0, shed  +11.3, KR lots +0.00 M, KR burn  -3833)
+ 25 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +8.7 (short   -0.1, shed   -8.3, KR lots +0.05 M, KR burn  +4219)
+ 27 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -0.0 (short   -0.1, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+ 28 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -3.5 (short   +0.0, shed   +3.3, KR lots -0.00 M, KR burn   -596)
+ 29 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -2.9 (short   +3.0, shed   -0.1, KR lots -0.06 M, KR burn   -318)
+ 30 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+ 31 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -0.6 (short   +0.0, shed   +0.6, KR lots +0.00 M, KR burn   -574)
+ 34 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  -17.0 (short   +0.0, shed  +17.1, KR lots +0.00 M, KR burn     +0)
+ 35 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  +12.4 (short   -7.5, shed   -5.1, KR lots +0.19 M, KR burn  +3561)
+ 36 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +8.7 (short  -12.0, shed   +3.7, KR lots +0.00 M, KR burn  +2544)
+ 37 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -0.0 (short   +0.0, shed   -0.0, KR lots +0.00 M, KR burn    -13)
+ 39 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  -10.6 (short   -1.1, shed  +11.5, KR lots +0.00 M, KR burn  -2197)
+ 40 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+ 41 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -0.7 (short   +0.0, shed   +0.8, KR lots +0.00 M, KR burn    +52)
+ 42 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+ 43 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+ 44 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+ 46 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+ 47 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +3.8 (short   +0.0, shed   -2.1, KR lots -1.30 M, KR burn   -714)
+ 48 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -3.9 (short   +0.0, shed   +3.8, KR lots +0.00 M, KR burn     +0)
+ 49 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -1.0 (short   +0.7, shed   +0.2, KR lots -0.01 M, KR burn  +2268)
+ 50 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +0.6 (short   -2.2, shed   +1.6, KR lots +0.05 M, KR burn   -140)
+ 51 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  -10.1 (short   +0.0, shed  +12.2, KR lots -0.57 M, KR burn   +505)
+ 52 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -8.9 (short   +0.1, shed   +8.8, KR lots +0.00 M, KR burn   +446)
+ 53 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -0.4 (short   -0.0, shed   +0.3, KR lots +0.00 M, KR burn  -1352)
+ 54 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -0.4 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn   +339)
+ 55 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +5.6 (short   -0.0, shed   -6.1, KR lots +0.16 M, KR burn  +4359)
+ 56 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+ 58 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -0.8 (short  -10.3, shed  +11.1, KR lots +0.20 M, KR burn  -3365)
+ 59 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  -58.7 (short  +65.1, shed   -5.9, KR lots -1.03 M, KR burn  +2442)
+ 60 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -1.7 (short   +0.0, shed   +1.7, KR lots +0.00 M, KR burn     +0)
+ 62 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +7.6 (short   +0.1, shed   -7.8, KR lots -0.04 M, KR burn  +2877)
+ 63 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  -28.0 (short  +12.1, shed  +15.9, KR lots -0.30 M, KR burn  -2871)
+mean dJ: +0: +0.0 (better in 0/56), +250: -1.0 (better in 19/56)
+lanes ('auto',), weeks 10-39, valve too: False; dJ = hub - variant (positive = better), bn/ep
+  0 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  -16.7 (short  +14.0, shed   +3.1, KR lots +0.13 M, KR burn  -1053)
+  1 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +3.1 (short   +0.0, shed   -3.2, KR lots +0.01 M, KR burn  +2983)
+  2 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -6.2 (short   +1.8, shed   +4.5, KR lots +0.00 M, KR burn   -288)
+  3 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  -11.5 (short   +9.5, shed   +1.4, KR lots -0.20 M, KR burn  -2473)
+  4 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -4.2 (short   +0.0, shed   +4.2, KR lots +0.00 M, KR burn   +639)
+  5 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +6.1 (short   -7.5, shed   +1.3, KR lots +0.15 M, KR burn  +2477)
+  6 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+  7 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +2.6 (short   +0.0, shed   -3.1, KR lots +0.26 M, KR burn  +2354)
+  8 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +6.3 (short   -0.0, shed   -6.4, KR lots +0.00 M, KR burn  +3090)
+  9 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -1.5 (short   +3.0, shed   -1.5, KR lots -0.20 M, KR burn    -63)
+ 10 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -1.3 (short   -2.2, shed   +3.4, KR lots +0.00 M, KR burn  +3310)
+ 11 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  +14.2 (short   +2.4, shed  -16.6, KR lots +0.00 M, KR burn  +3382)
+ 12 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -0.2 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn  -1160)
+ 13 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  +15.5 (short  -15.7, shed   -0.3, KR lots +0.00 M, KR burn  +1422)
+ 14 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +1.0 (short   -1.0, shed   +0.1, KR lots +0.02 M, KR burn    +30)
+ 15 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -1.2 (short   -0.0, shed   +1.2, KR lots +0.00 M, KR burn   +333)
+ 16 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +1.7 (short   -7.1, shed   +5.6, KR lots +0.14 M, KR burn  +3274)
+ 17 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  +38.3 (short  -30.6, shed   -7.6, KR lots +0.61 M, KR burn  +7105)
+ 18 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +7.1 (short   -9.3, shed   +1.3, KR lots +0.32 M, KR burn   -319)
+ 19 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+ 20 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +2.2 (short   +0.2, shed   -2.5, KR lots -0.05 M, KR burn   +321)
+ 21 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+ 22 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +0.1 (short   +0.0, shed   -0.2, KR lots +0.00 M, KR burn   -346)
+ 24 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  -11.4 (short   +0.0, shed  +11.3, KR lots +0.00 M, KR burn  -3833)
+ 25 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +8.7 (short   -0.1, shed   -8.3, KR lots +0.05 M, KR burn  +4219)
+ 27 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -0.0 (short   -0.1, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+ 28 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -3.5 (short   +0.0, shed   +3.3, KR lots -0.00 M, KR burn   -596)
+ 29 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -2.9 (short   +3.0, shed   -0.1, KR lots -0.06 M, KR burn   -318)
+ 30 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+ 31 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -0.6 (short   +0.0, shed   +0.6, KR lots +0.00 M, KR burn   -574)
+ 34 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  -17.0 (short   +0.0, shed  +17.1, KR lots +0.00 M, KR burn     +0)
+ 35 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  +12.4 (short   -7.5, shed   -5.1, KR lots +0.19 M, KR burn  +3561)
+ 36 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +8.7 (short  -12.0, shed   +3.7, KR lots +0.00 M, KR burn  +2544)
+ 37 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -0.0 (short   +0.0, shed   -0.0, KR lots +0.00 M, KR burn    -13)
+ 39 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  -10.6 (short   -1.1, shed  +11.5, KR lots +0.00 M, KR burn  -2197)
+ 40 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+ 41 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -0.7 (short   +0.0, shed   +0.8, KR lots +0.00 M, KR burn    +52)
+ 42 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+ 43 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+ 44 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+ 46 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+ 47 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +3.8 (short   +0.0, shed   -2.1, KR lots -1.30 M, KR burn   -714)
+ 48 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -3.9 (short   +0.0, shed   +3.8, KR lots +0.00 M, KR burn     +0)
+ 49 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -1.0 (short   +0.7, shed   +0.2, KR lots -0.01 M, KR burn  +2268)
+ 50 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +0.6 (short   -2.2, shed   +1.6, KR lots +0.05 M, KR burn   -140)
+ 51 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  -10.1 (short   +0.0, shed  +12.2, KR lots -0.57 M, KR burn   +505)
+ 52 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -8.9 (short   +0.1, shed   +8.8, KR lots +0.00 M, KR burn   +446)
+ 53 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -0.4 (short   -0.0, shed   +0.3, KR lots +0.00 M, KR burn  -1352)
+ 54 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -0.4 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn   +339)
+ 55 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +5.6 (short   -0.0, shed   -6.1, KR lots +0.16 M, KR burn  +4359)
+ 56 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0)
+ 58 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -0.8 (short  -10.3, shed  +11.1, KR lots +0.20 M, KR burn  -3365)
+ 59 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  -58.7 (short  +65.1, shed   -5.9, KR lots -1.03 M, KR burn  +2442)
+ 60 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   -1.7 (short   +0.0, shed   +1.7, KR lots +0.00 M, KR burn     +0)
+ 62 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ   +7.6 (short   +0.1, shed   -7.8, KR lots -0.04 M, KR burn  +2877)
+ 63 | +0: dJ   +0.0 (short   +0.0, shed   +0.0, KR lots +0.00 M, KR burn     +0) | +250: dJ  -28.0 (short  +12.1, shed  +15.9, KR lots -0.30 M, KR burn  -2871)
+mean dJ: +0: +0.0 (better in 0/56), +250: -1.0 (better in 19/56)
+auto rule +250, root 111 x64 episodes: 64 changed: 51
+  L1: n 25 mean dJ +4.39 bn/ep (SE 1.60), better 14, worse 5
+  L2: n 25 mean dJ -2.99 bn/ep (SE 3.04), better 5, worse 13
+  L3: n 8 mean dJ -1.80 bn/ep (SE 4.92), better 5, worse 3
+  L4: n 6 mean dJ -1.40 bn/ep (SE 0.73), better 1, worse 5
+  board-weighted RSS change +0.0010, 90% interval -0.0013 .. +0.0032
+  the other 56 alone: mean -1.03 bn/ep, better 19, worse 25
+--- VERDICT (17:35 UTC): (c). Probe A: plan's KR gas rides visible, persistent capacity (Lombok bypass, no strait queues,
+    grid_kr stock above the ration threshold). Probe B: LSF on KR gas slots 7.4 bn/ep (pair 8.4; +competitors / +KR wafers
+    a few bn more), shed only, vs 193 target; open-loop schedule in closed loop -14.1. State rule (+250/wk on the bypass the
+    visible cut calls for, wk 10-39): +8.7 on the 8 episodes, -1.0 on the other 56; board +0.0010 (-0.0013..+0.0032). Closed.
