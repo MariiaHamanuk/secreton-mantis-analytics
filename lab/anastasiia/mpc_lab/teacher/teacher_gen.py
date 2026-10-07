@@ -61,7 +61,9 @@ def configure(task, entropy):
 
 
 def out_dir(task, entropy):
-    return os.path.join(ROOT, "outputs", "teacher", f"{task}_{entropy}")
+    # TEACHER_MEASURE reaches the joblib workers through the environment (a global would not survive the spawn)
+    prefix = "measure_" if os.environ.get("TEACHER_MEASURE") else ""
+    return os.path.join(ROOT, "outputs", "teacher", f"{prefix}{task}_{entropy}")
 
 
 def logline(msg):
@@ -303,9 +305,15 @@ def summary_of(path):
 
 # ----- CLI ------------------------------------------------------------------------------------------------------------
 def generate(task="small", entropy=555, episodes=32, start=0, tl=60, gap=1e-3, rounds=8, ls_budget=5000, ls_secs=3600,
-             order="kind", rules="base,fuel,lots", n_jobs=2):
-    """Episodes start..start+episodes-1 of (task, entropy); an episode whose ep<n>.npz exists is skipped."""
-    if int(entropy) in RESERVED:
+             order="kind", rules="base,fuel,lots", n_jobs=2, measure=False):
+    """Episodes start..start+entropy-1 of (task, entropy); an episode whose ep<n>.npz exists is skipped.
+
+    ``measure`` allows a reserved root (e.g. 111) for CEILING MEASUREMENT ONLY: the output goes to a separate
+    measure_<task>_<entropy>/ folder and must never be used as training data.
+    """
+    if measure:
+        os.environ["TEACHER_MEASURE"] = "1"
+    if int(entropy) in RESERVED and not measure:
         raise ValueError(f"root {entropy} is reserved (0/111/222/333/444): training data must not overlap them")
     os.makedirs(out_dir(task, entropy), exist_ok=True)
     if isinstance(rules, (tuple, list)):
