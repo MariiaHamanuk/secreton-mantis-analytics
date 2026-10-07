@@ -27,3 +27,42 @@
   full 111 x16 (first 12 in the search), program limit lifted on both (solve_share 100): hub 0.8756, tuned 0.8820,
     +0.0065 (+0.0023 to +0.0113), levels 0.906/0.858/0.863/- vs 0.902/0.846/0.857/-, cheaper in 10/16
   proxy (program off) had predicted small +0.006 %, full +0.408 % of cost; the real hub: small -0.055 %, full +0.218 %
+[17:22:47] out-of-sample full 16..47 root 111: outputs/rl_lab/hub_cem/eval/hub_tuned_nolimit vs outputs/rl_lab/hub_cem/eval/hub_nolimit, 64 plays left
+  full ep  16: base 4055120490332.75 agent 4043396596589.13 -> +0.2891% (win), workers 2
+  full ep  17: base 6219049302124.37 agent 6161572753672.80 -> +0.9242% (win), workers 2
+  full ep  18: base 9024793033586.62 agent 9051092357128.88 -> -0.2914% (loss), workers 2
+  full ep  19: base 6326369409155.64 agent 6357835100249.60 -> -0.4974% (loss), workers 2
+  full ep  20: base 3485503727307.91 agent 3503289352536.00 -> -0.5103% (loss), workers 1
+  full ep  21: base 3851651332202.25 agent 3856487911230.60 -> -0.1256% (loss), workers 1
+  full ep  22: base 10748390316572.16 agent 10736755743216.14 -> +0.1082% (win), workers 1
+  full ep  23: base 4425279652839.49 agent 4426466796908.50 -> -0.0268% (loss), workers 1
+  full ep  24: base 2656017828264.84 agent 2655242442588.00 -> +0.0292% (win), workers 1
+  full ep  25: base 6369068461728.70 agent 6403498950079.36 -> -0.5406% (loss), workers 1
+  full ep  26: base 7325664164311.54 agent 7310923986390.19 -> +0.2012% (win), workers 1
+  full ep  27: base 4099089923316.54 agent 4073922509936.78 -> +0.6140% (win), workers 1
+  full ep  28: base 5490441742040.58 agent 5487029284545.56 -> +0.0622% (win), workers 1
+  full ep  29: base 10649095105907.09 agent 10690981368843.27 -> -0.3933% (loss), workers 1
+  full ep  30: base 6170706447351.19 agent 6178248335741.82 -> -0.1222% (loss), workers 1
+  full ep  31: base 7213469922736.12 agent 7225546118902.09 -> -0.1674% (loss), workers 1
+  full ep  32: base 12513132458278.64 agent 12506062155926.47 -> +0.0565% (win), workers 1
+  full ep  33: base 4019920742129.50 agent 4019508755098.11 -> +0.0102% (win), workers 1
+  full ep  34: base 4853893706912.61 agent 4773623327553.78 -> +1.6537% (win), workers 1
+  full ep  35: base 8800365381254.96 agent 8771555030498.26 -> +0.3274% (win), workers 1
+  full ep  36: base 2542047621208.88 agent 2539791153453.28 -> +0.0888% (win), workers 1
+  full ep  37: base 3956804790429.36 agent 3914893629202.25 -> +1.0592% (win), workers 1
+  full ep  38: base 4035841103123.72 agent 4047325776362.96 -> -0.2846% (loss), workers 1
+  full ep  39: base 6286449335767.30 agent 6331677330507.60 -> -0.7195% (loss), workers 1
+  full ep  40: base 6161393501303.49 agent 6157244519050.34 -> +0.0673% (win), workers 1
+  full ep  41: base 8174597916965.54 agent 8174178544532.83 -> +0.0051% (win), workers 1
+[19:26:49] out-of-sample full 16..47 root 111: outputs/rl_lab/hub_cem/eval/hub_tuned_nolimit vs outputs/rl_lab/hub_cem/eval/hub_nolimit, 12 plays left
+  full ep  42: base 7658252368160.38 agent 7717506930977.89 -> -0.7737% (loss), workers 2
+  full ep  43: base 3989732186056.16 agent 3997043037390.22 -> -0.1832% (loss), workers 2
+  full ep  44: base 6483297812544.90 agent 6489661587758.16 -> -0.0982% (loss), workers 1
+  full ep  45: base 5644689416911.54 agent 5643316360297.87 -> +0.0243% (win), workers 1
+  full ep  46: base 3523530137266.63 agent 3533291884817.79 -> -0.2770% (loss), workers 1
+  full ep  47: base 7998052507733.81 agent 7985642943452.87 -> +0.1552% (win), workers 1
+[20:45] out-of-sample full 16..47 scored with the committed references (generator id 7113ffee..; same episodes, harms
+  and naive as the current id 7740c882.., oracle within cents), package bootstrap: base 0.8556, agent 0.8563,
+  paired +0.0007 (-0.0016 to +0.0030), cheaper in 17/32, mean cost +0.021 % +- 0.089 % (se), total cost -0.007 %;
+  harm levels present 1:15 2:6 3:10 4:1; by level base .882/.845/.796/.851, agent .882/.849/.793/.841
+  verdict: the Full x16 gain (+0.0065, 12 of 16 in the search) does not hold out of sample: it was selection
