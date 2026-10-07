@@ -1,0 +1,280 @@
+2026-10-07 04:47:37 [pid 1443] generate small root 555 episodes 0..31: tl 60 gap 0.001 rounds 8 rules base,fuel,lots ls_budget 5000 order kind n_jobs 2
+2026-10-07 04:47:38 [pid 1456] [small 555 ep 1] start
+2026-10-07 04:47:39 [pid 1455] [small 555 ep 0] start
+2026-10-07 04:47:39 [pid 1455] [small 555 ep 0] plan loaded from stage: claimed 353553591657792 played 360080667963313 (no_incumbent_round_3)
+2026-10-07 04:47:47 [pid 1456] [small 555 ep 1] round 0: binaries on 0/0 grid/osat-weeks, new violations 75/20, gap 0.0, claimed 600.559 played 748.829 bn, 2s
+2026-10-07 04:48:11 [pid 1456] [small 555 ep 1] round 1: binaries on 75/20 grid/osat-weeks, new violations 5/13, gap 0.0003143193612806258, claimed 600.764 played 610.796 bn, 21s
+2026-10-07 04:48:33 [pid 1455] [small 555 ep 0] LS replays 1000 accepted 68 J 3598.496 bn (dJ 2.311) 50s
+2026-10-07 04:49:15 [pid 1456] [small 555 ep 1] round 2: binaries on 80/33 grid/osat-weeks, new violations 0/7, gap 0.012111877082647817, claimed 607.959 played 614.218 bn, 60s
+2026-10-07 04:49:20 [pid 1455] [small 555 ep 0] LS replays 2000 accepted 135 J 3594.499 bn (dJ 6.307) 98s
+2026-10-07 04:49:47 [pid 1455] [small 555 ep 0] LS replays 3000 accepted 147 J 3588.928 bn (dJ 11.879) 125s
+2026-10-07 04:50:18 [pid 1456] [small 555 ep 1] round 3: binaries on 80/40 grid/osat-weeks, new violations 0/8, gap 0.01193177607877861, claimed 607.848 played 615.654 bn, 60s
+2026-10-07 04:50:22 [pid 1455] [small 555 ep 0] LS replays 4000 accepted 165 J 3588.833 bn (dJ 11.974) 160s
+2026-10-07 04:51:02 [pid 1455] [small 555 ep 0] LS replays 5000 accepted 174 J 3588.819 bn (dJ 11.988) 200s
+2026-10-07 04:51:02 [pid 1455] [small 555 ep 0] LS done: J 3600.807 -> 3588.819 bn (dJ 11.988), 174 moves, 5000 replays, 181 cpu s
+2026-10-07 04:51:09 [pid 1455] [small 555 ep 0] SAVED 0.1 MB: claimed 3535.536 played 3600.807 teacher 3588.819 bn | RSS-episode claimed 0.6986 played 0.6537 teacher 0.6619 | 210s
+2026-10-07 04:51:09 [pid 1455] [small 555 ep 2] start
+2026-10-07 04:51:16 [pid 1455] [small 555 ep 2] round 0: binaries on 0/0 grid/osat-weeks, new violations 96/26, gap 0.0, claimed 2788.011 played 2848.664 bn, 1s
+2026-10-07 04:51:23 [pid 1456] [small 555 ep 1] round 4: binaries on 80/48 grid/osat-weeks, new violations 0/2, gap 0.014493214344587509, claimed 609.398 played 609.584 bn, 60s
+2026-10-07 04:52:20 [pid 1455] [small 555 ep 2] round 1: binaries on 96/26 grid/osat-weeks, new violations 6/30, gap 0.00433013347711119, claimed 2801.291 played 2836.263 bn, 60s
+2026-10-07 04:52:27 [pid 1456] [small 555 ep 1] round 5: binaries on 80/50 grid/osat-weeks, new violations 0/2, gap 0.014659523670316702, claimed 609.464 played 611.009 bn, 60s
+2026-10-07 04:53:23 [pid 1455] [small 555 ep 2] round 2: binaries on 102/56 grid/osat-weeks, new violations 2/17, gap 0.001177693212527792, claimed 2795.110 played 2833.952 bn, 60s
+2026-10-07 04:53:30 [pid 1456] [small 555 ep 1] round 6: binaries on 80/52 grid/osat-weeks, new violations 0/1, gap 0.01435883833889212, claimed 609.386 played 614.554 bn, 60s
+2026-10-07 04:54:27 [pid 1455] [small 555 ep 2] round 3: binaries on 104/73 grid/osat-weeks, new violations 2/1, gap 0.003739265183959403, claimed 2802.091 played 2834.816 bn, 60s
+2026-10-07 04:54:34 [pid 1456] [small 555 ep 1] round 7: binaries on 80/53 grid/osat-weeks, new violations 0/0, gap 0.012133874687160552, claimed 607.901 played 607.627 bn, 61s
+2026-10-07 04:54:34 [pid 1456] [small 555 ep 1] MILP converged: chose round 7 of 8: claimed J 607.901 bn, played J 607.627 bn, gap 0.012133874687160552, 415s
+2026-10-07 04:55:23 [pid 1456] [small 555 ep 1] LS replays 1000 accepted 19 J 606.023 bn (dJ 1.604) 46s
+2026-10-07 04:55:30 [pid 1455] [small 555 ep 2] round 4: binaries on 106/74 grid/osat-weeks, new violations 0/3, gap 0.3804380333397495, claimed 4439.130 played 2834.633 bn, 60s
+2026-10-07 04:56:10 [pid 1456] [small 555 ep 1] LS replays 2000 accepted 24 J 605.971 bn (dJ 1.656) 93s
+2026-10-07 04:56:33 [pid 1455] [small 555 ep 2] round 5: binaries on 106/77 grid/osat-weeks, new violations 0/2, gap 0.0037972556527419384, claimed 2803.878 played 2833.240 bn, 60s
+2026-10-07 04:57:03 [pid 1456] [small 555 ep 1] LS replays 3000 accepted 56 J 604.609 bn (dJ 3.018) 146s
+2026-10-07 04:57:36 [pid 1455] [small 555 ep 2] round 6: binaries on 106/79 grid/osat-weeks, new violations 0/3, gap 0.00418797778215923, claimed 2804.933 played 2833.286 bn, 60s
+2026-10-07 04:57:38 [pid 1456] [small 555 ep 1] LS replays 4000 accepted 59 J 604.609 bn (dJ 3.018) 181s
+2026-10-07 04:58:28 [pid 1456] [small 555 ep 1] LS replays 5000 accepted 63 J 604.586 bn (dJ 3.041) 230s
+2026-10-07 04:58:28 [pid 1456] [small 555 ep 1] LS done: J 607.627 -> 604.586 bn (dJ 3.041), 63 moves, 5000 replays, 210 cpu s
+2026-10-07 04:58:39 [pid 1455] [small 555 ep 2] round 7: binaries on 106/82 grid/osat-weeks, new violations 0/2, gap 0.00418803992558326, claimed 2804.932 played 2833.810 bn, 60s
+2026-10-07 04:58:45 [pid 1456] [small 555 ep 1] SAVED 0.2 MB: claimed 607.901 played 607.627 teacher 604.586 bn | RSS-episode claimed 0.9962 played 0.9963 teacher 0.9979 | 666s
+2026-10-07 04:58:45 [pid 1456] [small 555 ep 3] start
+2026-10-07 04:58:53 [pid 1456] [small 555 ep 3] round 0: binaries on 0/0 grid/osat-weeks, new violations 119/38, gap 0.0, claimed 1533.111 played 1891.658 bn, 1s
+2026-10-07 04:59:42 [pid 1455] [small 555 ep 2] round 8: binaries on 106/84 grid/osat-weeks, new violations 0/4, gap 0.004300660076165311, claimed 2804.932 played 2831.397 bn, 60s
+2026-10-07 04:59:42 [pid 1455] [small 555 ep 2] MILP round_cap: chose round 8 of 9: claimed J 2804.932 bn, played J 2831.397 bn, gap 0.004300660076165311, 513s
+2026-10-07 04:59:56 [pid 1456] [small 555 ep 3] round 1: binaries on 119/38 grid/osat-weeks, new violations 6/13, gap 0.013913432253692364, claimed 1593.895 played 1634.097 bn, 60s
+2026-10-07 05:00:19 [pid 1455] [small 555 ep 2] LS replays 1000 accepted 31 J 2816.176 bn (dJ 15.221) 34s
+2026-10-07 05:00:48 [pid 1455] [small 555 ep 2] LS replays 2000 accepted 35 J 2816.176 bn (dJ 15.221) 64s
+2026-10-07 05:00:59 [pid 1456] [small 555 ep 3] round 2: binaries on 125/51 grid/osat-weeks, new violations 2/9, gap 0.0095565316544076, claimed 1587.702 played 1611.686 bn, 60s
+2026-10-07 05:01:24 [pid 1455] [small 555 ep 2] LS replays 3000 accepted 46 J 2815.288 bn (dJ 16.109) 100s
+2026-10-07 05:01:50 [pid 1455] [small 555 ep 2] LS replays 4000 accepted 58 J 2815.284 bn (dJ 16.114) 125s
+2026-10-07 05:02:03 [pid 1456] [small 555 ep 3] round 3: binaries on 127/60 grid/osat-weeks, new violations 2/4, gap 0.008515534504591773, claimed 1587.701 played 1600.651 bn, 60s
+2026-10-07 05:02:28 [pid 1455] [small 555 ep 2] LS replays 5000 accepted 81 J 2811.076 bn (dJ 20.321) 163s
+2026-10-07 05:02:28 [pid 1455] [small 555 ep 2] LS done: J 2831.397 -> 2811.076 bn (dJ 20.321), 81 moves, 5000 replays, 152 cpu s
+2026-10-07 05:02:43 [pid 1455] [small 555 ep 2] SAVED 0.1 MB: claimed 2804.932 played 2831.397 teacher 2811.076 bn | RSS-episode claimed 0.9123 played 0.7755 teacher 0.8805 | 694s
+2026-10-07 05:02:43 [pid 1455] [small 555 ep 4] start
+2026-10-07 05:02:50 [pid 1455] [small 555 ep 4] round 0: binaries on 0/0 grid/osat-weeks, new violations 117/50, gap 0.0, claimed 2996.604 played 3291.392 bn, 1s
+2026-10-07 05:03:06 [pid 1456] [small 555 ep 3] round 4: binaries on 129/64 grid/osat-weeks, new violations 0/4, gap 0.015048802180608011, claimed 1599.055 played 1624.190 bn, 60s
+2026-10-07 05:03:53 [pid 1455] [small 555 ep 4] round 1: binaries on 117/50 grid/osat-weeks, new violations 15/23, gap 0.019209625691717636, claimed 3070.511 played 3156.099 bn, 60s
+2026-10-07 05:04:10 [pid 1456] [small 555 ep 3] round 5: binaries on 129/68 grid/osat-weeks, new violations 0/7, gap 0.01367302985086228, claimed 1596.417 played 1626.105 bn, 60s
+2026-10-07 05:04:56 [pid 1455] [small 555 ep 4] round 2: binaries on 132/73 grid/osat-weeks, new violations 8/13, gap 0.017403781707823272, claimed 3092.094 played 3133.822 bn, 60s
+2026-10-07 05:05:13 [pid 1456] [small 555 ep 3] round 6: binaries on 129/75 grid/osat-weeks, new violations 0/6, gap 0.031394251126331804, claimed 1623.303 played 1662.279 bn, 60s
+2026-10-07 05:05:59 [pid 1455] [small 555 ep 4] round 3: binaries on 140/86 grid/osat-weeks, new violations 5/8, gap 0.025135102396724358, claimed 3122.516 played 3165.581 bn, 60s
+2026-10-07 05:06:16 [pid 1456] [small 555 ep 3] round 7: binaries on 129/81 grid/osat-weeks, new violations 0/3, gap 0.011345206089720524, claimed 1593.011 played 1612.756 bn, 60s
+2026-10-07 05:07:03 [pid 1455] [small 555 ep 4] round 4: binaries on 145/94 grid/osat-weeks, new violations 4/5, gap 0.02788519962240741, claimed 3129.563 played 3158.187 bn, 60s
+2026-10-07 05:07:21 [pid 1456] [small 555 ep 3] round 8: binaries on 129/84 grid/osat-weeks, new violations 0/8, gap 0.0074600044154508605, claimed 1584.685 played 1612.840 bn, 60s
+2026-10-07 05:07:21 [pid 1456] [small 555 ep 3] MILP round_cap: chose round 3 of 9: claimed J 1587.701 bn, played J 1600.651 bn, gap 0.008515534504591773, 515s
+2026-10-07 05:08:06 [pid 1455] [small 555 ep 4] round 5: binaries on 149/99 grid/osat-weeks, new violations 1/3, gap 0.04663507672946789, claimed 3190.080 played 3124.072 bn, 60s
+2026-10-07 05:08:13 [pid 1456] [small 555 ep 3] LS replays 1000 accepted 26 J 1599.022 bn (dJ 1.630) 49s
+2026-10-07 05:08:49 [pid 1456] [small 555 ep 3] LS replays 2000 accepted 58 J 1596.894 bn (dJ 3.757) 85s
+2026-10-07 05:09:10 [pid 1455] [small 555 ep 4] round 6: binaries on 150/102 grid/osat-weeks, new violations 2/5, gap 0.029422480319464067, claimed 3135.220 played 3161.274 bn, 60s
+2026-10-07 05:09:19 [pid 1456] [small 555 ep 3] LS replays 3000 accepted 61 J 1591.721 bn (dJ 8.930) 115s
+2026-10-07 05:09:46 [pid 1456] [small 555 ep 3] LS replays 4000 accepted 69 J 1591.708 bn (dJ 8.943) 143s
+2026-10-07 05:10:14 [pid 1455] [small 555 ep 4] round 7: binaries on 152/107 grid/osat-weeks, new violations 0/9, gap 0.013424162670513332, claimed 3086.765 played 3105.918 bn, 60s
+2026-10-07 05:10:29 [pid 1456] [small 555 ep 3] LS replays 5000 accepted 86 J 1591.181 bn (dJ 9.470) 185s
+2026-10-07 05:10:29 [pid 1456] [small 555 ep 3] LS done: J 1600.651 -> 1591.181 bn (dJ 9.470), 86 moves, 5000 replays, 182 cpu s
+2026-10-07 05:10:44 [pid 1456] [small 555 ep 3] SAVED 0.1 MB: claimed 1587.701 played 1600.651 teacher 1591.181 bn | RSS-episode claimed 0.9328 played 0.9169 teacher 0.9285 | 719s
+2026-10-07 05:10:44 [pid 1456] [small 555 ep 5] start
+2026-10-07 05:10:52 [pid 1456] [small 555 ep 5] round 0: binaries on 0/0 grid/osat-weeks, new violations 98/27, gap 0.0, claimed 2685.857 played 2953.199 bn, 1s
+2026-10-07 05:11:18 [pid 1455] [small 555 ep 4] round 8: binaries on 152/116 grid/osat-weeks, new violations 0/0, gap 0.014362497048528546, claimed 3089.709 played 3109.514 bn, 60s
+2026-10-07 05:11:18 [pid 1455] [small 555 ep 4] MILP converged: chose round 7 of 9: claimed J 3086.765 bn, played J 3105.918 bn, gap 0.013424162670513332, 515s
+2026-10-07 05:11:56 [pid 1456] [small 555 ep 5] round 1: binaries on 98/27 grid/osat-weeks, new violations 10/12, gap 0.08377665072646913, claimed 2922.075 played 2771.401 bn, 60s
+2026-10-07 05:12:14 [pid 1455] [small 555 ep 4] LS replays 1000 accepted 20 J 3104.018 bn (dJ 1.900) 52s
+2026-10-07 05:12:57 [pid 1455] [small 555 ep 4] LS replays 2000 accepted 63 J 3103.145 bn (dJ 2.774) 96s
+2026-10-07 05:12:59 [pid 1456] [small 555 ep 5] round 2: binaries on 108/39 grid/osat-weeks, new violations 4/21, gap 0.015075189610843708, claimed 2727.250 played 2803.687 bn, 60s
+2026-10-07 05:13:38 [pid 1455] [small 555 ep 4] LS replays 3000 accepted 120 J 3098.790 bn (dJ 7.129) 136s
+2026-10-07 05:14:03 [pid 1456] [small 555 ep 5] round 3: binaries on 112/60 grid/osat-weeks, new violations 1/4, gap 0.03680352978431999, claimed 2789.138 played 2822.772 bn, 60s
+2026-10-07 05:14:14 [pid 1455] [small 555 ep 4] LS replays 4000 accepted 124 J 3098.618 bn (dJ 7.301) 172s
+2026-10-07 05:14:49 [pid 1455] [small 555 ep 4] LS replays 5000 accepted 127 J 3098.616 bn (dJ 7.303) 207s
+2026-10-07 05:14:49 [pid 1455] [small 555 ep 4] LS done: J 3105.918 -> 3098.616 bn (dJ 7.303), 127 moves, 5000 replays, 203 cpu s
+2026-10-07 05:15:04 [pid 1455] [small 555 ep 4] SAVED 0.1 MB: claimed 3086.765 played 3105.918 teacher 3098.616 bn | RSS-episode claimed 0.8989 played 0.8774 teacher 0.8856 | 741s
+2026-10-07 05:15:04 [pid 1455] [small 555 ep 6] start
+2026-10-07 05:15:06 [pid 1456] [small 555 ep 5] round 4: binaries on 113/64 grid/osat-weeks, new violations 1/7, gap 0.03561260454781048, claimed 2785.673 played 2821.422 bn, 60s
+2026-10-07 05:15:13 [pid 1455] [small 555 ep 6] round 0: binaries on 0/0 grid/osat-weeks, new violations 83/48, gap 0.0, claimed 2980.228 played 3174.139 bn, 1s
+2026-10-07 05:16:09 [pid 1456] [small 555 ep 5] round 5: binaries on 114/71 grid/osat-weeks, new violations 0/7, gap 0.02893053938305409, claimed 2766.392 played 2793.706 bn, 60s
+2026-10-07 05:16:16 [pid 1455] [small 555 ep 6] round 1: binaries on 83/48 grid/osat-weeks, new violations 9/22, gap 0.00668381571189289, claimed 3008.322 played 3052.620 bn, 60s
+2026-10-07 05:17:13 [pid 1456] [small 555 ep 5] round 6: binaries on 114/78 grid/osat-weeks, new violations 0/3, gap 0.03803788323310698, claimed 2792.737 played 2813.434 bn, 60s
+2026-10-07 05:17:19 [pid 1455] [small 555 ep 6] round 2: binaries on 92/70 grid/osat-weeks, new violations 6/8, gap 0.0057384225701091985, claimed 3015.728 played 3043.822 bn, 60s
+2026-10-07 05:18:16 [pid 1456] [small 555 ep 5] round 7: binaries on 114/81 grid/osat-weeks, new violations 0/2, gap 0.022523035032940397, claimed 2748.153 played 2777.937 bn, 60s
+2026-10-07 05:18:22 [pid 1455] [small 555 ep 6] round 3: binaries on 98/78 grid/osat-weeks, new violations 4/3, gap 0.006292445028922879, claimed 3017.067 played 3041.779 bn, 60s
+2026-10-07 05:19:19 [pid 1456] [small 555 ep 5] round 8: binaries on 114/83 grid/osat-weeks, new violations 1/3, gap 0.021074919483314178, claimed 2744.064 played 2767.703 bn, 60s
+2026-10-07 05:19:19 [pid 1456] [small 555 ep 5] MILP round_cap: chose round 8 of 9: claimed J 2744.064 bn, played J 2767.703 bn, gap 0.021074919483314178, 515s
+2026-10-07 05:19:25 [pid 1455] [small 555 ep 6] round 4: binaries on 102/81 grid/osat-weeks, new violations 5/4, gap 0.008006360659844003, claimed 3020.570 played 3042.756 bn, 60s
+2026-10-07 05:20:03 [pid 1456] [small 555 ep 5] LS replays 1000 accepted 14 J 2767.512 bn (dJ 0.191) 41s
+2026-10-07 05:20:28 [pid 1455] [small 555 ep 6] round 5: binaries on 107/85 grid/osat-weeks, new violations 1/5, gap 0.006863404347797692, claimed 3018.112 played 3029.657 bn, 60s
+2026-10-07 05:20:34 [pid 1456] [small 555 ep 5] LS replays 2000 accepted 21 J 2764.268 bn (dJ 3.435) 73s
+2026-10-07 05:21:07 [pid 1456] [small 555 ep 5] LS replays 3000 accepted 21 J 2764.268 bn (dJ 3.435) 105s
+2026-10-07 05:21:31 [pid 1455] [small 555 ep 6] round 6: binaries on 108/90 grid/osat-weeks, new violations 0/1, gap 0.008595012173363614, claimed 3023.829 played 3046.905 bn, 60s
+2026-10-07 05:21:36 [pid 1456] [small 555 ep 5] LS replays 4000 accepted 50 J 2760.018 bn (dJ 7.685) 135s
+2026-10-07 05:22:12 [pid 1456] [small 555 ep 5] LS replays 5000 accepted 64 J 2759.587 bn (dJ 8.116) 171s
+2026-10-07 05:22:12 [pid 1456] [small 555 ep 5] LS done: J 2767.703 -> 2759.587 bn (dJ 8.116), 64 moves, 5000 replays, 159 cpu s
+2026-10-07 05:22:26 [pid 1456] [small 555 ep 5] SAVED 0.1 MB: claimed 2744.064 played 2767.703 teacher 2759.587 bn | RSS-episode claimed 0.9334 played 0.9064 teacher 0.9157 | 702s
+2026-10-07 05:22:26 [pid 1456] [small 555 ep 7] start
+2026-10-07 05:22:31 [pid 1456] [small 555 ep 7] round 0: binaries on 0/0 grid/osat-weeks, new violations 112/31, gap 0.0, claimed 2656.892 played 2963.941 bn, 1s
+2026-10-07 05:22:35 [pid 1455] [small 555 ep 6] round 7: binaries on 108/91 grid/osat-weeks, new violations 0/3, gap 0.012541951406997869, claimed 3036.305 played 3057.240 bn, 60s
+2026-10-07 05:23:36 [pid 1456] [small 555 ep 7] round 1: binaries on 112/31 grid/osat-weeks, new violations 7/23, gap 0.06588982795444413, claimed 2840.505 played 2767.748 bn, 62s
+2026-10-07 05:23:39 [pid 1455] [small 555 ep 6] round 8: binaries on 108/94 grid/osat-weeks, new violations 0/0, gap 0.013375937651944341, claimed 3038.600 played 3061.412 bn, 60s
+2026-10-07 05:23:39 [pid 1455] [small 555 ep 6] MILP converged: chose round 5 of 9: claimed J 3018.112 bn, played J 3029.657 bn, gap 0.006863404347797692, 514s
+2026-10-07 05:24:18 [pid 1455] [small 555 ep 6] LS replays 1000 accepted 29 J 3026.775 bn (dJ 2.882) 36s
+2026-10-07 05:24:39 [pid 1456] [small 555 ep 7] round 2: binaries on 119/54 grid/osat-weeks, new violations 6/12, gap 0.05949959804888039, claimed 2821.375 played 2760.671 bn, 60s
+2026-10-07 05:24:53 [pid 1455] [small 555 ep 6] LS replays 2000 accepted 99 J 3023.313 bn (dJ 6.344) 71s
+2026-10-07 05:25:27 [pid 1455] [small 555 ep 6] LS replays 3000 accepted 114 J 3019.633 bn (dJ 10.024) 105s
+2026-10-07 05:25:42 [pid 1456] [small 555 ep 7] round 3: binaries on 125/66 grid/osat-weeks, new violations 19/5, gap 0.06797921046573077, claimed 2849.205 played 2770.815 bn, 60s
+2026-10-07 05:26:01 [pid 1455] [small 555 ep 6] LS replays 4000 accepted 123 J 3018.882 bn (dJ 10.776) 139s
+2026-10-07 05:26:30 [pid 1455] [small 555 ep 6] LS replays 5000 accepted 134 J 3018.875 bn (dJ 10.783) 168s
+2026-10-07 05:26:30 [pid 1455] [small 555 ep 6] LS done: J 3029.657 -> 3018.875 bn (dJ 10.783), 134 moves, 5000 replays, 156 cpu s
+2026-10-07 05:26:45 [pid 1455] [small 555 ep 6] SAVED 0.1 MB: claimed 3018.112 played 3029.657 teacher 3018.875 bn | RSS-episode claimed 0.9677 played 0.9579 teacher 0.9671 | 701s
+2026-10-07 05:26:46 [pid 1455] [small 555 ep 8] start
+2026-10-07 05:26:46 [pid 1456] [small 555 ep 7] round 4: binaries on 144/71 grid/osat-weeks, new violations 3/8, gap 0.022447385533016395, claimed 2721.044 played 2756.187 bn, 60s
+2026-10-07 05:26:53 [pid 1455] [small 555 ep 8] round 0: binaries on 0/0 grid/osat-weeks, new violations 107/21, gap 0.0, claimed 1937.773 played 2497.020 bn, 2s
+2026-10-07 05:27:48 [pid 1456] [small 555 ep 7] round 5: binaries on 147/79 grid/osat-weeks, new violations 2/5, gap 0.07873052632094267, claimed 2880.715 played 2783.266 bn, 60s
+2026-10-07 05:27:56 [pid 1455] [small 555 ep 8] round 1: binaries on 107/21 grid/osat-weeks, new violations 39/3, gap 0.2672284653887569, claimed 2649.021 played 2608.531 bn, 60s
+2026-10-07 05:28:51 [pid 1456] [small 555 ep 7] round 6: binaries on 149/84 grid/osat-weeks, new violations 0/6, gap 0.029200714626113265, claimed 2739.157 played 2755.543 bn, 60s
+2026-10-07 05:28:59 [pid 1455] [small 555 ep 8] round 2: binaries on 146/24 grid/osat-weeks, new violations 9/14, gap 0.22228445889926082, claimed 2525.005 played 2492.442 bn, 60s
+2026-10-07 05:29:54 [pid 1456] [small 555 ep 7] round 7: binaries on 149/90 grid/osat-weeks, new violations 2/4, gap 0.03490242680657615, claimed 2755.384 played 2764.283 bn, 60s
+2026-10-07 05:30:02 [pid 1455] [small 555 ep 8] round 3: binaries on 155/38 grid/osat-weeks, new violations 0/4, gap 0.28580339663532883, claimed 2744.561 played 2526.597 bn, 60s
+2026-10-07 05:30:58 [pid 1456] [small 555 ep 7] round 8: binaries on 151/94 grid/osat-weeks, new violations 1/6, gap 0.03444608525925668, claimed 2754.176 played 2757.624 bn, 60s
+2026-10-07 05:30:58 [pid 1456] [small 555 ep 7] MILP round_cap: chose round 6 of 9: claimed J 2739.157 bn, played J 2755.543 bn, gap 0.029200714626113265, 511s
+2026-10-07 05:31:07 [pid 1455] [small 555 ep 8] round 4: binaries on 155/42 grid/osat-weeks, new violations 0/6, gap 0.20361990281081024, claimed 2469.402 played 2415.810 bn, 60s
+2026-10-07 05:31:50 [pid 1456] [small 555 ep 7] LS replays 1000 accepted 64 J 2749.798 bn (dJ 5.745) 50s
+2026-10-07 05:32:10 [pid 1455] [small 555 ep 8] round 5: binaries on 155/48 grid/osat-weeks, new violations 0/4, gap inf, claimed 2271.418 played 2246.859 bn, 60s
+2026-10-07 05:32:32 [pid 1456] [small 555 ep 7] LS replays 2000 accepted 131 J 2749.233 bn (dJ 6.310) 91s
+2026-10-07 05:33:04 [pid 1456] [small 555 ep 7] LS replays 3000 accepted 144 J 2747.963 bn (dJ 7.580) 124s
+2026-10-07 05:33:10 [pid 1455] [small 555 ep 8] round 6: no incumbent in 60s; stop
+2026-10-07 05:33:10 [pid 1455] [small 555 ep 8] MILP no_incumbent_round_6: chose round 5 of 6: claimed J 2271.418 bn, played J 2246.859 bn, gap inf, 384s
+2026-10-07 05:33:35 [pid 1456] [small 555 ep 7] LS replays 4000 accepted 149 J 2747.767 bn (dJ 7.775) 155s
+2026-10-07 05:33:57 [pid 1455] [small 555 ep 8] LS replays 1000 accepted 23 J 2231.749 bn (dJ 15.110) 45s
+2026-10-07 05:34:21 [pid 1456] [small 555 ep 7] LS replays 5000 accepted 198 J 2747.619 bn (dJ 7.924) 200s
+2026-10-07 05:34:21 [pid 1456] [small 555 ep 7] LS done: J 2755.543 -> 2747.619 bn (dJ 7.924), 198 moves, 5000 replays, 188 cpu s
+2026-10-07 05:34:36 [pid 1456] [small 555 ep 7] SAVED 0.1 MB: claimed 2739.157 played 2755.543 teacher 2747.619 bn | RSS-episode claimed 0.9422 played 0.9307 teacher 0.9363 | 730s
+2026-10-07 05:34:37 [pid 1456] [small 555 ep 9] start
+2026-10-07 05:34:40 [pid 1455] [small 555 ep 8] LS replays 2000 accepted 38 J 2231.679 bn (dJ 15.180) 88s
+2026-10-07 05:34:43 [pid 1456] [small 555 ep 9] round 0: binaries on 0/0 grid/osat-weeks, new violations 72/107, gap 0.0, claimed 3193.843 played 3243.735 bn, 1s
+2026-10-07 05:35:00 [pid 1456] [small 555 ep 9] round 1: binaries on 72/107 grid/osat-weeks, new violations 3/5, gap 4.8969392465734334e-05, claimed 3194.092 played 3242.552 bn, 14s
+2026-10-07 05:35:14 [pid 1456] [small 555 ep 9] round 2: binaries on 75/112 grid/osat-weeks, new violations 1/2, gap 2.972531221726807e-05, claimed 3194.085 played 3242.132 bn, 11s
+2026-10-07 05:35:19 [pid 1455] [small 555 ep 8] LS replays 3000 accepted 85 J 2228.710 bn (dJ 18.149) 127s
+2026-10-07 05:35:30 [pid 1456] [small 555 ep 9] round 3: binaries on 76/114 grid/osat-weeks, new violations 1/1, gap 3.252381968506251e-05, claimed 3194.094 played 3239.091 bn, 12s
+2026-10-07 05:35:40 [pid 1456] [small 555 ep 9] round 4: binaries on 77/115 grid/osat-weeks, new violations 0/0, gap 3.956048734066923e-05, claimed 3194.117 played 3241.242 bn, 7s
+2026-10-07 05:35:40 [pid 1456] [small 555 ep 9] MILP converged: chose round 3 of 5: claimed J 3194.094 bn, played J 3239.091 bn, gap 3.252381968506251e-05, 63s
+2026-10-07 05:35:51 [pid 1455] [small 555 ep 8] LS replays 4000 accepted 92 J 2228.485 bn (dJ 18.374) 159s
+2026-10-07 05:36:18 [pid 1456] [small 555 ep 9] LS replays 1000 accepted 20 J 3233.323 bn (dJ 5.767) 35s
+2026-10-07 05:36:25 [pid 1455] [small 555 ep 8] LS replays 5000 accepted 144 J 2228.004 bn (dJ 18.856) 192s
+2026-10-07 05:36:25 [pid 1455] [small 555 ep 8] LS done: J 2246.859 -> 2228.004 bn (dJ 18.856), 144 moves, 5000 replays, 184 cpu s
+2026-10-07 05:36:40 [pid 1455] [small 555 ep 8] SAVED 0.1 MB: claimed 2271.418 played 2246.859 teacher 2228.004 bn | RSS-episode claimed 0.7636 played 0.7810 teacher 0.7944 | 595s
+2026-10-07 05:36:41 [pid 1455] [small 555 ep 10] start
+2026-10-07 05:36:47 [pid 1455] [small 555 ep 10] round 0: binaries on 0/0 grid/osat-weeks, new violations 129/32, gap 0.0, claimed 2743.544 played 3194.499 bn, 1s
+2026-10-07 05:36:52 [pid 1456] [small 555 ep 9] LS replays 2000 accepted 26 J 3233.323 bn (dJ 5.768) 69s
+2026-10-07 05:37:36 [pid 1456] [small 555 ep 9] LS replays 3000 accepted 35 J 3233.320 bn (dJ 5.771) 113s
+2026-10-07 05:37:50 [pid 1455] [small 555 ep 10] round 1: binaries on 129/32 grid/osat-weeks, new violations 18/11, gap 0.3042167660892616, claimed 3977.512 played 2969.889 bn, 60s
+2026-10-07 05:38:12 [pid 1456] [small 555 ep 9] LS replays 4000 accepted 98 J 3232.658 bn (dJ 6.432) 149s
+2026-10-07 05:38:52 [pid 1455] [small 555 ep 10] round 2: binaries on 147/43 grid/osat-weeks, new violations 6/9, gap 0.0601678257902632, claimed 2986.387 played 3033.695 bn, 60s
+2026-10-07 05:38:53 [pid 1456] [small 555 ep 9] LS replays 5000 accepted 132 J 3231.572 bn (dJ 7.519) 190s
+2026-10-07 05:38:53 [pid 1456] [small 555 ep 9] LS done: J 3239.091 -> 3231.572 bn (dJ 7.519), 132 moves, 5000 replays, 179 cpu s
+2026-10-07 05:39:08 [pid 1456] [small 555 ep 9] SAVED 0.1 MB: claimed 3194.094 played 3239.091 teacher 3231.572 bn | RSS-episode claimed 0.9996 played 0.9448 teacher 0.9539 | 271s
+2026-10-07 05:39:08 [pid 1456] [small 555 ep 11] start
+2026-10-07 05:39:14 [pid 1456] [small 555 ep 11] round 0: binaries on 0/0 grid/osat-weeks, new violations 72/66, gap 0.0, claimed 2546.623 played 2732.008 bn, 1s
+2026-10-07 05:39:45 [pid 1456] [small 555 ep 11] round 1: binaries on 72/66 grid/osat-weeks, new violations 7/18, gap 0.0007545514336729264, claimed 2553.577 played 2577.330 bn, 29s
+2026-10-07 05:39:55 [pid 1455] [small 555 ep 10] round 3: binaries on 153/52 grid/osat-weeks, new violations 4/11, gap 0.050383251694422045, claimed 2956.688 played 2975.454 bn, 60s
+2026-10-07 05:40:49 [pid 1456] [small 555 ep 11] round 2: binaries on 79/84 grid/osat-weeks, new violations 3/26, gap 0.005207347214135567, claimed 2565.088 played 2584.463 bn, 60s
+2026-10-07 05:40:59 [pid 1455] [small 555 ep 10] round 4: binaries on 157/63 grid/osat-weeks, new violations 0/6, gap 0.0566539543163836, claimed 2976.013 played 2991.602 bn, 60s
+2026-10-07 05:41:52 [pid 1456] [small 555 ep 11] round 3: binaries on 82/110 grid/osat-weeks, new violations 6/4, gap 0.0033232929624120986, claimed 2560.200 played 2582.070 bn, 60s
+2026-10-07 05:42:02 [pid 1455] [small 555 ep 10] round 5: binaries on 157/69 grid/osat-weeks, new violations 0/3, gap 0.07979012454341833, claimed 3050.063 played 3069.963 bn, 60s
+2026-10-07 05:42:55 [pid 1456] [small 555 ep 11] round 4: binaries on 88/114 grid/osat-weeks, new violations 9/0, gap 0.0027081057762030044, claimed 2558.608 played 2577.819 bn, 60s
+2026-10-07 05:43:07 [pid 1455] [small 555 ep 10] round 6: binaries on 157/72 grid/osat-weeks, new violations 0/4, gap 0.06087119059902345, claimed 2988.820 played 2997.911 bn, 60s
+2026-10-07 05:43:58 [pid 1456] [small 555 ep 11] round 5: binaries on 97/114 grid/osat-weeks, new violations 1/1, gap 0.0022251348721062164, claimed 2557.368 played 2575.135 bn, 60s
+2026-10-07 05:44:10 [pid 1455] [small 555 ep 10] round 7: binaries on 157/76 grid/osat-weeks, new violations 0/4, gap 0.07611524779829694, claimed 3037.291 played 3040.941 bn, 60s
+2026-10-07 05:45:00 [pid 1456] [small 555 ep 11] round 6: binaries on 98/115 grid/osat-weeks, new violations 0/1, gap 0.0033129877328205667, claimed 2560.174 played 2584.004 bn, 60s
+2026-10-07 05:45:13 [pid 1455] [small 555 ep 10] round 8: binaries on 157/80 grid/osat-weeks, new violations 0/2, gap 0.04729868825187813, claimed 2946.652 played 2947.151 bn, 60s
+2026-10-07 05:45:13 [pid 1455] [small 555 ep 10] MILP round_cap: chose round 8 of 9: claimed J 2946.652 bn, played J 2947.151 bn, gap 0.04729868825187813, 513s
+2026-10-07 05:45:58 [pid 1455] [small 555 ep 10] LS replays 1000 accepted 17 J 2946.241 bn (dJ 0.909) 42s
+2026-10-07 05:46:03 [pid 1456] [small 555 ep 11] round 7: binaries on 98/116 grid/osat-weeks, new violations 3/0, gap 0.002256682200370149, claimed 2557.447 played 2579.169 bn, 60s
+2026-10-07 05:46:35 [pid 1455] [small 555 ep 10] LS replays 2000 accepted 82 J 2945.197 bn (dJ 1.953) 79s
+2026-10-07 05:47:03 [pid 1455] [small 555 ep 10] LS replays 3000 accepted 94 J 2944.395 bn (dJ 2.755) 107s
+2026-10-07 05:47:06 [pid 1456] [small 555 ep 11] round 8: binaries on 101/116 grid/osat-weeks, new violations 3/3, gap 0.004624546371688308, claimed 2563.569 played 2582.107 bn, 60s
+2026-10-07 05:47:06 [pid 1456] [small 555 ep 11] MILP round_cap: chose round 5 of 9: claimed J 2557.368 bn, played J 2575.135 bn, gap 0.0022251348721062164, 478s
+2026-10-07 05:47:36 [pid 1455] [small 555 ep 10] LS replays 4000 accepted 108 J 2944.393 bn (dJ 2.758) 139s
+2026-10-07 05:47:45 [pid 1456] [small 555 ep 11] LS replays 1000 accepted 17 J 2574.886 bn (dJ 0.250) 37s
+2026-10-07 05:48:10 [pid 1455] [small 555 ep 10] LS replays 5000 accepted 113 J 2944.393 bn (dJ 2.758) 173s
+2026-10-07 05:48:10 [pid 1455] [small 555 ep 10] LS done: J 2947.151 -> 2944.393 bn (dJ 2.758), 113 moves, 5000 replays, 170 cpu s
+2026-10-07 05:48:21 [pid 1456] [small 555 ep 11] LS replays 2000 accepted 17 J 2574.886 bn (dJ 0.250) 73s
+2026-10-07 05:48:23 [pid 1455] [small 555 ep 10] SAVED 0.1 MB: claimed 2946.652 played 2947.151 teacher 2944.393 bn | RSS-episode claimed 0.8228 played 0.8224 teacher 0.8248 | 703s
+2026-10-07 05:48:23 [pid 1455] [small 555 ep 12] start
+2026-10-07 05:48:28 [pid 1455] [small 555 ep 12] round 0: binaries on 0/0 grid/osat-weeks, new violations 73/51, gap 0.0, claimed 3032.652 played 3208.733 bn, 1s
+2026-10-07 05:48:47 [pid 1455] [small 555 ep 12] round 1: binaries on 73/51 grid/osat-weeks, new violations 8/23, gap 0.00047708000675974094, claimed 3034.158 played 3103.068 bn, 16s
+2026-10-07 05:48:57 [pid 1456] [small 555 ep 11] LS replays 3000 accepted 21 J 2574.851 bn (dJ 0.284) 108s
+2026-10-07 05:49:08 [pid 1455] [small 555 ep 12] round 2: binaries on 81/74 grid/osat-weeks, new violations 4/4, gap 0.0005178867681644725, claimed 3034.283 played 3069.145 bn, 18s
+2026-10-07 05:49:22 [pid 1456] [small 555 ep 11] LS replays 4000 accepted 30 J 2573.848 bn (dJ 1.288) 133s
+2026-10-07 05:49:57 [pid 1456] [small 555 ep 11] LS replays 5000 accepted 52 J 2572.843 bn (dJ 2.293) 168s
+2026-10-07 05:49:57 [pid 1456] [small 555 ep 11] LS done: J 2575.135 -> 2572.843 bn (dJ 2.293), 52 moves, 5000 replays, 166 cpu s
+2026-10-07 05:50:11 [pid 1455] [small 555 ep 12] round 3: binaries on 85/78 grid/osat-weeks, new violations 4/3, gap 0.0029800589247734673, claimed 3041.834 played 3083.962 bn, 60s
+2026-10-07 05:50:12 [pid 1456] [small 555 ep 11] SAVED 0.1 MB: claimed 2557.368 played 2575.135 teacher 2572.843 bn | RSS-episode claimed 0.9914 played 0.9772 teacher 0.9791 | 664s
+2026-10-07 05:50:12 [pid 1456] [small 555 ep 13] start
+2026-10-07 05:50:19 [pid 1456] [small 555 ep 13] round 0: binaries on 0/0 grid/osat-weeks, new violations 126/21, gap 0.0, claimed 2356.730 played 2655.136 bn, 1s
+2026-10-07 05:51:14 [pid 1455] [small 555 ep 12] round 4: binaries on 89/81 grid/osat-weeks, new violations 8/5, gap 0.0038880048731259964, claimed 3044.557 played 3069.147 bn, 60s
+2026-10-07 05:51:22 [pid 1456] [small 555 ep 13] round 1: binaries on 126/21 grid/osat-weeks, new violations 16/19, gap 0.009686809839185496, claimed 2405.274 played 2426.565 bn, 60s
+2026-10-07 05:52:17 [pid 1455] [small 555 ep 12] round 5: binaries on 97/86 grid/osat-weeks, new violations 2/4, gap 0.005103186062987665, claimed 3048.304 played 3075.684 bn, 61s
+2026-10-07 05:52:24 [pid 1456] [small 555 ep 13] round 2: binaries on 142/40 grid/osat-weeks, new violations 10/24, gap 0.2498555280323771, claimed 3153.730 played 2609.831 bn, 60s
+2026-10-07 05:53:21 [pid 1455] [small 555 ep 12] round 6: binaries on 99/90 grid/osat-weeks, new violations 6/3, gap 0.004022434200682077, claimed 3045.045 played 3076.365 bn, 60s
+2026-10-07 05:53:27 [pid 1456] [small 555 ep 13] round 3: binaries on 152/64 grid/osat-weeks, new violations 1/9, gap 0.008784390022712824, claimed 2403.124 played 2419.364 bn, 60s
+2026-10-07 05:54:24 [pid 1455] [small 555 ep 12] round 7: binaries on 105/93 grid/osat-weeks, new violations 3/1, gap 0.0012275587527968235, claimed 3036.457 played 3076.553 bn, 60s
+2026-10-07 05:54:29 [pid 1456] [small 555 ep 13] round 4: binaries on 153/73 grid/osat-weeks, new violations 1/3, gap 0.014812321548004832, claimed 2418.031 played 2441.643 bn, 60s
+2026-10-07 05:55:26 [pid 1455] [small 555 ep 12] round 8: binaries on 108/94 grid/osat-weeks, new violations 3/2, gap 0.0016402991083125699, claimed 3037.728 played 3068.333 bn, 60s
+2026-10-07 05:55:26 [pid 1455] [small 555 ep 12] MILP round_cap: chose round 8 of 9: claimed J 3037.728 bn, played J 3068.333 bn, gap 0.0016402991083125699, 423s
+2026-10-07 05:55:32 [pid 1456] [small 555 ep 13] round 5: binaries on 154/76 grid/osat-weeks, new violations 1/9, gap 0.16173235632956048, claimed 2841.272 played 2799.049 bn, 60s
+2026-10-07 05:56:11 [pid 1455] [small 555 ep 12] LS replays 1000 accepted 25 J 3059.178 bn (dJ 9.155) 42s
+2026-10-07 05:56:36 [pid 1456] [small 555 ep 13] round 6: binaries on 155/85 grid/osat-weeks, new violations 1/2, gap 0.07097777173128006, claimed 2565.021 played 2532.931 bn, 60s
+2026-10-07 05:56:49 [pid 1455] [small 555 ep 12] LS replays 2000 accepted 59 J 3059.100 bn (dJ 9.234) 80s
+2026-10-07 05:57:19 [pid 1455] [small 555 ep 12] LS replays 3000 accepted 61 J 3053.014 bn (dJ 15.319) 110s
+2026-10-07 05:57:39 [pid 1456] [small 555 ep 13] round 7: binaries on 156/87 grid/osat-weeks, new violations 0/5, gap 0.006639891305958931, claimed 2398.060 played 2417.171 bn, 60s
+2026-10-07 05:57:51 [pid 1455] [small 555 ep 12] LS replays 4000 accepted 76 J 3051.733 bn (dJ 16.600) 142s
+2026-10-07 05:58:19 [pid 1455] [small 555 ep 12] LS replays 5000 accepted 95 J 3051.720 bn (dJ 16.613) 170s
+2026-10-07 05:58:19 [pid 1455] [small 555 ep 12] LS done: J 3068.333 -> 3051.720 bn (dJ 16.613), 95 moves, 5000 replays, 153 cpu s
+2026-10-07 05:58:33 [pid 1455] [small 555 ep 12] SAVED 0.1 MB: claimed 3037.728 played 3068.333 teacher 3051.720 bn | RSS-episode claimed 0.9953 played 0.9670 teacher 0.9824 | 609s
+2026-10-07 05:58:33 [pid 1455] [small 555 ep 14] start
+2026-10-07 05:58:39 [pid 1455] [small 555 ep 14] round 0: binaries on 0/0 grid/osat-weeks, new violations 120/22, gap 0.0, claimed 1436.007 played 2125.783 bn, 1s
+2026-10-07 05:58:42 [pid 1456] [small 555 ep 13] round 8: binaries on 156/92 grid/osat-weeks, new violations 0/1, gap 0.013380669926735363, claimed 2414.374 played 2426.076 bn, 60s
+2026-10-07 05:58:42 [pid 1456] [small 555 ep 13] MILP round_cap: chose round 7 of 9: claimed J 2398.060 bn, played J 2417.171 bn, gap 0.006639891305958931, 509s
+2026-10-07 05:59:32 [pid 1456] [small 555 ep 13] LS replays 1000 accepted 58 J 2405.422 bn (dJ 11.748) 46s
+2026-10-07 05:59:42 [pid 1455] [small 555 ep 14] round 1: binaries on 120/22 grid/osat-weeks, new violations 10/19, gap 0.2081696154447693, claimed 1879.317 played 1933.697 bn, 60s
+2026-10-07 06:00:25 [pid 1456] [small 555 ep 13] LS replays 2000 accepted 85 J 2404.912 bn (dJ 12.258) 99s
+2026-10-07 06:00:45 [pid 1455] [small 555 ep 14] round 2: binaries on 130/41 grid/osat-weeks, new violations 0/12, gap 0.2170749268297946, claimed 1930.662 played 1940.808 bn, 60s
+2026-10-07 06:01:13 [pid 1456] [small 555 ep 13] LS replays 3000 accepted 130 J 2403.273 bn (dJ 13.898) 147s
+2026-10-07 06:01:44 [pid 1456] [small 555 ep 13] LS replays 4000 accepted 153 J 2397.992 bn (dJ 19.179) 178s
+2026-10-07 06:01:48 [pid 1455] [small 555 ep 14] round 3: binaries on 130/53 grid/osat-weeks, new violations 1/9, gap 0.13333197920563805, claimed 1743.129 played 1770.887 bn, 60s
+2026-10-07 06:02:21 [pid 1456] [small 555 ep 13] LS replays 5000 accepted 182 J 2395.205 bn (dJ 21.965) 215s
+2026-10-07 06:02:21 [pid 1456] [small 555 ep 13] LS done: J 2417.171 -> 2395.184 bn (dJ 21.987), 183 moves, 5001 replays, 196 cpu s
+2026-10-07 06:02:37 [pid 1456] [small 555 ep 13] SAVED 0.1 MB: claimed 2398.060 played 2417.171 teacher 2395.184 bn | RSS-episode claimed 0.9452 played 0.9198 teacher 0.9490 | 744s
+2026-10-07 06:02:37 [pid 1456] [small 555 ep 15] start
+2026-10-07 06:02:46 [pid 1456] [small 555 ep 15] round 0: binaries on 0/0 grid/osat-weeks, new violations 72/15, gap 0.0, claimed 983.699 played 1125.537 bn, 4s
+2026-10-07 06:02:52 [pid 1455] [small 555 ep 14] round 4: binaries on 131/62 grid/osat-weeks, new violations 1/12, gap 0.10904283745104969, claimed 1695.330 played 1708.448 bn, 60s
+2026-10-07 06:03:49 [pid 1456] [small 555 ep 15] round 1: binaries on 72/15 grid/osat-weeks, new violations 5/9, gap 0.0033588472387836455, claimed 987.357 played 1110.255 bn, 60s
+2026-10-07 06:03:56 [pid 1455] [small 555 ep 14] round 5: binaries on 132/74 grid/osat-weeks, new violations 1/5, gap 0.12276093055559863, claimed 1721.933 played 1754.838 bn, 60s
+2026-10-07 06:04:52 [pid 1456] [small 555 ep 15] round 2: binaries on 77/24 grid/osat-weeks, new violations 26/5, gap 0.337169845587031, claimed 1466.810 played 1129.066 bn, 60s
+2026-10-07 06:04:59 [pid 1455] [small 555 ep 14] round 6: binaries on 133/79 grid/osat-weeks, new violations 0/3, gap 0.17377336315606542, claimed 1828.932 played 1848.897 bn, 60s
+2026-10-07 06:05:55 [pid 1456] [small 555 ep 15] round 3: binaries on 103/29 grid/osat-weeks, new violations 4/5, gap 0.013133785245404723, claimed 997.212 played 1069.775 bn, 60s
+2026-10-07 06:06:03 [pid 1455] [small 555 ep 14] round 7: binaries on 133/82 grid/osat-weeks, new violations 0/2, gap 0.12830136006704088, claimed 1732.852 played 1750.064 bn, 60s
+2026-10-07 06:06:58 [pid 1456] [small 555 ep 15] round 4: binaries on 107/34 grid/osat-weeks, new violations 3/1, gap 0.028735507265199335, claimed 1013.310 played 1068.894 bn, 60s
+2026-10-07 06:07:06 [pid 1455] [small 555 ep 14] round 8: binaries on 133/84 grid/osat-weeks, new violations 0/1, gap 0.1329568909527671, claimed 1742.229 played 1758.314 bn, 60s
+2026-10-07 06:07:06 [pid 1455] [small 555 ep 14] MILP round_cap: chose round 4 of 9: claimed J 1695.330 bn, played J 1708.448 bn, gap 0.10904283745104969, 513s
+2026-10-07 06:07:57 [pid 1455] [small 555 ep 14] LS replays 1000 accepted 27 J 1699.914 bn (dJ 8.534) 48s
+2026-10-07 06:08:01 [pid 1456] [small 555 ep 15] round 5: binaries on 110/35 grid/osat-weeks, new violations 3/3, gap 0.06645799481688654, claimed 1054.395 played 1103.565 bn, 60s
+2026-10-07 06:08:46 [pid 1455] [small 555 ep 14] LS replays 2000 accepted 47 J 1699.348 bn (dJ 9.100) 97s
+2026-10-07 06:09:05 [pid 1456] [small 555 ep 15] round 6: binaries on 113/38 grid/osat-weeks, new violations 2/0, gap 0.026124917302366685, claimed 1010.567 played 1058.423 bn, 60s
+2026-10-07 06:09:34 [pid 1455] [small 555 ep 14] LS replays 3000 accepted 113 J 1696.951 bn (dJ 11.497) 146s
+2026-10-07 06:10:07 [pid 1455] [small 555 ep 14] LS replays 4000 accepted 163 J 1695.759 bn (dJ 12.689) 178s
+2026-10-07 06:10:08 [pid 1456] [small 555 ep 15] round 7: binaries on 115/38 grid/osat-weeks, new violations 0/0, gap 0.023515474974302984, claimed 1007.863 played 1066.072 bn, 60s
+2026-10-07 06:10:08 [pid 1456] [small 555 ep 15] MILP converged: chose round 6 of 8: claimed J 1010.567 bn, played J 1058.423 bn, gap 0.026124917302366685, 450s
+2026-10-07 06:10:40 [pid 1455] [small 555 ep 14] LS replays 5000 accepted 165 J 1695.433 bn (dJ 13.015) 211s
+2026-10-07 06:10:40 [pid 1455] [small 555 ep 14] LS done: J 1708.448 -> 1695.433 bn (dJ 13.015), 165 moves, 5000 replays, 207 cpu s
+2026-10-07 06:10:54 [pid 1455] [small 555 ep 14] SAVED 0.2 MB: claimed 1695.330 played 1708.448 teacher 1695.433 bn | RSS-episode claimed 0.8615 played 0.8545 teacher 0.8615 | 741s
+2026-10-07 06:10:54 [pid 1455] [small 555 ep 16] start
+2026-10-07 06:11:00 [pid 1455] [small 555 ep 16] round 0: binaries on 0/0 grid/osat-weeks, new violations 97/127, gap 0.0, claimed 4047.651 played 4221.580 bn, 1s
+2026-10-07 06:11:05 [pid 1456] [small 555 ep 15] LS replays 1000 accepted 38 J 1052.374 bn (dJ 6.049) 55s
+2026-10-07 06:12:03 [pid 1455] [small 555 ep 16] round 1: binaries on 97/127 grid/osat-weeks, new violations 5/4, gap 0.0201969992945615, claimed 4131.881 played 4170.065 bn, 60s
+2026-10-07 06:12:07 [pid 1456] [small 555 ep 15] LS replays 2000 accepted 68 J 1050.083 bn (dJ 8.340) 117s
+2026-10-07 06:13:02 [pid 1456] [small 555 ep 15] LS replays 3000 accepted 93 J 1049.644 bn (dJ 8.779) 173s
+2026-10-07 06:13:07 [pid 1455] [small 555 ep 16] round 2: binaries on 102/131 grid/osat-weeks, new violations 3/1, gap 0.00976309618743466, claimed 4088.001 played 4114.573 bn, 60s
+2026-10-07 06:13:41 [pid 1456] [small 555 ep 15] LS replays 4000 accepted 107 J 1048.955 bn (dJ 9.468) 211s
+2026-10-07 06:14:10 [pid 1455] [small 555 ep 16] round 3: binaries on 105/132 grid/osat-weeks, new violations 4/0, gap 0.007755982378154031, claimed 4079.712 played 4105.950 bn, 60s
+2026-10-07 06:14:22 [pid 1456] [small 555 ep 15] LS replays 5000 accepted 118 J 1047.548 bn (dJ 10.875) 252s
+2026-10-07 06:14:22 [pid 1456] [small 555 ep 15] LS done: J 1058.423 -> 1047.548 bn (dJ 10.875), 118 moves, 5000 replays, 248 cpu s
+2026-10-07 06:14:39 [pid 1456] [small 555 ep 15] SAVED 0.2 MB: claimed 1010.567 played 1058.423 teacher 1047.548 bn | RSS-episode claimed 0.9506 played 0.8630 teacher 0.8829 | 721s
+2026-10-07 06:14:39 [pid 1456] [small 555 ep 17] start
+2026-10-07 06:14:46 [pid 1456] [small 555 ep 17] round 0: binaries on 0/0 grid/osat-weeks, new violations 85/52, gap 0.0, claimed 3125.765 played 3213.200 bn, 1s
+2026-10-07 06:14:54 pilot stopped after episodes 0..15 (time budget: ~11 min/episode, 32 would take ~3 h)
