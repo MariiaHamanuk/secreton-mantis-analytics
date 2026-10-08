@@ -43,11 +43,21 @@ from action_search import FACTORS, _env, _finish, _restore, _snapshot, groups_of
 
 def record(payload):
     """One episode: at ``weeks`` sampled weeks, the exact finished cost of every candidate action."""
-    import residual as R
     from shockbench_flow_gym import agent_config_from_reset
 
-    task, entropy, n_scenarios, index, weeks, grouping, seed, rules_folder = payload
+    task, entropy, n_scenarios, index, weeks, grouping, seed, rules_folder, base_folder, with_tables = payload
     env, parts = _env(task, entropy, n_scenarios)
+    if base_folder:  # measure against a full submission agent (e.g. the hub) instead of the composed rules
+        from sbf_starter.agents import load as load_agent
+
+        cls = load_agent(base_folder)
+
+        class _BaseParts:
+            @staticmethod
+            def agent(config, values=None, schedule=None):
+                return cls(config)
+
+        parts = _BaseParts()
     rng = np.random.default_rng(seed)
 
     obs, info = env.reset(options={"pool_index": int(index)})
@@ -58,16 +68,21 @@ def record(payload):
     # the weeks to probe: spread over the episode, and never the last, where there is no tail to measure
     wanted = sorted(rng.choice(np.arange(1, horizon - 1), size=min(weeks, horizon - 2), replace=False).tolist())
 
-    rules_module = R.load_rules(rules_folder)
-    feat = R.Residual(config, rules_module, None)
+    feat = None
+    if with_tables:  # the feature tables need torch; the advantages themselves do not
+        import residual as R
+
+        rules_module = R.load_rules(rules_folder)
+        feat = R.Residual(config, rules_module, None)
     agent = parts.agent(config, None)
     rows, w = [], 0
     while True:
         proposal = agent.act(obs)
         flows = np.asarray(proposal["flows"], dtype=np.float64)
-        feat.history.update(feat.layout, obs)  # every week: the counters of how long a cut or a shed has lasted
+        if feat is not None:
+            feat.history.update(feat.layout, obs)  # every week: the counters of how long a cut or a shed has lasted
         if w in wanted:
-            tables = feat.tables(obs, flows)  # the same features the networks read
+            tables = feat.tables(obs, flows) if feat is not None else None  # the same features the networks read
             snap = _snapshot(env)
             cands = []
             for j, mask in enumerate(masks):
@@ -112,6 +127,7 @@ def main(
     workers=10,
     seed=0,
     rules="agents/anastasiia_rules_v2",
+    base=None,
     out=None,
     keep_features=False,
 ):
@@ -141,7 +157,11 @@ def main(
     )
 
     t0 = time.perf_counter()
-    jobs = [(task, entropy, episodes, i, weeks, grouping, seed * 100 + i, str(folder)) for i in range(episodes)]
+    base_folder = str(Path(base) if Path(str(base)).is_absolute() else ROOT / base) if base else None
+    jobs = [
+        (task, entropy, episodes, i, weeks, grouping, seed * 100 + i, str(folder), base_folder, keep_features)
+        for i in range(episodes)
+    ]
     rows = []
     with ProcessPoolExecutor(max_workers=workers) as pool:
         for got in pool.map(record, jobs):

@@ -152,8 +152,19 @@ def episode(payload):
     """One episode played with a one-step lookahead each week. Returns its cost and the plain rules' for comparison."""
     from shockbench_flow_gym import agent_config_from_reset
 
-    task, entropy, n_scenarios, index, sweeps, grouping = payload
+    task, entropy, n_scenarios, index, sweeps, grouping, base_folder, ckpt_dir = payload
     env, parts = _env(task, entropy, n_scenarios)
+    if base_folder:  # search on top of a full submission agent (e.g. the hub) instead of the composed rules
+        from sbf_starter.agents import load as load_agent
+
+        cls = load_agent(base_folder)
+
+        class _BaseParts:
+            @staticmethod
+            def agent(config, values=None, schedule=None):
+                return cls(config)
+
+        parts = _BaseParts()
 
     obs, info = env.reset(options={"pool_index": int(index)})
     config = agent_config_from_reset(env, obs, info)
@@ -169,6 +180,13 @@ def episode(payload):
     masks = [m for _, m in groups]
     weeks = int(config["T"])
 
+    # per-week checkpoints (sweeps == 1 only): a restart replays the recorded factors without searching them again
+    ck, done_weeks = None, []
+    if ckpt_dir and sweeps == 1:
+        ck = Path(ckpt_dir) / f"ckpt_ep{index}.jsonl"
+        if ck.exists():
+            done_weeks = [json.loads(line) for line in ck.read_text().splitlines() if line.strip()]
+
     schedule = np.ones((weeks, len(groups)))
     best_total, rollouts, history = base, 0, []
     for _ in range(max(1, sweeps)):
@@ -179,6 +197,17 @@ def episode(payload):
         while True:
             proposal = agent.act(obs)
             flows = np.asarray(proposal["flows"], dtype=np.float64)
+            if w < len(done_weeks):  # fast-forward: play the checkpointed factors, no search
+                found[w] = np.asarray(done_weeks[w]["factors"])
+                scale = np.ones(flows.shape[0])
+                for j, mask in enumerate(masks):
+                    scale[mask] = found[w, j]
+                obs, reward, terminated, truncated, _ = env.step({**proposal, "flows": flows * scale})
+                total += -float(reward)
+                w += 1
+                if terminated or truncated:
+                    break
+                continue
             snap = _snapshot(env)
             scale = np.ones(flows.shape[0])
             for j, mask in enumerate(masks):
@@ -202,6 +231,9 @@ def episode(payload):
             _restore(env, snap)
             obs, reward, terminated, truncated, _ = env.step({**proposal, "flows": flows * scale})
             total += -float(reward)
+            if ck is not None:
+                with ck.open("a") as fh:
+                    fh.write(json.dumps({"week": w, "factors": found[w].tolist(), "cost_so_far": total}) + "\n")
             w += 1
             if terminated or truncated:
                 break
@@ -219,7 +251,8 @@ def episode(payload):
     }
 
 
-def main(task="small", entropy=111, episodes=12, workers=10, sweeps=1, grouping="family", out=None):
+def main(task="small", entropy=111, episodes=12, workers=10, sweeps=1, grouping="family", base=None, out=None):
+    base_folder = str(Path(base) if Path(str(base)).is_absolute() else ROOT / base) if base else None
     stamp = time.strftime("%Y%m%d_%H%M%S")
     out = Path(out) if out else ROOT / "outputs" / "rl_lab" / f"action_{grouping}_{task}_{entropy}_{stamp}"
     out.mkdir(parents=True, exist_ok=True)
@@ -233,6 +266,7 @@ def main(task="small", entropy=111, episodes=12, workers=10, sweeps=1, grouping=
                 "factors": FACTORS,
                 "sweeps": sweeps,
                 "grouping": grouping,
+                "base": base,
                 "mode": "lookahead in the true simulator, schedule tail, true future",
             },
             indent=2,
@@ -247,7 +281,7 @@ def main(task="small", entropy=111, episodes=12, workers=10, sweeps=1, grouping=
     t0 = time.perf_counter()
     rows = []
     with ProcessPoolExecutor(max_workers=workers) as pool:
-        for row in pool.map(episode, [(task, entropy, episodes, i, sweeps, grouping) for i in range(episodes)]):
+        for row in pool.map(episode, [(task, entropy, episodes, i, sweeps, grouping, base_folder, str(out)) for i in range(episodes)]):
             rows.append(row)
             sweep_gains = " ".join(f"{(row['base_cost'] - s) / row['base_cost']:+.2%}" for s in row["sweeps"])
             print(
