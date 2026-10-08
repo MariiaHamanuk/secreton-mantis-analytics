@@ -689,3 +689,337 @@
 2026-10-07 11:24:02 [pid 2322] [small 555 ep 25] round 2: binaries on 53/44 grid/osat-weeks, new violations 0/15, gap 0.0046121718156235504, claimed 849.569 played 851.880 bn, 60s
 2026-10-07 11:24:11 [pid 2321] [small 555 ep 26] round 2: binaries on 130/51 grid/osat-weeks, new violations 3/5, gap 0.08807966794276018, claimed 988.452 played 1013.525 bn, 60s
 2026-10-07 11:24:26 [pid 2320] [small 555 ep 24] round 5: binaries on 98/59 grid/osat-weeks, new violations 1/6, gap 0.3122273728840533, claimed 3592.748 played 2546.448 bn, 60s
+2026-10-07 19:36:22 [pid 30725] generate small root 111 episodes 3..13: tl 300 gap 0.001 rounds 12 rules base,fuel,lots ls_budget 40000 order kind n_jobs 2
+2026-10-07 19:36:24 [pid 30741] [small 111 ep 3] start
+2026-10-07 19:36:24 [pid 30741] [small 111 ep 3] plan loaded from stage: claimed 318409228618238 played 321490617110393 (round_cap)
+2026-10-07 19:36:24 [pid 30742] [small 111 ep 5] start
+2026-10-07 19:36:24 [pid 30742] [small 111 ep 5] plan loaded from stage: claimed 419564633052156 played 417592030294655 (no_incumbent_round_6)
+2026-10-07 19:36:44 [pid 30820] generate small root 111 episodes 3..13: tl 300 gap 0.001 rounds 12 rules base,fuel,lots ls_budget 40000 order kind n_jobs 2
+2026-10-07 19:36:47 [pid 30833] [small 111 ep 3] start
+2026-10-07 19:36:47 [pid 30834] [small 111 ep 5] start
+2026-10-07 19:37:01 [pid 30834] [small 111 ep 5] round 0: binaries on 0/0 grid/osat-weeks, new violations 146/32, gap 0.0, claimed 3631.374 played 4411.980 bn, 2s
+2026-10-07 19:37:07 [pid 30833] [small 111 ep 3] round 0: binaries on 0/0 grid/osat-weeks, new violations 113/29, gap 0.0, claimed 2978.602 played 3401.293 bn, 6s
+2026-10-07 19:37:37 [pid 30742] [small 111 ep 5] LS replays 1000 accepted 21 J 4175.437 bn (dJ 0.483) 69s
+2026-10-07 19:37:54 [pid 30741] [small 111 ep 3] LS replays 1000 accepted 34 J 3213.557 bn (dJ 1.349) 85s
+2026-10-07 19:38:41 [pid 30742] [small 111 ep 5] LS replays 2000 accepted 87 J 4173.823 bn (dJ 2.097) 133s
+2026-10-07 19:39:21 [pid 30741] [small 111 ep 3] LS replays 2000 accepted 135 J 3202.444 bn (dJ 12.462) 173s
+2026-10-07 19:39:29 [pid 30742] [small 111 ep 5] LS replays 3000 accepted 87 J 4173.823 bn (dJ 2.097) 180s
+2026-10-07 19:40:15 [pid 30741] [small 111 ep 3] LS replays 3000 accepted 139 J 3201.228 bn (dJ 13.678) 227s
+2026-10-07 19:40:42 [pid 30742] [small 111 ep 5] LS replays 4000 accepted 94 J 4173.784 bn (dJ 2.136) 253s
+2026-10-07 19:41:17 [pid 30741] [small 111 ep 3] LS replays 4000 accepted 152 J 3200.588 bn (dJ 14.318) 289s
+2026-10-07 19:41:57 [pid 30742] [small 111 ep 5] LS replays 5000 accepted 97 J 4173.784 bn (dJ 2.136) 328s
+2026-10-07 19:42:07 [pid 30834] [small 111 ep 5] round 1: binaries on 146/32 grid/osat-weeks, new violations 11/33, gap 0.21849756678525983, claimed 5140.554 played 4199.975 bn, 300s
+2026-10-07 19:42:17 [pid 30833] [small 111 ep 3] round 1: binaries on 113/29 grid/osat-weeks, new violations 15/12, gap 0.032181636405007805, claimed 3184.092 played 3214.906 bn, 301s
+2026-10-07 19:42:45 [pid 30741] [small 111 ep 3] LS replays 5000 accepted 164 J 3200.337 bn (dJ 14.569) 376s
+2026-10-07 19:43:08 [pid 30742] [small 111 ep 5] LS replays 6000 accepted 108 J 4173.595 bn (dJ 2.325) 399s
+2026-10-07 19:43:59 [pid 30741] [small 111 ep 3] LS replays 6000 accepted 169 J 3200.337 bn (dJ 14.570) 451s
+2026-10-07 19:44:04 [pid 30742] [small 111 ep 5] LS replays 7000 accepted 116 J 4173.595 bn (dJ 2.326) 455s
+2026-10-07 19:45:23 [pid 30741] [small 111 ep 3] LS replays 7000 accepted 181 J 3200.271 bn (dJ 14.635) 535s
+2026-10-07 19:45:26 [pid 30742] [small 111 ep 5] LS replays 8000 accepted 132 J 4173.291 bn (dJ 2.629) 537s
+2026-10-07 19:46:29 [pid 30742] [small 111 ep 5] LS replays 9000 accepted 136 J 4173.291 bn (dJ 2.629) 600s
+2026-10-07 19:46:45 [pid 30741] [small 111 ep 3] LS replays 8000 accepted 202 J 3200.064 bn (dJ 14.842) 616s
+2026-10-07 19:47:14 [pid 30834] [small 111 ep 5] round 2: binaries on 157/65 grid/osat-weeks, new violations 0/14, gap 0.027797573591264634, claimed 4205.032 played 4197.146 bn, 301s
+2026-10-07 19:47:26 [pid 30833] [small 111 ep 3] round 2: binaries on 128/41 grid/osat-weeks, new violations 5/7, gap 0.051214266988662334, claimed 3250.599 played 3263.342 bn, 301s
+2026-10-07 19:47:40 [pid 30742] [small 111 ep 5] LS replays 10000 accepted 153 J 4173.141 bn (dJ 2.779) 671s
+2026-10-07 19:48:05 [pid 30741] [small 111 ep 3] LS replays 9000 accepted 229 J 3199.827 bn (dJ 15.080) 696s
+2026-10-07 19:48:55 [pid 30742] [small 111 ep 5] LS replays 11000 accepted 172 J 4173.021 bn (dJ 2.899) 747s
+2026-10-07 19:49:29 [pid 30741] [small 111 ep 3] LS replays 10000 accepted 253 J 3199.634 bn (dJ 15.272) 781s
+2026-10-07 19:49:53 [pid 30742] [small 111 ep 5] LS replays 12000 accepted 185 J 4172.993 bn (dJ 2.927) 805s
+2026-10-07 19:50:57 [pid 30741] [small 111 ep 3] LS replays 11000 accepted 278 J 3199.209 bn (dJ 15.697) 869s
+2026-10-07 19:51:05 [pid 30742] [small 111 ep 5] LS replays 13000 accepted 193 J 4172.988 bn (dJ 2.932) 876s
+2026-10-07 19:52:00 [pid 30741] [small 111 ep 3] LS replays 12000 accepted 299 J 3199.181 bn (dJ 15.725) 931s
+2026-10-07 19:52:17 [pid 30742] [small 111 ep 5] LS replays 14000 accepted 201 J 4172.905 bn (dJ 3.015) 949s
+2026-10-07 19:52:20 [pid 30834] [small 111 ep 5] round 3: binaries on 157/79 grid/osat-weeks, new violations 1/16, gap 0.02601930916257087, claimed 4195.646 played 4175.920 bn, 301s
+2026-10-07 19:52:33 [pid 30833] [small 111 ep 3] round 3: binaries on 133/48 grid/osat-weeks, new violations 14/11, gap 0.05030126790496343, claimed 3246.411 played 3264.027 bn, 300s
+2026-10-07 19:53:08 [pid 30741] [small 111 ep 3] LS replays 13000 accepted 316 J 3199.180 bn (dJ 15.726) 999s
+2026-10-07 19:53:27 [pid 30742] [small 111 ep 5] LS replays 15000 accepted 220 J 4172.736 bn (dJ 3.185) 1018s
+2026-10-07 19:54:19 [pid 30742] [small 111 ep 5] LS replays 16000 accepted 221 J 4172.734 bn (dJ 3.186) 1070s
+2026-10-07 19:54:39 [pid 30741] [small 111 ep 3] LS replays 14000 accepted 346 J 3199.041 bn (dJ 15.865) 1091s
+2026-10-07 19:55:22 [pid 30742] [small 111 ep 5] LS replays 17000 accepted 228 J 4172.727 bn (dJ 3.193) 1133s
+2026-10-07 19:56:05 [pid 30741] [small 111 ep 3] LS replays 15000 accepted 361 J 3199.028 bn (dJ 15.878) 1177s
+2026-10-07 19:56:36 [pid 30742] [small 111 ep 5] LS replays 18000 accepted 235 J 4172.727 bn (dJ 3.194) 1207s
+2026-10-07 19:57:09 [pid 30741] [small 111 ep 3] LS replays 16000 accepted 381 J 3198.407 bn (dJ 16.499) 1241s
+2026-10-07 19:57:26 [pid 30834] [small 111 ep 5] round 4: binaries on 158/95 grid/osat-weeks, new violations 0/13, gap inf, claimed 4188.567 played 4177.002 bn, 301s
+2026-10-07 19:57:40 [pid 30833] [small 111 ep 3] round 4: binaries on 147/59 grid/osat-weeks, new violations 0/2, gap 0.10853894464903761, claimed 3463.607 played 3431.633 bn, 301s
+2026-10-07 19:57:53 [pid 30742] [small 111 ep 5] LS replays 19000 accepted 246 J 4172.706 bn (dJ 3.214) 1284s
+2026-10-07 19:58:13 [pid 30741] [small 111 ep 3] LS replays 17000 accepted 389 J 3198.405 bn (dJ 16.501) 1305s
+2026-10-07 19:58:46 [pid 30742] [small 111 ep 5] LS replays 20000 accepted 252 J 4172.702 bn (dJ 3.218) 1337s
+2026-10-07 19:59:22 [pid 30741] [small 111 ep 3] LS replays 18000 accepted 398 J 3197.887 bn (dJ 17.019) 1374s
+2026-10-07 19:59:59 [pid 30742] [small 111 ep 5] LS replays 21000 accepted 259 J 4172.700 bn (dJ 3.220) 1410s
+2026-10-07 20:00:41 [pid 30741] [small 111 ep 3] LS replays 19000 accepted 411 J 3197.862 bn (dJ 17.044) 1452s
+2026-10-07 20:01:05 [pid 30742] [small 111 ep 5] LS replays 22000 accepted 266 J 4172.700 bn (dJ 3.221) 1476s
+2026-10-07 20:01:57 [pid 30741] [small 111 ep 3] LS replays 20000 accepted 430 J 3197.857 bn (dJ 17.049) 1529s
+2026-10-07 20:02:13 [pid 30742] [small 111 ep 5] LS replays 23000 accepted 273 J 4172.656 bn (dJ 3.265) 1544s
+2026-10-07 20:02:32 [pid 30834] [small 111 ep 5] round 5: binaries on 158/108 grid/osat-weeks, new violations 1/1, gap 0.2040058722967606, claimed 5097.379 played 4202.608 bn, 300s
+2026-10-07 20:02:46 [pid 30833] [small 111 ep 3] round 5: binaries on 147/61 grid/osat-weeks, new violations 1/0, gap 0.04711882899621103, claimed 3239.935 played 3247.681 bn, 301s
+2026-10-07 20:03:19 [pid 30741] [small 111 ep 3] LS replays 21000 accepted 452 J 3197.848 bn (dJ 17.058) 1610s
+2026-10-07 20:03:27 [pid 30742] [small 111 ep 5] LS replays 24000 accepted 279 J 4172.655 bn (dJ 3.265) 1618s
+2026-10-07 20:04:22 [pid 30742] [small 111 ep 5] LS replays 25000 accepted 297 J 4172.654 bn (dJ 3.266) 1674s
+2026-10-07 20:04:35 [pid 30741] [small 111 ep 3] LS replays 22000 accepted 473 J 3197.843 bn (dJ 17.063) 1686s
+2026-10-07 20:05:36 [pid 30742] [small 111 ep 5] LS replays 26000 accepted 304 J 4172.654 bn (dJ 3.266) 1747s
+2026-10-07 20:06:01 [pid 30741] [small 111 ep 3] LS replays 23000 accepted 498 J 3197.776 bn (dJ 17.130) 1773s
+2026-10-07 20:06:43 [pid 30742] [small 111 ep 5] LS replays 27000 accepted 307 J 4172.443 bn (dJ 3.477) 1814s
+2026-10-07 20:07:28 [pid 30741] [small 111 ep 3] LS replays 24000 accepted 515 J 3197.768 bn (dJ 17.138) 1860s
+2026-10-07 20:07:38 [pid 30834] [small 111 ep 5] round 6: binaries on 159/109 grid/osat-weeks, new violations 1/4, gap 0.03350113629872428, claimed 4229.142 played 4203.836 bn, 300s
+2026-10-07 20:07:53 [pid 30833] [small 111 ep 3] round 6: binaries on 148/61 grid/osat-weeks, new violations 1/2, gap 0.23157068023165733, claimed 3990.178 played 3288.850 bn, 301s
+2026-10-07 20:07:53 [pid 30742] [small 111 ep 5] LS replays 28000 accepted 318 J 4172.340 bn (dJ 3.580) 1885s
+2026-10-07 20:08:30 [pid 30741] [small 111 ep 3] LS replays 25000 accepted 534 J 3197.723 bn (dJ 17.183) 1921s
+2026-10-07 20:08:51 [pid 30742] [small 111 ep 5] LS replays 29000 accepted 318 J 4172.340 bn (dJ 3.580) 1942s
+2026-10-07 20:09:36 [pid 30741] [small 111 ep 3] LS replays 26000 accepted 539 J 3197.723 bn (dJ 17.183) 1987s
+2026-10-07 20:09:48 [pid 30742] [small 111 ep 5] LS replays 30000 accepted 323 J 4172.223 bn (dJ 3.698) 1999s
+2026-10-07 20:10:53 [pid 30741] [small 111 ep 3] LS replays 27000 accepted 559 J 3197.722 bn (dJ 17.184) 2065s
+2026-10-07 20:11:08 [pid 30742] [small 111 ep 5] LS replays 31000 accepted 329 J 4172.222 bn (dJ 3.698) 2079s
+2026-10-07 20:12:19 [pid 30742] [small 111 ep 5] LS replays 32000 accepted 333 J 4172.222 bn (dJ 3.698) 2150s
+2026-10-07 20:12:25 [pid 30741] [small 111 ep 3] LS replays 28000 accepted 577 J 3197.259 bn (dJ 17.647) 2157s
+2026-10-07 20:12:44 [pid 30834] [small 111 ep 5] round 7: binaries on 160/113 grid/osat-weeks, new violations 0/3, gap 0.019078833905647182, claimed 4167.894 played 4165.966 bn, 300s
+2026-10-07 20:13:00 [pid 30833] [small 111 ep 3] round 7: binaries on 149/63 grid/osat-weeks, new violations 1/2, gap 0.4401192053900684, claimed 5451.361 played 3813.399 bn, 300s
+2026-10-07 20:13:25 [pid 30742] [small 111 ep 5] LS replays 33000 accepted 337 J 4172.214 bn (dJ 3.706) 2216s
+2026-10-07 20:13:48 [pid 30741] [small 111 ep 3] LS replays 29000 accepted 613 J 3196.578 bn (dJ 18.328) 2239s
+2026-10-07 20:14:26 [pid 30742] [small 111 ep 5] LS replays 34000 accepted 344 J 4172.213 bn (dJ 3.707) 2277s
+2026-10-07 20:14:42 [pid 30741] [small 111 ep 3] LS replays 30000 accepted 615 J 3196.578 bn (dJ 18.328) 2294s
+2026-10-07 20:15:38 [pid 30742] [small 111 ep 5] LS replays 35000 accepted 344 J 4172.213 bn (dJ 3.707) 2350s
+2026-10-07 20:15:54 [pid 30741] [small 111 ep 3] LS replays 31000 accepted 619 J 3196.498 bn (dJ 18.408) 2366s
+2026-10-07 20:16:28 [pid 30741] [small 111 ep 3] LS done: J 3214.906 -> 3196.255 bn (dJ 18.651), 629 moves, 31408 replays, 1201 cpu s
+2026-10-07 20:16:29 [pid 30742] [small 111 ep 5] LS done: J 4175.920 -> 4172.213 bn (dJ 3.707), 345 moves, 35668 replays, 1203 cpu s
+2026-10-07 20:16:40 [pid 30742] [small 111 ep 5] SAVED 0.1 MB: claimed 4195.646 played 4175.920 teacher 4172.213 bn | RSS-episode claimed 0.4969 played 0.5145 teacher 0.5178 | 2415s
+2026-10-07 20:16:40 [pid 30741] [small 111 ep 3] SAVED 0.2 MB: claimed 3184.092 played 3214.906 teacher 3196.255 bn | RSS-episode claimed 0.8248 played 0.7985 teacher 0.8144 | 2416s
+2026-10-07 20:17:49 [pid 30834] [small 111 ep 5] round 8: binaries on 160/116 grid/osat-weeks, new violations 1/0, gap 0.0360170825284731, claimed 4242.012 played 4238.142 bn, 301s
+2026-10-07 20:18:04 [pid 30833] [small 111 ep 3] round 8: binaries on 150/65 grid/osat-weeks, new violations 0/1, gap 0.038336465785474214, claimed 3210.340 played 3221.184 bn, 300s
+2026-10-07 20:22:52 [pid 30834] [small 111 ep 5] round 9: binaries on 161/116 grid/osat-weeks, new violations 1/1, gap 0.19991601843373527, claimed 5074.296 played 4163.334 bn, 300s
+2026-10-07 20:23:09 [pid 30833] [small 111 ep 3] round 9: binaries on 150/66 grid/osat-weeks, new violations 0/2, gap 0.4345600158205475, claimed 5400.809 played 3814.294 bn, 300s
+2026-10-07 20:27:56 [pid 30834] [small 111 ep 5] round 10: binaries on 162/117 grid/osat-weeks, new violations 0/0, gap 0.024853977830458035, claimed 4190.260 played 4168.600 bn, 300s
+2026-10-07 20:27:56 [pid 30834] [small 111 ep 5] MILP converged: chose round 9 of 11: claimed J 5074.296 bn, played J 4163.334 bn, gap 0.19991601843373527, 3069s
+2026-10-07 20:28:13 [pid 30833] [small 111 ep 3] round 10: binaries on 150/68 grid/osat-weeks, new violations 0/1, gap 0.040553290102763734, claimed 3219.080 played 3215.845 bn, 300s
+2026-10-07 20:28:53 [pid 30834] [small 111 ep 5] LS replays 1000 accepted 13 J 4163.190 bn (dJ 0.144) 54s
+2026-10-07 20:29:34 [pid 30834] [small 111 ep 5] LS replays 2000 accepted 64 J 4162.819 bn (dJ 0.515) 94s
+2026-10-07 20:30:01 [pid 30834] [small 111 ep 5] LS replays 3000 accepted 65 J 4162.819 bn (dJ 0.515) 121s
+2026-10-07 20:30:45 [pid 30834] [small 111 ep 5] LS replays 4000 accepted 77 J 4162.737 bn (dJ 0.597) 165s
+2026-10-07 20:31:28 [pid 30834] [small 111 ep 5] LS replays 5000 accepted 83 J 4162.736 bn (dJ 0.598) 209s
+2026-10-07 20:32:11 [pid 30834] [small 111 ep 5] LS replays 6000 accepted 87 J 4162.736 bn (dJ 0.598) 251s
+2026-10-07 20:32:44 [pid 30834] [small 111 ep 5] LS replays 7000 accepted 98 J 4162.611 bn (dJ 0.723) 284s
+2026-10-07 20:33:17 [pid 30833] [small 111 ep 3] round 11: binaries on 150/69 grid/osat-weeks, new violations 0/1, gap 0.04106894584847603, claimed 3219.855 played 3217.371 bn, 301s
+2026-10-07 20:33:29 [pid 30834] [small 111 ep 5] LS replays 8000 accepted 122 J 4162.485 bn (dJ 0.849) 329s
+2026-10-07 20:34:14 [pid 30834] [small 111 ep 5] LS replays 9000 accepted 124 J 4162.485 bn (dJ 0.849) 374s
+2026-10-07 20:34:53 [pid 30834] [small 111 ep 5] LS replays 10000 accepted 132 J 4162.484 bn (dJ 0.850) 413s
+2026-10-07 20:35:40 [pid 30834] [small 111 ep 5] LS replays 11000 accepted 147 J 4162.383 bn (dJ 0.951) 460s
+2026-10-07 20:36:13 [pid 30834] [small 111 ep 5] LS replays 12000 accepted 160 J 4162.355 bn (dJ 0.979) 494s
+2026-10-07 20:36:58 [pid 30834] [small 111 ep 5] LS replays 13000 accepted 162 J 4162.355 bn (dJ 0.979) 538s
+2026-10-07 20:37:38 [pid 30834] [small 111 ep 5] LS replays 14000 accepted 169 J 4162.320 bn (dJ 1.014) 578s
+2026-10-07 20:38:21 [pid 30833] [small 111 ep 3] round 12: binaries on 150/70 grid/osat-weeks, new violations 0/2, gap 0.053234970022322047, claimed 3265.307 played 3269.253 bn, 300s
+2026-10-07 20:38:21 [pid 30833] [small 111 ep 3] MILP round_cap: chose round 1 of 13: claimed J 3184.092 bn, played J 3214.906 bn, gap 0.032181636405007805, 3694s
+2026-10-07 20:38:26 [pid 30834] [small 111 ep 5] LS replays 15000 accepted 187 J 4162.283 bn (dJ 1.051) 626s
+2026-10-07 20:38:58 [pid 30834] [small 111 ep 5] LS replays 16000 accepted 187 J 4162.283 bn (dJ 1.051) 658s
+2026-10-07 20:39:25 [pid 30833] [small 111 ep 3] LS replays 1000 accepted 34 J 3213.557 bn (dJ 1.349) 60s
+2026-10-07 20:39:33 [pid 30834] [small 111 ep 5] LS replays 17000 accepted 191 J 4162.278 bn (dJ 1.056) 693s
+2026-10-07 20:40:21 [pid 30833] [small 111 ep 3] LS replays 2000 accepted 135 J 3202.444 bn (dJ 12.462) 115s
+2026-10-07 20:40:21 [pid 30834] [small 111 ep 5] LS replays 18000 accepted 195 J 4162.278 bn (dJ 1.056) 742s
+2026-10-07 20:40:59 [pid 30833] [small 111 ep 3] LS replays 3000 accepted 139 J 3201.228 bn (dJ 13.678) 153s
+2026-10-07 20:41:02 [pid 30834] [small 111 ep 5] LS replays 19000 accepted 203 J 4162.278 bn (dJ 1.056) 782s
+2026-10-07 20:41:37 [pid 30833] [small 111 ep 3] LS replays 4000 accepted 152 J 3200.588 bn (dJ 14.318) 192s
+2026-10-07 20:41:42 [pid 30834] [small 111 ep 5] LS replays 20000 accepted 207 J 4162.204 bn (dJ 1.130) 822s
+2026-10-07 20:42:16 [pid 30834] [small 111 ep 5] LS replays 21000 accepted 217 J 4162.204 bn (dJ 1.130) 857s
+2026-10-07 20:42:31 [pid 30833] [small 111 ep 3] LS replays 5000 accepted 164 J 3200.337 bn (dJ 14.569) 246s
+2026-10-07 20:42:59 [pid 30834] [small 111 ep 5] LS replays 22000 accepted 220 J 4162.203 bn (dJ 1.131) 900s
+2026-10-07 20:43:15 [pid 30833] [small 111 ep 3] LS replays 6000 accepted 169 J 3200.337 bn (dJ 14.570) 289s
+2026-10-07 20:43:38 [pid 30834] [small 111 ep 5] LS replays 23000 accepted 222 J 4162.203 bn (dJ 1.131) 938s
+2026-10-07 20:44:05 [pid 30833] [small 111 ep 3] LS replays 7000 accepted 181 J 3200.271 bn (dJ 14.635) 340s
+2026-10-07 20:44:23 [pid 30834] [small 111 ep 5] LS replays 24000 accepted 228 J 4162.202 bn (dJ 1.132) 984s
+2026-10-07 20:44:55 [pid 30833] [small 111 ep 3] LS replays 8000 accepted 202 J 3200.064 bn (dJ 14.842) 389s
+2026-10-07 20:44:55 [pid 30834] [small 111 ep 5] LS replays 25000 accepted 239 J 4162.196 bn (dJ 1.138) 1015s
+2026-10-07 20:45:33 [pid 30834] [small 111 ep 5] LS replays 26000 accepted 246 J 4162.140 bn (dJ 1.195) 1053s
+2026-10-07 20:45:41 [pid 30833] [small 111 ep 3] LS replays 9000 accepted 229 J 3199.827 bn (dJ 15.080) 436s
+2026-10-07 20:46:14 [pid 30834] [small 111 ep 5] LS replays 27000 accepted 250 J 4162.129 bn (dJ 1.205) 1094s
+2026-10-07 20:46:31 [pid 30833] [small 111 ep 3] LS replays 10000 accepted 253 J 3199.634 bn (dJ 15.272) 485s
+2026-10-07 20:46:54 [pid 30834] [small 111 ep 5] LS replays 28000 accepted 264 J 4162.123 bn (dJ 1.211) 1134s
+2026-10-07 20:47:21 [pid 30833] [small 111 ep 3] LS replays 11000 accepted 278 J 3199.209 bn (dJ 15.697) 535s
+2026-10-07 20:47:27 [pid 30834] [small 111 ep 5] LS replays 29000 accepted 266 J 4162.123 bn (dJ 1.211) 1167s
+2026-10-07 20:47:56 [pid 30833] [small 111 ep 3] LS replays 12000 accepted 299 J 3199.181 bn (dJ 15.725) 571s
+2026-10-07 20:48:00 [pid 30834] [small 111 ep 5] LS replays 30000 accepted 267 J 4162.123 bn (dJ 1.211) 1200s
+2026-10-07 20:48:37 [pid 30833] [small 111 ep 3] LS replays 13000 accepted 316 J 3199.180 bn (dJ 15.726) 611s
+2026-10-07 20:48:45 [pid 30834] [small 111 ep 5] LS replays 31000 accepted 273 J 4162.120 bn (dJ 1.214) 1245s
+2026-10-07 20:49:26 [pid 30834] [small 111 ep 5] LS replays 32000 accepted 275 J 4162.108 bn (dJ 1.226) 1286s
+2026-10-07 20:49:35 [pid 30833] [small 111 ep 3] LS replays 14000 accepted 346 J 3199.041 bn (dJ 15.865) 670s
+2026-10-07 20:50:08 [pid 30834] [small 111 ep 5] LS replays 33000 accepted 284 J 4162.081 bn (dJ 1.253) 1328s
+2026-10-07 20:50:27 [pid 30833] [small 111 ep 3] LS replays 15000 accepted 361 J 3199.028 bn (dJ 15.878) 721s
+2026-10-07 20:50:41 [pid 30834] [small 111 ep 5] LS replays 34000 accepted 289 J 4162.081 bn (dJ 1.253) 1361s
+2026-10-07 20:51:09 [pid 30833] [small 111 ep 3] LS replays 16000 accepted 381 J 3198.407 bn (dJ 16.499) 763s
+2026-10-07 20:51:26 [pid 30834] [small 111 ep 5] LS replays 35000 accepted 303 J 4162.076 bn (dJ 1.258) 1406s
+2026-10-07 20:51:49 [pid 30833] [small 111 ep 3] LS replays 17000 accepted 389 J 3198.405 bn (dJ 16.501) 804s
+2026-10-07 20:52:01 [pid 30834] [small 111 ep 5] LS replays 36000 accepted 303 J 4162.076 bn (dJ 1.258) 1441s
+2026-10-07 20:52:35 [pid 30833] [small 111 ep 3] LS replays 18000 accepted 398 J 3197.887 bn (dJ 17.019) 849s
+2026-10-07 20:52:46 [pid 30834] [small 111 ep 5] LS replays 37000 accepted 313 J 4162.043 bn (dJ 1.291) 1486s
+2026-10-07 20:53:21 [pid 30833] [small 111 ep 3] LS replays 19000 accepted 411 J 3197.862 bn (dJ 17.044) 895s
+2026-10-07 20:53:25 [pid 30834] [small 111 ep 5] LS replays 38000 accepted 327 J 4161.842 bn (dJ 1.492) 1526s
+2026-10-07 20:54:04 [pid 30834] [small 111 ep 5] LS replays 39000 accepted 337 J 4161.841 bn (dJ 1.493) 1564s
+2026-10-07 20:54:12 [pid 30833] [small 111 ep 3] LS replays 20000 accepted 430 J 3197.857 bn (dJ 17.049) 946s
+2026-10-07 20:54:40 [pid 30834] [small 111 ep 5] LS replays 40000 accepted 339 J 4161.841 bn (dJ 1.493) 1600s
+2026-10-07 20:54:40 [pid 30834] [small 111 ep 5] LS done: J 4163.334 -> 4161.841 bn (dJ 1.493), 339 moves, 40000 replays, 1190 cpu s
+2026-10-07 20:54:47 [pid 30834] [small 111 ep 5] SAVED 0.1 MB: claimed 5074.296 played 4163.334 teacher 4161.841 bn | RSS-episode claimed -0.2866 played 0.5257 teacher 0.5270 | 4680s
+2026-10-07 20:54:47 [pid 30834] [small 111 ep 8] start
+2026-10-07 20:54:55 [pid 30834] [small 111 ep 8] round 0: binaries on 0/0 grid/osat-weeks, new violations 141/29, gap 0.0, claimed 1747.794 played 2092.953 bn, 1s
+2026-10-07 20:55:10 [pid 30833] [small 111 ep 3] LS replays 21000 accepted 452 J 3197.848 bn (dJ 17.058) 1005s
+2026-10-07 20:56:03 [pid 30833] [small 111 ep 3] LS replays 22000 accepted 473 J 3197.843 bn (dJ 17.063) 1057s
+2026-10-07 20:56:56 [pid 30833] [small 111 ep 3] LS replays 23000 accepted 498 J 3197.776 bn (dJ 17.130) 1110s
+2026-10-07 20:57:47 [pid 30833] [small 111 ep 3] LS replays 24000 accepted 515 J 3197.768 bn (dJ 17.138) 1161s
+2026-10-07 20:58:23 [pid 30833] [small 111 ep 3] LS replays 25000 accepted 534 J 3197.723 bn (dJ 17.183) 1198s
+2026-10-07 20:59:03 [pid 30833] [small 111 ep 3] LS replays 26000 accepted 539 J 3197.723 bn (dJ 17.183) 1237s
+2026-10-07 20:59:41 [pid 30833] [small 111 ep 3] LS replays 27000 accepted 559 J 3197.722 bn (dJ 17.184) 1276s
+2026-10-07 20:59:58 [pid 30834] [small 111 ep 8] round 1: binaries on 141/29 grid/osat-weeks, new violations 10/25, gap 0.050200703494855586, claimed 1841.245 played 1957.597 bn, 300s
+2026-10-07 21:00:28 [pid 30833] [small 111 ep 3] LS replays 28000 accepted 577 J 3197.259 bn (dJ 17.647) 1323s
+2026-10-07 21:01:08 [pid 30833] [small 111 ep 3] LS replays 29000 accepted 613 J 3196.578 bn (dJ 18.328) 1362s
+2026-10-07 21:01:32 [pid 30833] [small 111 ep 3] LS replays 30000 accepted 615 J 3196.578 bn (dJ 18.328) 1387s
+2026-10-07 21:01:59 [pid 30833] [small 111 ep 3] LS replays 31000 accepted 619 J 3196.498 bn (dJ 18.408) 1414s
+2026-10-07 21:02:36 [pid 30833] [small 111 ep 3] LS replays 32000 accepted 636 J 3196.255 bn (dJ 18.651) 1450s
+2026-10-07 21:03:06 [pid 30833] [small 111 ep 3] LS replays 33000 accepted 643 J 3196.254 bn (dJ 18.652) 1481s
+2026-10-07 21:03:39 [pid 30833] [small 111 ep 3] LS replays 34000 accepted 654 J 3196.253 bn (dJ 18.653) 1514s
+2026-10-07 21:04:12 [pid 30833] [small 111 ep 3] LS replays 35000 accepted 672 J 3196.250 bn (dJ 18.656) 1547s
+2026-10-07 21:04:48 [pid 30833] [small 111 ep 3] LS replays 36000 accepted 681 J 3196.250 bn (dJ 18.656) 1583s
+2026-10-07 21:05:01 [pid 30834] [small 111 ep 8] round 2: binaries on 151/54 grid/osat-weeks, new violations 2/26, gap 0.04684793051281229, claimed 1875.776 played 1918.533 bn, 300s
+2026-10-07 21:05:27 [pid 30833] [small 111 ep 3] LS replays 37000 accepted 690 J 3196.249 bn (dJ 18.657) 1622s
+2026-10-07 21:06:01 [pid 30833] [small 111 ep 3] LS replays 38000 accepted 697 J 3196.231 bn (dJ 18.676) 1656s
+2026-10-07 21:06:26 [pid 30833] [small 111 ep 3] LS replays 39000 accepted 703 J 3196.231 bn (dJ 18.676) 1680s
+2026-10-07 21:06:56 [pid 30833] [small 111 ep 3] LS replays 40000 accepted 713 J 3196.230 bn (dJ 18.676) 1711s
+2026-10-07 21:06:56 [pid 30833] [small 111 ep 3] LS done: J 3214.906 -> 3196.230 bn (dJ 18.676), 713 moves, 40000 replays, 1306 cpu s
+2026-10-07 21:07:01 [pid 30833] [small 111 ep 3] SAVED 0.2 MB: claimed 3184.092 played 3214.906 teacher 3196.230 bn | RSS-episode claimed 0.8248 played 0.7985 teacher 0.8144 | 5414s
+2026-10-07 21:07:01 [pid 30833] [small 111 ep 11] start
+2026-10-07 21:07:08 [pid 30833] [small 111 ep 11] round 0: binaries on 0/0 grid/osat-weeks, new violations 134/26, gap 0.0, claimed 3646.677 played 4026.858 bn, 2s
+2026-10-07 21:10:04 [pid 30834] [small 111 ep 8] round 3: binaries on 153/80 grid/osat-weeks, new violations 0/5, gap 0.03728875634840009, claimed 1878.263 played 1886.043 bn, 300s
+2026-10-07 21:12:11 [pid 30833] [small 111 ep 11] round 1: binaries on 134/26 grid/osat-weeks, new violations 13/8, gap 0.008937977534125072, claimed 3906.243 played 3940.409 bn, 300s
+2026-10-07 21:15:06 [pid 30834] [small 111 ep 8] round 4: binaries on 153/85 grid/osat-weeks, new violations 0/3, gap 0.04124223241075979, claimed 1885.505 played 1897.570 bn, 300s
+2026-10-07 21:17:13 [pid 30833] [small 111 ep 11] round 2: binaries on 147/34 grid/osat-weeks, new violations 1/13, gap 0.007406305366455282, claimed 3922.161 played 3917.671 bn, 300s
+2026-10-07 21:20:06 [pid 30834] [small 111 ep 8] round 5: no incumbent in 300s; stop
+2026-10-07 21:20:06 [pid 30834] [small 111 ep 8] MILP no_incumbent_round_5: chose round 3 of 5: claimed J 1878.263 bn, played J 1886.043 bn, gap 0.03728875634840009, 1519s
+2026-10-07 21:20:46 [pid 30834] [small 111 ep 8] LS replays 1000 accepted 20 J 1880.812 bn (dJ 5.231) 37s
+2026-10-07 21:21:18 [pid 30834] [small 111 ep 8] LS replays 2000 accepted 30 J 1879.650 bn (dJ 6.393) 70s
+2026-10-07 21:21:57 [pid 30834] [small 111 ep 8] LS replays 3000 accepted 43 J 1879.649 bn (dJ 6.394) 108s
+2026-10-07 21:22:16 [pid 30833] [small 111 ep 11] round 3: binaries on 148/47 grid/osat-weeks, new violations 2/4, gap 0.008212985551474365, claimed 3925.330 played 3916.523 bn, 300s
+2026-10-07 21:22:29 [pid 30834] [small 111 ep 8] LS replays 4000 accepted 49 J 1879.639 bn (dJ 6.404) 140s
+2026-10-07 21:22:56 [pid 30834] [small 111 ep 8] LS replays 5000 accepted 49 J 1879.639 bn (dJ 6.404) 167s
+2026-10-07 21:23:22 [pid 30834] [small 111 ep 8] LS replays 6000 accepted 75 J 1877.691 bn (dJ 8.352) 194s
+2026-10-07 21:23:54 [pid 30834] [small 111 ep 8] LS replays 7000 accepted 119 J 1877.666 bn (dJ 8.377) 225s
+2026-10-07 21:24:21 [pid 30834] [small 111 ep 8] LS replays 8000 accepted 127 J 1877.661 bn (dJ 8.382) 253s
+2026-10-07 21:24:45 [pid 30834] [small 111 ep 8] LS replays 9000 accepted 190 J 1877.648 bn (dJ 8.396) 276s
+2026-10-07 21:25:18 [pid 30834] [small 111 ep 8] LS replays 10000 accepted 209 J 1877.559 bn (dJ 8.484) 309s
+2026-10-07 21:25:56 [pid 30834] [small 111 ep 8] LS replays 11000 accepted 225 J 1876.265 bn (dJ 9.779) 348s
+2026-10-07 21:26:25 [pid 30834] [small 111 ep 8] LS replays 12001 accepted 266 J 1875.982 bn (dJ 10.061) 376s
+2026-10-07 21:26:52 [pid 30834] [small 111 ep 8] LS replays 13000 accepted 279 J 1875.949 bn (dJ 10.094) 404s
+2026-10-07 21:27:18 [pid 30833] [small 111 ep 11] round 4: binaries on 150/51 grid/osat-weeks, new violations 1/1, gap 0.009012516533600629, claimed 3928.723 played 3919.079 bn, 300s
+2026-10-07 21:27:19 [pid 30834] [small 111 ep 8] LS replays 14000 accepted 307 J 1875.815 bn (dJ 10.228) 431s
+2026-10-07 21:27:51 [pid 30834] [small 111 ep 8] LS replays 15000 accepted 344 J 1875.659 bn (dJ 10.384) 462s
+2026-10-07 21:28:19 [pid 30834] [small 111 ep 8] LS replays 16000 accepted 353 J 1875.658 bn (dJ 10.385) 491s
+2026-10-07 21:28:54 [pid 30834] [small 111 ep 8] LS replays 17000 accepted 370 J 1875.657 bn (dJ 10.386) 525s
+2026-10-07 21:29:18 [pid 30834] [small 111 ep 8] LS replays 18000 accepted 406 J 1875.362 bn (dJ 10.681) 549s
+2026-10-07 21:29:55 [pid 30834] [small 111 ep 8] LS replays 19000 accepted 424 J 1875.123 bn (dJ 10.920) 586s
+2026-10-07 21:30:30 [pid 30834] [small 111 ep 8] LS replays 20000 accepted 425 J 1875.123 bn (dJ 10.920) 622s
+2026-10-07 21:31:09 [pid 30834] [small 111 ep 8] LS replays 21000 accepted 427 J 1875.123 bn (dJ 10.920) 660s
+2026-10-07 21:31:34 [pid 30834] [small 111 ep 8] LS replays 22000 accepted 428 J 1875.123 bn (dJ 10.920) 685s
+2026-10-07 21:32:05 [pid 30834] [small 111 ep 8] LS replays 23000 accepted 428 J 1875.123 bn (dJ 10.920) 716s
+2026-10-07 21:32:21 [pid 30833] [small 111 ep 11] round 5: binaries on 151/52 grid/osat-weeks, new violations 0/3, gap 0.007199783094141656, claimed 3921.325 played 3920.516 bn, 300s
+2026-10-07 21:32:34 [pid 30834] [small 111 ep 8] LS replays 24000 accepted 443 J 1873.518 bn (dJ 12.526) 745s
+2026-10-07 21:33:10 [pid 30834] [small 111 ep 8] LS replays 25000 accepted 459 J 1872.725 bn (dJ 13.319) 781s
+2026-10-07 21:33:39 [pid 30834] [small 111 ep 8] LS replays 26000 accepted 467 J 1872.629 bn (dJ 13.414) 810s
+2026-10-07 22:07:02 [pid 315] generate small root 111 episodes 3..13: tl 300 gap 0.001 rounds 12 rules base,fuel,lots ls_budget 40000 order kind n_jobs 1
+2026-10-07 22:07:04 [pid 315] [small 111 ep 8] start
+2026-10-07 22:07:04 [pid 315] [small 111 ep 8] plan loaded from stage: claimed 187826260083326 played 188604314775815 (no_incumbent_round_5)
+2026-10-07 22:07:43 [pid 315] [small 111 ep 8] LS replays 1000 accepted 20 J 1880.812 bn (dJ 5.231) 33s
+2026-10-07 22:08:13 [pid 315] [small 111 ep 8] LS replays 2000 accepted 30 J 1879.650 bn (dJ 6.393) 63s
+2026-10-07 22:08:47 [pid 315] [small 111 ep 8] LS replays 3000 accepted 43 J 1879.649 bn (dJ 6.394) 97s
+2026-10-07 22:09:14 [pid 315] [small 111 ep 8] LS replays 4000 accepted 49 J 1879.639 bn (dJ 6.404) 123s
+2026-10-07 22:09:36 [pid 315] [small 111 ep 8] LS replays 5000 accepted 49 J 1879.639 bn (dJ 6.404) 146s
+2026-10-07 22:10:02 [pid 315] [small 111 ep 8] LS replays 6000 accepted 75 J 1877.691 bn (dJ 8.352) 171s
+2026-10-07 22:10:31 [pid 315] [small 111 ep 8] LS replays 7000 accepted 119 J 1877.666 bn (dJ 8.377) 201s
+2026-10-07 22:10:57 [pid 315] [small 111 ep 8] LS replays 8000 accepted 127 J 1877.661 bn (dJ 8.382) 227s
+2026-10-07 22:11:20 [pid 315] [small 111 ep 8] LS replays 9000 accepted 190 J 1877.648 bn (dJ 8.396) 249s
+2026-10-07 22:11:51 [pid 315] [small 111 ep 8] LS replays 10000 accepted 209 J 1877.559 bn (dJ 8.484) 281s
+2026-10-08 01:39:36 [pid 224] generate small root 111 episodes 3..13: tl 300 gap 0.001 rounds 12 rules base,fuel,lots ls_budget 40000 order kind n_jobs 1
+2026-10-08 01:39:43 [pid 224] [small 111 ep 8] start
+2026-10-08 01:39:43 [pid 224] [small 111 ep 8] plan loaded from stage: claimed 187826260083326 played 188604314775815 (no_incumbent_round_5)
+2026-10-08 01:40:32 [pid 224] [small 111 ep 8] LS replays 1000 accepted 20 J 1880.812 bn (dJ 5.231) 24s
+2026-10-08 01:40:54 [pid 224] [small 111 ep 8] LS replays 2000 accepted 30 J 1879.650 bn (dJ 6.393) 47s
+2026-10-08 01:41:19 [pid 224] [small 111 ep 8] LS replays 3000 accepted 43 J 1879.649 bn (dJ 6.394) 72s
+2026-10-08 01:41:39 [pid 224] [small 111 ep 8] LS replays 4000 accepted 49 J 1879.639 bn (dJ 6.404) 92s
+2026-10-08 01:41:56 [pid 224] [small 111 ep 8] LS replays 5000 accepted 49 J 1879.639 bn (dJ 6.404) 108s
+2026-10-08 01:42:14 [pid 224] [small 111 ep 8] LS replays 6000 accepted 75 J 1877.691 bn (dJ 8.352) 127s
+2026-10-08 01:42:37 [pid 224] [small 111 ep 8] LS replays 7000 accepted 119 J 1877.666 bn (dJ 8.377) 149s
+2026-10-08 01:42:56 [pid 224] [small 111 ep 8] LS replays 8000 accepted 127 J 1877.661 bn (dJ 8.382) 168s
+2026-10-08 01:43:12 [pid 224] [small 111 ep 8] LS replays 9000 accepted 190 J 1877.648 bn (dJ 8.396) 184s
+2026-10-08 01:43:34 [pid 224] [small 111 ep 8] LS replays 10000 accepted 209 J 1877.559 bn (dJ 8.484) 207s
+2026-10-08 01:43:58 [pid 224] [small 111 ep 8] LS replays 11000 accepted 225 J 1876.265 bn (dJ 9.779) 231s
+2026-10-08 01:44:16 [pid 224] [small 111 ep 8] LS replays 12001 accepted 266 J 1875.982 bn (dJ 10.061) 249s
+2026-10-08 01:44:34 [pid 224] [small 111 ep 8] LS replays 13000 accepted 279 J 1875.949 bn (dJ 10.094) 267s
+2026-10-08 01:44:51 [pid 224] [small 111 ep 8] LS replays 14000 accepted 307 J 1875.815 bn (dJ 10.228) 284s
+2026-10-08 01:45:11 [pid 224] [small 111 ep 8] LS replays 15000 accepted 344 J 1875.659 bn (dJ 10.384) 303s
+2026-10-08 01:45:30 [pid 224] [small 111 ep 8] LS replays 16000 accepted 353 J 1875.658 bn (dJ 10.385) 323s
+2026-10-08 01:45:54 [pid 224] [small 111 ep 8] LS replays 17000 accepted 370 J 1875.657 bn (dJ 10.386) 347s
+2026-10-08 01:46:10 [pid 224] [small 111 ep 8] LS replays 18000 accepted 406 J 1875.362 bn (dJ 10.681) 363s
+2026-10-08 01:46:34 [pid 224] [small 111 ep 8] LS replays 19000 accepted 424 J 1875.123 bn (dJ 10.920) 387s
+2026-10-08 01:46:57 [pid 224] [small 111 ep 8] LS replays 20000 accepted 425 J 1875.123 bn (dJ 10.920) 410s
+2026-10-08 01:47:21 [pid 224] [small 111 ep 8] LS replays 21000 accepted 427 J 1875.123 bn (dJ 10.920) 434s
+2026-10-08 01:47:38 [pid 224] [small 111 ep 8] LS replays 22000 accepted 428 J 1875.123 bn (dJ 10.920) 451s
+2026-10-08 01:47:56 [pid 224] [small 111 ep 8] LS replays 23000 accepted 428 J 1875.123 bn (dJ 10.920) 469s
+2026-10-08 01:48:14 [pid 224] [small 111 ep 8] LS replays 24000 accepted 443 J 1873.518 bn (dJ 12.526) 487s
+2026-10-08 01:48:37 [pid 224] [small 111 ep 8] LS replays 25000 accepted 459 J 1872.725 bn (dJ 13.319) 510s
+2026-10-08 01:48:58 [pid 224] [small 111 ep 8] LS replays 26000 accepted 467 J 1872.629 bn (dJ 13.414) 531s
+2026-10-08 01:49:14 [pid 224] [small 111 ep 8] LS replays 27000 accepted 490 J 1871.261 bn (dJ 14.782) 547s
+2026-10-08 01:49:38 [pid 224] [small 111 ep 8] LS replays 28000 accepted 509 J 1870.181 bn (dJ 15.862) 571s
+2026-10-08 01:50:01 [pid 224] [small 111 ep 8] LS replays 29000 accepted 520 J 1870.172 bn (dJ 15.871) 594s
+2026-10-08 01:50:18 [pid 224] [small 111 ep 8] LS replays 30000 accepted 528 J 1870.030 bn (dJ 16.013) 611s
+2026-10-08 01:50:35 [pid 224] [small 111 ep 8] LS replays 31000 accepted 532 J 1870.029 bn (dJ 16.014) 628s
+2026-10-08 01:50:53 [pid 224] [small 111 ep 8] LS replays 32000 accepted 535 J 1869.975 bn (dJ 16.068) 646s
+2026-10-08 01:51:15 [pid 224] [small 111 ep 8] LS replays 33000 accepted 550 J 1869.908 bn (dJ 16.135) 667s
+2026-10-08 01:51:34 [pid 224] [small 111 ep 8] LS replays 34000 accepted 556 J 1869.875 bn (dJ 16.169) 687s
+2026-10-08 01:51:55 [pid 224] [small 111 ep 8] LS replays 35000 accepted 557 J 1869.875 bn (dJ 16.169) 708s
+2026-10-08 01:52:15 [pid 224] [small 111 ep 8] LS replays 36000 accepted 567 J 1869.871 bn (dJ 16.172) 728s
+2026-10-08 01:52:35 [pid 224] [small 111 ep 8] LS replays 37000 accepted 570 J 1869.871 bn (dJ 16.172) 748s
+2026-10-08 01:53:01 [pid 224] [small 111 ep 8] LS replays 38000 accepted 571 J 1869.871 bn (dJ 16.172) 773s
+2026-10-08 01:53:21 [pid 224] [small 111 ep 8] LS replays 39000 accepted 571 J 1869.871 bn (dJ 16.172) 793s
+2026-10-08 01:53:36 [pid 224] [small 111 ep 8] LS replays 40000 accepted 573 J 1869.871 bn (dJ 16.172) 808s
+2026-10-08 01:53:36 [pid 224] [small 111 ep 8] LS done: J 1886.043 -> 1869.871 bn (dJ 16.172), 573 moves, 40000 replays, 801 cpu s
+2026-10-08 01:53:40 [pid 224] [small 111 ep 8] SAVED 0.1 MB: claimed 1878.263 played 1886.043 teacher 1869.871 bn | RSS-episode claimed 0.8531 played 0.8443 teacher 0.8625 | 837s
+2026-10-08 01:53:40 [pid 224] [small 111 ep 11] start
+2026-10-08 01:53:45 [pid 224] [small 111 ep 11] round 0: binaries on 0/0 grid/osat-weeks, new violations 134/26, gap 0.0, claimed 3646.677 played 4026.858 bn, 2s
+2026-10-08 01:58:47 [pid 224] [small 111 ep 11] round 1: binaries on 134/26 grid/osat-weeks, new violations 14/14, gap 0.00719590459156593, claimed 3899.390 played 3950.562 bn, 300s
+2026-10-08 02:03:49 [pid 224] [small 111 ep 11] round 2: binaries on 148/40 grid/osat-weeks, new violations 3/7, gap 0.008360752712267893, claimed 3925.918 played 3920.919 bn, 300s
+2026-10-08 08:17:43 [pid 229] generate small root 111 episodes 3..13: tl 300 gap 0.001 rounds 12 rules base,fuel,lots ls_budget 40000 order kind n_jobs 1
+2026-10-08 08:17:49 [pid 229] [small 111 ep 11] start
+2026-10-08 08:18:15 [pid 229] [small 111 ep 11] round 0: binaries on 0/0 grid/osat-weeks, new violations 134/26, gap 0.0, claimed 3646.677 played 4026.858 bn, 4s
+2026-10-08 09:10:04 [pid 235] generate small root 111 episodes 3..13: tl 150 gap 0.001 rounds 8 rules base,fuel,lots ls_budget 30000 order kind n_jobs 1
+2026-10-08 09:10:07 [pid 235] [small 111 ep 11] start
+2026-10-08 09:10:17 [pid 235] [small 111 ep 11] round 0: binaries on 0/0 grid/osat-weeks, new violations 134/26, gap 0.0, claimed 3646.677 played 4026.858 bn, 2s
+2026-10-08 09:12:50 [pid 235] [small 111 ep 11] round 1: binaries on 134/26 grid/osat-weeks, new violations 14/17, gap 0.009286743268612547, claimed 3907.702 played 3966.373 bn, 150s
+2026-10-08 09:15:23 [pid 235] [small 111 ep 11] round 2: binaries on 148/43 grid/osat-weeks, new violations 2/3, gap 0.012884622245061955, claimed 3941.611 played 3934.387 bn, 150s
+2026-10-08 10:02:44 [pid 241] generate small root 111 episodes 3..13: tl 150 gap 0.001 rounds 8 rules base,fuel,lots ls_budget 30000 order kind n_jobs 1
+2026-10-08 10:02:47 [pid 241] [small 111 ep 11] start
+2026-10-08 10:02:47 [pid 241] [small 111 ep 11] plan loaded from stage: claimed 393706927538469 played 391883690438982 (round_cap)
+2026-10-08 10:03:26 [pid 241] [small 111 ep 11] LS replays 1000 accepted 23 J 3918.561 bn (dJ 0.276) 34s
+2026-10-08 10:04:02 [pid 241] [small 111 ep 11] LS replays 2000 accepted 56 J 3917.050 bn (dJ 1.787) 71s
+2026-10-08 10:04:31 [pid 241] [small 111 ep 11] LS replays 3000 accepted 153 J 3911.638 bn (dJ 7.199) 100s
+2026-10-08 10:04:57 [pid 241] [small 111 ep 11] LS replays 4000 accepted 162 J 3909.923 bn (dJ 8.914) 125s
+2026-10-08 10:05:32 [pid 241] [small 111 ep 11] LS replays 5000 accepted 171 J 3908.718 bn (dJ 10.119) 160s
+2026-10-08 10:06:02 [pid 241] [small 111 ep 11] LS replays 6000 accepted 176 J 3908.601 bn (dJ 10.236) 191s
+2026-10-08 10:06:30 [pid 241] [small 111 ep 11] LS replays 7000 accepted 199 J 3908.391 bn (dJ 10.446) 219s
+2026-10-08 10:07:04 [pid 241] [small 111 ep 11] LS replays 8000 accepted 219 J 3908.341 bn (dJ 10.496) 252s
+2026-10-08 10:07:36 [pid 241] [small 111 ep 11] LS replays 9000 accepted 225 J 3908.341 bn (dJ 10.496) 284s
+2026-10-08 10:08:03 [pid 241] [small 111 ep 11] LS replays 10000 accepted 245 J 3908.341 bn (dJ 10.496) 312s
+2026-10-08 10:50:15 [pid 235] generate small root 111 episodes 3..13: tl 150 gap 0.001 rounds 8 rules base,fuel,lots ls_budget 20000 order kind n_jobs 1
+2026-10-08 10:50:17 [pid 235] [small 111 ep 11] start
+2026-10-08 10:50:17 [pid 235] [small 111 ep 11] plan loaded from stage: claimed 393706927538469 played 391883690438982 (round_cap)
+2026-10-08 10:50:59 [pid 235] [small 111 ep 11] LS replays 1000 accepted 23 J 3918.561 bn (dJ 0.276) 37s
+2026-10-08 10:51:36 [pid 235] [small 111 ep 11] LS replays 2000 accepted 56 J 3917.050 bn (dJ 1.787) 73s
+2026-10-08 10:52:05 [pid 235] [small 111 ep 11] LS replays 3000 accepted 153 J 3911.638 bn (dJ 7.199) 103s
+2026-10-08 10:52:31 [pid 235] [small 111 ep 11] LS replays 4000 accepted 162 J 3909.923 bn (dJ 8.914) 128s
+2026-10-08 10:53:05 [pid 235] [small 111 ep 11] LS replays 5000 accepted 171 J 3908.718 bn (dJ 10.119) 163s
+2026-10-08 10:53:37 [pid 235] [small 111 ep 11] LS replays 6000 accepted 176 J 3908.601 bn (dJ 10.236) 194s
+2026-10-08 10:54:06 [pid 235] [small 111 ep 11] LS replays 7000 accepted 199 J 3908.391 bn (dJ 10.446) 223s
+2026-10-08 10:54:39 [pid 235] [small 111 ep 11] LS replays 8000 accepted 219 J 3908.341 bn (dJ 10.496) 256s
+2026-10-08 11:24:49 [pid 251] generate small root 111 episodes 3..13: tl 150 gap 0.001 rounds 8 rules base,fuel,lots ls_budget 20000 order kind n_jobs 1
+2026-10-08 11:24:51 [pid 251] [small 111 ep 11] start
+2026-10-08 11:24:51 [pid 251] [small 111 ep 11] plan loaded from stage: claimed 393706927538469 played 391883690438982 (round_cap)
+2026-10-08 11:25:35 [pid 251] [small 111 ep 11] LS replays 1000 accepted 23 J 3918.561 bn (dJ 0.276) 38s
+2026-10-08 11:26:18 [pid 251] [small 111 ep 11] LS replays 2000 accepted 56 J 3917.050 bn (dJ 1.787) 80s
+2026-10-08 11:26:54 [pid 251] [small 111 ep 11] LS replays 3000 accepted 153 J 3911.638 bn (dJ 7.199) 117s
+2026-10-08 11:27:23 [pid 251] [small 111 ep 11] LS replays 4000 accepted 162 J 3909.923 bn (dJ 8.914) 146s
+2026-10-08 11:28:04 [pid 251] [small 111 ep 11] LS replays 5000 accepted 171 J 3908.718 bn (dJ 10.119) 187s
+2026-10-08 11:28:39 [pid 251] [small 111 ep 11] LS replays 6000 accepted 176 J 3908.601 bn (dJ 10.236) 222s
+2026-10-08 11:29:07 [pid 251] [small 111 ep 11] LS replays 7000 accepted 199 J 3908.391 bn (dJ 10.446) 250s
+2026-10-08 11:29:40 [pid 251] [small 111 ep 11] LS replays 8000 accepted 219 J 3908.341 bn (dJ 10.496) 283s
