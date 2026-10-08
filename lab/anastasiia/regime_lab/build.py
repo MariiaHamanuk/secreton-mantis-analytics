@@ -42,6 +42,8 @@ def main(name: str = "regime_x", agent: str = "regime_x", params: str | dict = "
     if params:
         params = params if isinstance(params, dict) else json.loads(params)
         (out / "regime.json").write_text(json.dumps(_booleans(params)))
+        if _booleans(params).get("hull") == "model":  # the trees that stand in for the solve with the hull (``shares.py fit``)
+            shutil.copy(HERE / "share_model.npz", out / "share_model.npz")
     print(out)
 
 

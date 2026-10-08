@@ -1,0 +1,1 @@
+{"share": 0, "solve_seconds": 30, "orders": "plan", "anchor": {"wafer": 5000, "order": 200000}, "passes": 1, "carry_hints": true, "hull": "round", "end_weeks": 1, "solve_share": 1.5, "warm_share": 0.5, "chain_share": 0.5, "tol_retry": 1e-05, "end_left": true, "anchor_free": "overflow", "hull_tol": 0.01}

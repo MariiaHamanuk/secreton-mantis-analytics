@@ -64,6 +64,7 @@ def episode(agent: str, task: str, entropy: int, n: int) -> dict:
             sent[t, slot] = q
     return {
         "n": n, "J": int(u.core._ep.traj.J_cents), "cpu": cpu, "log": list(getattr(ag, "log", [])),
+        "detail": list(getattr(ag, "detail", [])),  # the lab agent's: every run of the solver, by week
         "costs": np.array([[getattr(r.costs, c) for c in comp] for r in recs]),
         "lots": np.array([r.lots_started for r in recs]), "shed": np.array([r.shed for r in recs]),
         "lost": np.array([r.lost for r in recs]), "demand": np.array([r.demand for r in recs]),
@@ -77,15 +78,19 @@ def _path(tag: str, task: str, entropy: int) -> Path:
     return OUT / f"{tag}_{task}_{entropy}.pkl"
 
 
-def run(agent: str, tag: str, task: str = "small", entropy: int = 111, episodes: int = 16, first: int = 0, n_jobs: int = 3) -> None:
+def run(agent: str, tag: str, task: str = "small", entropy: int = 111, episodes: int = 16, first: int = 0, n_jobs: int = 3,
+        only: str | tuple = "") -> None:
+    """``only``: episodes to play instead of ``first``..``first + episodes - 1`` ("2,11,16")."""
     path = _path(tag, task, entropy)
     kept = pickle.loads(path.read_bytes()) if path.is_file() else {}
-    todo = [n for n in range(first, first + episodes) if n not in kept]
+    wanted = [int(n) for n in (only.split(",") if isinstance(only, str) else only)] if only else range(first, first + episodes)
+    todo = [n for n in wanted if n not in kept]
     for r in Parallel(n_jobs=n_jobs)(delayed(episode)(agent, task, entropy, n) for n in todo):
         kept[r["n"]] = r
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(pickle.dumps(kept))
-    show(tag, task=task, entropy=entropy, episodes=episodes, first=first)
+    if not only:
+        show(tag, task=task, entropy=entropy, episodes=episodes, first=first)
 
 
 def show(*tags: str, task: str = "small", entropy: int = 111, episodes: int = 16, first: int = 0, by_episode: bool = False) -> None:
