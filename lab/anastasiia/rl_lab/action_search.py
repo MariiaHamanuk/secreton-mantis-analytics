@@ -166,26 +166,35 @@ def episode(payload):
 
         parts = _BaseParts()
 
+    # per-week checkpoints (sweeps == 1 only): a restart replays the recorded factors without searching them again,
+    # and the base cost, once played, is read back instead of replayed
+    ck, done_weeks, base_saved = None, [], None
+    if ckpt_dir and sweeps == 1:
+        ck = Path(ckpt_dir) / f"ckpt_ep{index}.jsonl"
+        if ck.exists():
+            rows_ck = [json.loads(line) for line in ck.read_text().splitlines() if line.strip()]
+            done_weeks = [r for r in rows_ck if "week" in r]
+            base_saved = next((r["base_cost"] for r in rows_ck if "base_cost" in r), None)
+
     obs, info = env.reset(options={"pool_index": int(index)})
     config = agent_config_from_reset(env, obs, info)
-    base_agent = parts.agent(config, None)
-    base = 0.0
-    while True:
-        obs, reward, terminated, truncated, _ = env.step(base_agent.act(obs))
-        base += -float(reward)
-        if terminated or truncated:
-            break
+    if base_saved is None:
+        base_agent = parts.agent(config, None)
+        base = 0.0
+        while True:
+            obs, reward, terminated, truncated, _ = env.step(base_agent.act(obs))
+            base += -float(reward)
+            if terminated or truncated:
+                break
+        if ck is not None:
+            with ck.open("a") as fh:
+                fh.write(json.dumps({"base_cost": base}) + "\n")
+    else:
+        base = float(base_saved)
 
     groups = groups_of(config, grouping)
     masks = [m for _, m in groups]
     weeks = int(config["T"])
-
-    # per-week checkpoints (sweeps == 1 only): a restart replays the recorded factors without searching them again
-    ck, done_weeks = None, []
-    if ckpt_dir and sweeps == 1:
-        ck = Path(ckpt_dir) / f"ckpt_ep{index}.jsonl"
-        if ck.exists():
-            done_weeks = [json.loads(line) for line in ck.read_text().splitlines() if line.strip()]
 
     schedule = np.ones((weeks, len(groups)))
     best_total, rollouts, history = base, 0, []
