@@ -298,6 +298,9 @@ selection set with 1 week: +0.037 against the hybrid (+0.030 to +0.045), better 
 0.898 / 0.900 / 0.917 against 0.789 / 0.867 / 0.884 / 0.880; the worst episode against the hybrid -0.025 for
 -0.183. One week is the setting; the data do not tell 1 from 0.5.
 
+**The model's three versions, their scores, differences and how they were measured: `versions/README.md`** (in
+Ukrainian; the settings are `versions/*.json`, the table is printed by `versions.py`).
+
 **Two models** (built by `build.py`; the first is in `agents/`, the second is built with these `--params`:
 `{"share": 0.7, "solve_seconds": 3.0, "orders": "plan", "anchor": {"wafer": 5000, "order": 200000},
 "passes": 1, "carry_hints": true, "hull": "round", "end_weeks": 1, "hull_every": 2, "anchor_every": 4,
