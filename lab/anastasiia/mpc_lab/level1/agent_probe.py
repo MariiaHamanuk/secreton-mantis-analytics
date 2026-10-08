@@ -56,7 +56,7 @@ def main(agent, eps="23,26,32,33,38,45,57,61", against=None) -> None:
     base = Path(against) if against else None
     if base is not None and not base.is_absolute():
         base = ROOT / base
-    which = [int(e) for e in str(eps).split(",")]
+    which = [int(e) for e in eps] if isinstance(eps, (list, tuple)) else [int(e) for e in str(eps).split(",")]
     print(f"{folder.name} on small 111 episodes {which}" + (f", against {base.name}" if base else ""))
     print(f"{'ep':>3} {'J bn':>8} {'short':>7} {'shed':>7} {'KRlots M':>8} {'KRburn':>7} {'queues':>7} {'grid_kr':>8}"
           + ("  | base: J / dJ / KRburn / queues / grid_kr" if base else ""))
