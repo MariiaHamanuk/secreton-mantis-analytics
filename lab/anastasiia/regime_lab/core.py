@@ -502,7 +502,8 @@ class Episode:
         return float(m.ub[self.col("xi", t, oi, kp)])
 
     # ----- the cell ------------------------------------------------------------------------------------------------
-    def cell(self, mode: dict, ref: dict, anchor: list | None = None, price=None, bonus=None) -> Cell:
+    def cell(self, mode: dict, ref: dict, anchor: list | None = None, price=None, bonus=None,
+             gate: bool = False) -> Cell:
         """The oracle program's columns and rows restricted to the regimes ``mode``, linearised at ``ref``.
 
         A grid's week may also be "HULL", which is no regime of the simulator: the week stands for a mix of whole
@@ -524,6 +525,7 @@ class Episode:
         carried from week to week from putting its lots off for ever. Not the simulator's cost either.
         """
         inst, marks, m, psi = self.inst, self.marks, self.m, self.psi
+        peak: dict = {}  # paradigm_lab E1a: (week, grid) of a "HULL" cell -> the week's peak above the base load
         ub = np.concatenate([m.ub, np.ones(self.n1 - self.n0), np.full(self.N - self.n1, INF)])
         C = Cell(np.concatenate([m.lb, np.zeros(self.N - self.n0)]), ub)
         if self.anchored or bonus is not None:
@@ -556,6 +558,7 @@ class Episode:
                     tot = sum(inst.nodes[inst.fabs[fi]].fab.e * float(m.ub[col("p", t, fi)]) / R[fi]
                               for fi in inst.grid_fabs[gi] if inst.nodes[inst.fabs[fi]].fab.e > 0 and R[fi] > 0)
                     rmax = min(1.0, max(0.0, (Gbar - ybar) / tot)) if tot > 0 else 0.0
+                    peak[(t, gi)] = Gbar - ybar  # paradigm_lab E1a: a fuel is a gate when its burn exceeds this
                 if gm == "OFF" or (gm == "HULL" and rmax <= 0.0):
                     C.fix(jl, 1.0)
                     C.fix(jr, 0.0)
@@ -601,7 +604,16 @@ class Episode:
                             if jO is not None:
                                 C.cap(jO, 0.0)
                         if (t, gi) in C.hull:  # the fabs run for the share of a week's burn the scarcest segment gets
-                            C.row([(jr, cap), (jG, -rmax)], -INF, dk)
+                            # paradigm_lab E1a. A fuel whose weekly burn exceeds the peak above the base load is a
+                            # "gate": without it the fabs get nothing (``FINDINGS.md``, "Energy and fabs"). The row
+                            # below reads rho <= rmax G_k / cap, so the other fuels stay free above their share and
+                            # the program may oversupply them in a short week - a pure loss, since a unit is worth
+                            # 4.1 m USD of shed base load against 25 to 40 m in the peak. With ``gate`` a gate fuel
+                            # is tied to the week's share exactly (G_k = cap y), which is the formal way of writing
+                            # "do not spread the fuel thin". No new column and no new row: the row count of the cell
+                            # is unchanged, so a carried basis, ``hints`` and ``shifted`` keep working.
+                            tie = gate and cap > peak.get((t, gi), INF)
+                            C.row([(jr, cap), (jG, -rmax)], -dk if tie else -INF, dk)
                             used += 1
                         C.skip(4 - used)
                         continue
@@ -999,6 +1011,7 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
             hull_rough: bool = False, hull_only: bool | str = False, marks: set | None = None,
             chain_deadline: float | None = None, record: bool = False, hull_tol: float | None = None,
             tilt: tuple | None = None,
+            gate: bool = False,
             big_exact: str = "ipm",
             model: tuple | None = None, search: int = 0, hull_lean: float = 0.0, search_room: int = 1) -> dict:
     """The loop from ``acts`` (weekly (flows, overrides, holds)): the best played trajectory and how it was reached.
@@ -1074,7 +1087,7 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
                 for key, gm in plain.items():
                     if gm == "OFF" and (close_until is None or key[0] <= close_until):
                         mode["grid"][key] = "HULL"
-                C = ep.cell(mode, ref, anchor, price, bonus)
+                C = ep.cell(mode, ref, anchor, price, bonus, gate=gate)
                 if tweak is not None:
                     tweak(C)
                 wide = ep.solve(C, method=method, basis=out["basis"], time_limit=time_limit, what="hull beside")
@@ -1105,7 +1118,7 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
             for key, gm in plain.items():
                 if gm == "OFF" and (close_until is None or key[0] <= close_until) and not (tail and key[0] == 1):
                     mode["grid"][key] = "HULL"
-            C = ep.cell(mode, ref, anchor, price, bonus)
+            C = ep.cell(mode, ref, anchor, price, bonus, gate=gate)
             if tweak is not None:
                 tweak(C)
             # plan_lab: only this solution's x is read (the shares to round), so it may be the rough one
@@ -1124,6 +1137,8 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
                 if search:  # the short weeks the hull covered and the share of a whole week it asked of each
                     scout = {key: float(wide["x"][ep.jrho(*key)]) / rmax for key, rmax in C.hull.items()}
                 closed = _rounded(ep, C, wide["x"], mode, write="MID" if hull == "hard" else "SOFT", lean=hull_lean)
+                ys = [float(wide["x"][ep.jrho(t, gi)]) / r for (t, gi), r in C.hull.items() if r > 0]
+                out["fracy"] = (sum(1 for y in ys if 0.01 < y < 0.99), len(ys))  # paradigm_lab E1a's first number
                 if wide["basis"] is not None:
                     out["basis"] = wide["basis"]
             out["rounded"] = closed
@@ -1152,14 +1167,14 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
         if reuse is not None:
             sol, closed = reuse, 0
         else:
-            C = ep.cell(mode, ref, anchor, price, bonus)
+            C = ep.cell(mode, ref, anchor, price, bonus, gate=gate)
             if tweak is not None:
                 tweak(C)
             sol = ep.solve(C, method=method, basis=out["basis"], time_limit=time_limit, what="exact", big=big_exact)
         if closed and sol["status"] not in solved and not late() and left() > 0.05:  # no fuel for all: the plain cell
             mode["grid"] = plain
             closed = 0
-            C = ep.cell(mode, ref, anchor, price, bonus)
+            C = ep.cell(mode, ref, anchor, price, bonus, gate=gate)
             if tweak is not None:
                 tweak(C)
             sol = ep.solve(C, method=method, basis=out["basis"], time_limit=left(), what="plain", big=big_exact)
@@ -1167,13 +1182,13 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
         # a tie read the other way left no room
         if sol["status"] not in solved and hint is not None and not late() and left() > 0.05:
             mode, ref = ep.regimes(recs)
-            C = ep.cell(mode, ref, anchor, price, bonus)
+            C = ep.cell(mode, ref, anchor, price, bonus, gate=gate)
             if tweak is not None:
                 tweak(C)
             sol = ep.solve(C, method=method, basis=out["basis"], time_limit=left(), what="no hint", big=big_exact)
         # the extra bounds left no room
         if sol["status"] not in solved and tweak is not None and not late() and left() > 0.05:
-            C = ep.cell(mode, ref, anchor, price, bonus)
+            C = ep.cell(mode, ref, anchor, price, bonus, gate=gate)
             sol = ep.solve(C, method=method, basis=out["basis"], time_limit=left(), what="no tweak", big=big_exact)
         if sol["status"] != "Optimal":
             out["hist"].append((sol["status"], None, time.process_time() - t0))
@@ -1209,7 +1224,7 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
                 for key in weeks:
                     if plain.get(key) == "OFF":
                         trial["grid"][key] = "SOFT"
-                Ct = ep.cell(trial, ref, anchor, price, bonus)
+                Ct = ep.cell(trial, ref, anchor, price, bonus, gate=gate)
                 if tweak is not None:
                     tweak(Ct)
                 st = ep.solve(Ct, method=method, basis=sol["basis"], what="search " + kind, big=big_exact,
@@ -1826,6 +1841,7 @@ def _weeks(weights, T: int) -> np.ndarray:
 
 
 def switch_step(ep: "Episode", d: dict, tries: int = 4, tweak=None, bonus=None, deadline: float | None = None,
+                gate: bool = False,
                 last_week: int | None = None, min_gain: float = 1e8, anchor: list | None = None, price=None,
                 time_limit: float = 600.0, method: str = "simplex") -> dict:
     """A few grid-weeks tried for a switch from "sheds base load" to "runs its fabs", on top of ``descend``'s result
@@ -1844,7 +1860,7 @@ def switch_step(ep: "Episode", d: dict, tries: int = 4, tweak=None, bonus=None, 
         return time_limit if deadline is None else min(time_limit, deadline - time.process_time())
 
     def cell_of(mode, ref):
-        C = ep.cell(mode, ref, anchor, price, bonus)
+        C = ep.cell(mode, ref, anchor, price, bonus, gate=gate)
         if tweak is not None:
             tweak(C)
         return C
