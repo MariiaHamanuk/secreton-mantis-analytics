@@ -998,6 +998,7 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
             close_until: int | None = None, close_rationed: bool = False, hull: bool | str = False,
             hull_rough: bool = False, hull_only: bool | str = False, marks: set | None = None,
             chain_deadline: float | None = None, record: bool = False, hull_tol: float | None = None,
+            tilt: tuple | None = None,
             big_exact: str = "ipm",
             model: tuple | None = None, search: int = 0, hull_lean: float = 0.0, search_room: int = 1) -> dict:
     """The loop from ``acts`` (weekly (flows, overrides, holds)): the best played trajectory and how it was reached.
@@ -1104,6 +1105,7 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
             # plan_lab: only this solution's x is read (the shares to round), so it may be the rough one
             # ``hull_tol``: nor need it be solved to the end: the interior point stops at this optimality tolerance
             loose = hull_tol if hull_tol and not tail else None
+            _tilt(ep, C, tilt)  # next_lab: the earlier week of the hull cell is worth more
             wide = ep.solve(C, method=method, basis=out["basis"], time_limit=time_limit,
                             crossover=tail or not (hull_rough or loose), what="hull", ipm_tol=loose)
             mode["grid"] = dict(plain)
@@ -1667,6 +1669,51 @@ def moved(hint: dict | None, weeks: int = 1) -> dict | None:
         return None
     return {kind: {(key[0] - weeks, *key[1:]): v for key, v in table.items() if key[0] > weeks}
             for kind, table in hint.items()}
+
+
+def _tilt(ep: "Episode", C: Cell, tilt: tuple | None) -> int:
+    """next_lab: the earlier week of the hull cell is worth more, so that scarce fuel is brought forward.
+
+    ``tilt`` is ``(worth, span)``: ``worth`` USD a unit of a grid's fab ratio is worth, by grid, and ``span`` the
+    weeks over which that falls to zero. Written on the hull cell only, on ``jrho`` - the share with which a grid
+    feeds its fabs in a week the program may make whole. Returns the cells priced.
+
+    Why on ``jrho`` and not on the lots. Without it two schedules of the same whole weeks cost the program the same,
+    so it takes the one easier to reach, which is the later one (fuel arrives over 2 to 6 weeks and a terminal holds
+    more of it later). ``_rounded`` then marks a whole week late in the window, only the first week of the plan is
+    played, and next week the same choice is made again: the full week is always "in a few weeks". Measured on Small
+    111, episode 62, grid KR: the base holds ``lots 0.00`` for fourteen weeks in a row and writes "whole 1 of 1"
+    every week; with the tilt weeks 15, 16 and 20 give 0.99, 0.23 and 1.00, and the episode goes 0.9007 to 0.9665.
+
+    Not ``lot_tilt``, which paid per lot and was measured to lose (0.1/0.25/0.5 gave +0.033/+0.030/+0.025 against
+    +0.038 without it): a bonus on lots is earned by starting more lots, including ones that never sell, while a
+    share cannot be raised without fuel actually being there, so this one is earned only by moving fuel earlier.
+
+    Nor is it a price for keeping a dated whole week: that was measured a nil by construction (the output matched to
+    the cent with a price ten times the largest coefficient of the objective), because ``_rounded`` scans the weeks
+    from the first and marks where the banked fuel first pays for a whole week - the date follows the fuel's arrival
+    and is not a variable of the objective (``hub/tried/mpc.md``, next_lab).
+
+    Measured, paired on the tuning sets against ``anastasiia_plan_hull``: Small 111 x64 +0.0029 (+0.0010..+0.0051),
+    cheaper in 38 of 64, at no CPU; Full 111 x32 +0.0008 with the interval holding zero. The grid of the number is a
+    plateau (0.02 the same, 0.04 worse). It does not carry to the one-solve form (-0.0007 Small / -0.0035 Full), and
+    ``hull_every`` 1 there is worse still: with ``hull_only`` "tail" the relaxation is played as the action.
+    """
+    if not tilt:
+        return 0
+    worth, span = tilt
+    if worth is None:
+        return 0
+    if C.cost is None:
+        C.cost = np.zeros(ep.N)
+    reach = max(1.0, float(span))
+    n = 0
+    for t, gi in C.hull:
+        w = max(0.0, 1.0 - (t - 1) / reach) * (float(worth[gi]) if np.ndim(worth) else float(worth))
+        if w > 0.0:
+            C.cost[ep.jrho(t, gi)] -= w
+            n += 1
+    return n
 
 
 def _rounded(ep: "Episode", C: Cell, x: np.ndarray, mode: dict, write: str = "MID", lean: float = 0.0) -> int:

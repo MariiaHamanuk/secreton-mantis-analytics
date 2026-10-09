@@ -102,6 +102,18 @@ PARAMS = {
     # the interior point's optimality tolerance in the solve with the hull, which then runs without the crossover too
     # (0: HiGHS's own, 1e-8): only the shares of whole weeks are read from that solution, and they are rounded
     "hull_tol": 0.0,
+    # next_lab: the earlier week of the hull cell is worth more, in shares of what a whole week of that grid's fabs
+    # sells for, falling to zero over ``tilt_weeks``. The price sits on ``jrho`` - the share with which a grid feeds
+    # its fabs - so it cannot be earned by starting more lots, only by bringing scarce fuel forward, and that is why
+    # it is not ``lot_tilt`` (which lost: 0.1/0.25/0.5 gave +0.033/+0.030/+0.025 against +0.038 without it). It cures
+    # the plan scheduling a grid's full week "in a few weeks" and putting it off every week (Small 111, episode 62,
+    # grid KR: ``lots 0.00`` for fourteen weeks in a row, 0.9007 -> 0.9665). Measured against
+    # ``anastasiia_plan_hull``: Small 111 x64 +0.0029 (+0.0010..+0.0051) at no CPU, Full 111 x32 +0.0008 with the
+    # interval holding zero; 0.02 the same and 0.04 worse, so 0.01 is already on the plateau. It does **not** carry
+    # to the one-solve form (-0.0007 Small / -0.0035 Full): there ``hull_only`` "tail" plays the relaxation itself.
+    # Reasons and the measured nil of pricing a dated week instead - ``plan_core._tilt`` and ``hub/tried/mpc.md``
+    "hull_tilt": 0.0,
+    "tilt_weeks": 13.0,
     # the solver of the exact cell of a large program (Full), where "auto" takes the interior point: "ipm", or "devex",
     # the dual simplex with devex weights from a cold start. A small program (Small) is not touched
     "big_exact": "ipm",
@@ -319,6 +331,11 @@ class Agent(_hybrid.Agent):
         supply = set(inst.supply_nodes)
         self.end_stock = np.array([0.0 if sl.node in supply else self.end_k[sl.k] for sl in inst.stock_slots])
         self.chip_worth = np.array([pi[inst.nodes[f].fab.product] for f in inst.fabs])  # a lot's chip, by fab
+        # next_lab: USD a whole week of each grid's fabs sells for at their nominal capacity: the scale of ``hull_tilt``
+        self.week_worth = np.array([
+            sum(float(inst.nodes[inst.fabs[fi]].fab.cap0) * self.chip_worth[fi] for fi in inst.grid_fabs[gi])
+            for gi in range(len(inst.grids))
+        ])
 
     def _wasted(self, observation) -> np.ndarray:
         """Wafer slots into fabs whose lots end as thrown-away chips: a plant that takes the fab's chips had its
@@ -623,6 +640,7 @@ class Agent(_hybrid.Agent):
             close=float(p["close"]), close_until=H - hull_until, close_rationed=bool(p["close_rationed"]),
             hull=p["hull"] if hull_week else False, hull_rough=bool(p["hull_rough"]),
             hull_tol=float(p["hull_tol"]) if p["hull_tol"] > 0 else None,
+            tilt=(float(p["hull_tilt"]) * self.week_worth, float(p["tilt_weeks"])) if p["hull_tilt"] > 0 else None,
             big_exact="rough" if fit and self.rough else str(p["big_exact"]),
             hull_only=p["hull_only"] if hull_week else False, marks=marks, chain_deadline=self.chain_deadline,
             record=bool(p["record_shares"]),
