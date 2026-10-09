@@ -10,7 +10,7 @@ is a paired score. bn = 1e9 USD an episode. Rough conversion from FINDINGS: 0.01
 34 bn on Full (the levels' weights make this approximate). Each measure states whether it is an upper bound.
 
 Scripts (temporary, outside the repo): `<scratchpad>/an1.py … an14.py`, `dump_inst.py`, `dump_edges.py`, where
-`<scratchpad>` is a scratch directory outside the repository; the scripts were not kept.
+`<scratchpad>` is a scratch directory outside the repository; of its scripts only the accounting of idea 1 is kept, as `../lot_pool.py`.
 They rebuild each scenario's marks (`sample_omega`, `compute_marks`, 1.2 s an episode) and read the pickles; the
 container side of the lot book is replayed exactly from the kept dispatches with the stocks forced to the record
 (queue totals match the record to 1e-10 on Full, 1.8 units on Small).

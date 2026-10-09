@@ -129,6 +129,13 @@ PARAMS = {
     # with ``ask_scale``: the tanker releases out of a strait onto a cut edge that the plan's releases fill are
     # multiplied the same way (the override step clips with the same code: the edge first, pro rata)
     "ask_scale_out": False,
+    # frontier_lab F6: while a grid's output is cut (an energy shock: half of them are over in two weeks) and the cut
+    # is no older than so many weeks, the valves into that grid are asked no less than the plan made the week before
+    # the cut was seen sent there this week. The plan under "as observed" feeds a cut grid only what it can burn at
+    # the cut output and keeps its gas at the ration's threshold; when the shock ends within the week the grid burns
+    # more, its stock falls under the threshold and the next week is rationed though the terminal holds the gas.
+    # A request above the terminal's stock is clipped for free (0: off)
+    "grid_keep": 0,
     # plan_lab, the week's time. ``hull_every``: weeks between solves with the hull (the weeks between keep the whole
     # weeks of the carried plan); ``hull_rough``: that solve without the crossover; ``anchor_every``: weeks between
     # rollouts of the rules alone when there is an ``anchor`` (their plan of the last rollout, moved on, is the anchor
@@ -463,6 +470,31 @@ class Agent(_hybrid.Agent):
             if (int(m.ov_edge[o]) in fresh or strait[o] in closed) and o not in self.wish_ov:
                 self.wish_ov[o] = float(ov.get(o, 0.0))
 
+    def _grid_wishes(self, prev) -> None:
+        """frontier_lab F6 (``grid_keep``): what last week's plan sent this week through the valves into a grid whose
+        output was first seen cut this week, kept while the cut runs."""
+        m, age = self.model, self.planner.grid_age
+        if not hasattr(self, "_valve_grid"):
+            self._valve_grid = {int(s): m.inst.grid_ordinal[m.inst.edges[int(m.slot_edge[s])].head]
+                                for s in np.flatnonzero(self.valves)}
+            self.grid_wish = {}
+        self.grid_wish = {s: q for s, q in self.grid_wish.items() if age[self._valve_grid[s]] > 0}
+        if prev is None:
+            return
+        for s, gi in self._valve_grid.items():
+            if age[gi] == 1 and s not in self.grid_wish:
+                self.grid_wish[s] = float(prev[0].get(s, 0.0))
+
+    def _grid_keep(self, planned: dict) -> None:
+        """frontier_lab F6: the valves into a grid under a young cut of its output, raised in place to what the plan
+        made before the cut sent there."""
+        age, top = self.planner.grid_age, int(self.p["grid_keep"])
+        for s, wish in getattr(self, "grid_wish", {}).items():
+            if 1 <= age[self._valve_grid[s]] <= top and wish > planned["flows"][s]:
+                planned["flows"][s] = wish
+                self.kept = getattr(self, "kept", 0) + 1
+                self.notes = (getattr(self, "notes", None) or {}) | {"grid_kept": self.kept}
+
     def _ask_scaled(self, planned: dict, skip: set) -> None:
         """hazard_lab (``ask_scale``): the requests on every cut first edge the plan fills, multiplied in place by
         one number per edge (the edges of ``skip`` aside)."""
@@ -693,6 +725,8 @@ class Agent(_hybrid.Agent):
                     self.watch.see(week, seen["u"], seen["open"], seen["war_risk"])
                     if self.p["watch_ask"]:
                         self._wishes(self.acts[0] if self.acts else None, week)
+                if self.p["grid_keep"]:
+                    self._grid_wishes(self.acts[0] if self.acts else None)
                 plan, note = self._plan(observation, week, fuel0, rules0, alone)
             except Exception as error:  # the hybrid's action stands
                 self.acts, self.basis, self.hint = None, None, None
@@ -704,6 +738,8 @@ class Agent(_hybrid.Agent):
                 raised = self._ask_early(planned)
             if self.p["ask_scale"] > 1.0:
                 self._ask_scaled(planned, raised)
+            if self.p["grid_keep"]:
+                self._grid_keep(planned)
             flows[self.chip_slots] = planned["flows"][self.chip_slots]
         elif self.planner is not None:  # the hybrid's program for the chips after the fab, when no plan decides them
             remember, self.planner._remember = self.planner._remember, (lambda o: None)
