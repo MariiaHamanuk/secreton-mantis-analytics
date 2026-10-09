@@ -252,8 +252,50 @@ def by_start(p: Problem, kept: int = 1) -> list:
     return out
 
 
+def forward(p: Problem, asked_here: list) -> list:
+    """Sets that ask for whole weeks the bank does not pay for, early in the window: [[weeks], ...].
+
+    Read off the ceiling of the family (``ceiling.py`` on Small 444 episodes 0-7, about 600 plays an episode,
+    +0.0030 over the rounding): the sets the replay likes are **earlier and larger** than the rounding's. On
+    episode 6 the rounding asks for weeks 11, 37 and 39 and the family's best asks for 5, 7, 9, 16, 33 and 37; on
+    episode 1 it asks 22, 23, 23 against 5, 8, 9, 21 and 32. Week 5 of 52 is a week the hull's share accounting
+    says nothing is affordable in.
+
+    Why it is affordable anyway: a week asked to be whole is written "SOFT", which is a **price** on its shed base
+    load (``core.SOFT``) and not a requirement. The cell has a solution either way - the week closes where the fuel
+    can be brought to it and stays short where it cannot - so asking lets the exact cell **bring fuel forward**,
+    which the hull's own bank never considers because the bank only ever counts fuel that has already arrived. The
+    rounding never asks, so the fuel never comes forward. That is the cycle run forwards rather than backwards, and
+    it is the half of P17 the bank hid.
+
+    Not ``hull_lean``, which was measured a loss (-0.0009 Small / -0.0061 Full): ``lean`` marks a week whose bank is
+    within a share of the price, so it only ever moves a near miss by a week. These sets are not near misses - they
+    sit at the first short weeks of the window with no bank at all - and they are **proposals**, judged by the
+    replay, not a change to what the rounding believes.
+    """
+    if not len(p):
+        return []
+    ts = p.weeks
+    n_now = max(1, len(asked_here))
+    out = [
+        list(ts[:1]),                       # the grid's earliest short week alone
+        sorted(set(asked_here) | set(ts[:1])),   # keep what is asked and add the earliest: "more and earlier"
+        sorted(set(asked_here) | set(ts[:2])),
+        list(ts[:n_now]),                   # the same count, moved to the front of the window
+        list(ts[: n_now + 1]),              # one more than is asked, at the front
+        sorted(set(asked_here) | set(ts[: n_now + 2])),
+    ]
+    seen, kept = set(), []
+    for w in out:
+        key = tuple(sorted(w))
+        if w and key not in seen and sorted(w) != sorted(asked_here):
+            seen.add(key)
+            kept.append(sorted(w))
+    return kept
+
+
 def proposals(probs: dict, asked: frozenset, readings: tuple = READINGS, kept: int = 3,
-              limit: int = 24) -> list:
+              limit: int = 24, fwd: bool = False) -> list:
     """Ranked sets of whole weeks from the cycle schedules, as ``core._other_weeks`` returns them.
 
     [(the reading that proposed it, frozenset of (week, grid))]. Every grid is scheduled on its own - the bank is a
@@ -267,6 +309,14 @@ def proposals(probs: dict, asked: frozenset, readings: tuple = READINGS, kept: i
     ranked = []
     for gi, p in probs.items():
         mine = frozenset(key for key in asked if key[1] != gi)
+        here = sorted(t for (t, g) in asked if g == gi)
+        # ``fwd``: the forward cycle, early weeks the bank does not pay for. Off by default - it was measured to
+        # lose where it goes first, not because the sets are bad but because it crowds out ``by_start``, which pays
+        # (Small 444 ep 0-7, 60 tries: 0.9238 with it first against 0.9245 without; 12 tries: 0.9233 against 0.9237)
+        if fwd:
+            for rank, weeks in enumerate(forward(p, here)):
+                cand = mine | frozenset((t, gi) for t in weeks)
+                ranked.append((0, 2, -rank, "fwd", cand))
         for rank, weeks in enumerate(by_start(p)):  # P17's own family: where does the cycle begin
             cand = mine | frozenset((t, gi) for t in weeks)
             ranked.append((len(cand) - len(asked), 1, -rank, "start", cand))
@@ -277,7 +327,7 @@ def proposals(probs: dict, asked: frozenset, readings: tuple = READINGS, kept: i
             for rank, weeks in enumerate(solve(p, v, kept=kept)):
                 cand = mine | frozenset((t, gi) for t in weeks)
                 ranked.append((len(cand) - len(asked), -order, -rank, name, cand))
-    ranked.sort(key=lambda r: (-r[0], -r[1], -r[2]))
+    ranked.sort(key=lambda r: (-r[1], -r[0], -r[2]))
     seen, out = {asked}, []
     for gain, _o, _r, name, cand in ranked:
         if cand in seen:

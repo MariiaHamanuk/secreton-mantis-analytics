@@ -1070,7 +1070,7 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
             gate: bool = False,
             big_exact: str = "ipm",
             model: tuple | None = None, search: int = 0, hull_lean: float = 0.0, search_room: int = 1,
-            cycle: int = 0) -> dict:
+            cycle: int = 0, cycle_after: int = 0) -> dict:
     """The loop from ``acts`` (weekly (flows, overrides, holds)): the best played trajectory and how it was reached.
 
     Each pass reads the regimes of the trajectory the simulator played (a tie as the last solution's duals say, with
@@ -1110,6 +1110,13 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
     optimum of that same problem for every week the cycle could begin at. Measured on Small 444 episodes 0-7: the
     ring itself is exhausted (8 tries 0.9230, 60 tries 0.9234), so what is left is a different kind of proposal,
     not more of the same. The judge is unchanged - the exact cell and the simulator's replay.
+
+    ``cycle_after``: so many of the ring's moves are tried **before** the cycle schedules. Prepending the cycles
+    outright was measured to lose at the budget the game has (eight tries: 0.9211 against the ring's 0.9230) while
+    winning where tries are free (sixty: 0.9245 against 0.9234), and the reason is not the proposals - by the
+    replay's own record they take 21 bn USD of the 26 bn the search takes at all, and the largest single move on
+    the set is a cycle (7.66 bn, episode 7) - but that they **starve** the ring's first two moves, which are the
+    ones measured to pay (``SPEC.md:112``). So the first ``cycle_after`` of the ring go first and the cycles follow.
 
     ``hull_lean``: ``_rounded``'s ``lean``. ``search`` in the result: (sets tried, the moves taken with what each saved in bn USD);
     ``search_cpu``: the CPU seconds all of it took.
@@ -1280,7 +1287,10 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
 
             def proposals(a: frozenset, rs: list) -> list:
                 ring = _other_weeks(scout, a, short(rs, a))
-                return (cycles.proposals(probs, a, limit=cycle) + ring) if (cycle and probs) else ring
+                if not (cycle and probs):
+                    return ring
+                cyc = cycles.proposals(probs, a, limit=cycle)
+                return ring[:cycle_after] + cyc + ring[cycle_after:]
 
             queue = proposals(asked, recs2)
             while queue and len(tried) <= search:
