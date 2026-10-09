@@ -131,8 +131,37 @@ def climb(judge: Judge, start: frozenset, domain: list, budget: int, rng, best: 
     return best
 
 
+def sweep_moves(weeks: frozenset, domain: list) -> list:
+    """The cheap single moves only: drop one asked week, or slide one by a single short week of its own grid.
+
+    For Full a play costs about 14 CPU seconds and the candidate domain runs to 284 weeks, so the hill climb cannot
+    finish even one step inside any budget this machine affords. This sweep answers the narrower question that one
+    sweep **can** answer: is the rounding's set a local optimum of the cheap moves? It is about 3 |W| plays rather
+    than |domain| + 13 |W|.
+    """
+    by_grid = {}
+    for t, gi in domain:
+        by_grid.setdefault(gi, []).append(t)
+    out = []
+    for key in weeks:
+        out.append(weeks - {key})
+    for t, gi in weeks:
+        ts = by_grid[gi]
+        at = ts.index(t)
+        for by in (-1, 1):
+            if 0 <= at + by < len(ts) and (ts[at + by], gi) not in weeks:
+                out.append((weeks - {(t, gi)}) | {(ts[at + by], gi)})
+    seen, kept = {weeks}, []
+    for w in out:
+        fw = frozenset(w)
+        if fw not in seen:
+            seen.add(fw)
+            kept.append(fw)
+    return kept
+
+
 def one(task: str, entropy: int, n: int, start_agent: str, iters: int, budget: int, restarts: int,
-        seed: int) -> dict:
+        seed: int, sweep: bool = False) -> dict:
     ep = core.Episode.of(task, entropy, n)
     method = "ipm" if ep.N > 4 * core.BIG else "simplex"
     acts = plan.start_hybrid(ep, agent=start_agent)
@@ -163,6 +192,21 @@ def one(task: str, entropy: int, n: int, start_agent: str, iters: int, budget: i
     best = (base, asked)
     rng = np.random.default_rng(seed + n)
 
+    if sweep:  # one exhaustive sweep of the cheap single moves: is the rounding's set a local optimum?
+        taken = []
+        for cand in sweep_moves(asked, domain):
+            J = judge(cand)
+            if J is not None and J < base - 1e6:
+                taken.append(((base - J) / 1e11, sorted(cand)))
+                if J < best[0]:
+                    best = (J, cand)
+        taken.sort(reverse=True)
+        return {"n": n, "status": "Optimal", "J_base": base, "J_best": best[0],
+                "gain_bn": (base - best[0]) / 1e11, "asked": sorted(asked), "best": sorted(best[1]),
+                "solves": judge.solves, "domain": len(domain), "seconds": time.process_time() - t0,
+                "improving": len(taken), "swept": judge.solves - 1,
+                "top": [f"{g:.2f}" for g, _ in taken[:3]]}
+
     # the starts: the rounding's set, then the cycle program's proposals, then random sets of the same size
     starts = [asked] + [cand for _name, cand in cycles.proposals(probs, asked, limit=12)]
     while len(starts) < 1 + restarts:
@@ -188,7 +232,7 @@ def one(task: str, entropy: int, n: int, start_agent: str, iters: int, budget: i
 
 def main(task: str = "small", entropy: int = 444, episodes: int = 8, first: int = 0, which: str | tuple = "",
          n_jobs: int = 4, iters: int = 60, budget: int = 300, restarts: int = 8, seed: int = 20261009,
-         start_agent: str = "anastasiia_plan_hull3") -> None:
+         start_agent: str = "anastasiia_plan_hull3", sweep: bool = False) -> None:
     """``--budget``: plays a episode may spend. ``--restarts``: random sets tried besides the cycle proposals."""
     if which:
         ns = [int(x) for x in (which if isinstance(which, (list, tuple)) else str(which).split(","))]
@@ -196,7 +240,7 @@ def main(task: str = "small", entropy: int = 444, episodes: int = 8, first: int 
         ns = list(range(first, first + episodes))
     refs = plan.references(task, entropy, max(ns) + 1)
     res = Parallel(n_jobs=n_jobs)(
-        delayed(one)(task, entropy, n, start_agent, iters, budget, restarts, seed) for n in ns)
+        delayed(one)(task, entropy, n, start_agent, iters, budget, restarts, seed, sweep) for n in ns)
     ok = [r for r in res if r.get("status") == "Optimal"]
     for r in res:
         if r.get("status") != "Optimal":
@@ -205,6 +249,10 @@ def main(task: str = "small", entropy: int = 444, episodes: int = 8, first: int 
     for r in ok:
         print(f"{r['n']:>3} {r['J_base'] / 1e11:>10.1f} {r['J_best'] / 1e11:>10.1f} {r['gain_bn']:>8.2f}"
               f" {r['solves']:>6} {r['domain']:>4}  {[(t, g) for t, g in r['asked']]} -> {[(t, g) for t, g in r['best']]}")
+    if sweep:
+        for r in ok:
+            print(f"  ep {r['n']}: swept {r['swept']} cheap moves of a domain of {r['domain']},"
+                  f" improving {r['improving']}, best {r['top'] or 'none'}")
     sub = [refs[r["n"]] for r in ok]
     print(f"\nrounding's set   {plan.both(sub, [r['J_base'] for r in ok])}")
     print(f"the family's best {plan.both(sub, [r['J_best'] for r in ok])}")

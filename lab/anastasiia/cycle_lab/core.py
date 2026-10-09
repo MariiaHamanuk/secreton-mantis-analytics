@@ -1070,7 +1070,7 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
             gate: bool = False,
             big_exact: str = "ipm",
             model: tuple | None = None, search: int = 0, hull_lean: float = 0.0, search_room: int = 1,
-            cycle: int = 0, cycle_after: int = 0) -> dict:
+            cycle: int = 0, cycle_after: int = 0, drops_first: bool = False) -> dict:
     """The loop from ``acts`` (weekly (flows, overrides, holds)): the best played trajectory and how it was reached.
 
     Each pass reads the regimes of the trajectory the simulator played (a tie as the last solution's duals say, with
@@ -1117,6 +1117,14 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
     replay's own record they take 21 bn USD of the 26 bn the search takes at all, and the largest single move on
     the set is a cycle (7.66 bn, episode 7) - but that they **starve** the ring's first two moves, which are the
     ones measured to pay (``SPEC.md:112``). So the first ``cycle_after`` of the ring go first and the cycles follow.
+
+    ``drops_first``: the moves that **unask** a week - the empty set, and each asked week dropped on its own - are
+    tried before the rest of the ring. Measured, from a fixed state on Small 444 episodes 0-23: one exhaustive sweep
+    of the cheap single moves (a drop, or a slide by one short week) costs eight plays an episode and takes +0.0010
+    of the family's +0.0018, and the largest single move is a **drop** on six of the twenty-four episodes - episode
+    23 gives 6.55 bn USD for dropping the only week it asked for, episode 19 gives 5.52, episode 7 4.98, episode 1
+    4.80. So the rounding regularly asks for whole weeks that cost money, and the ring already holds the cure but
+    ranks it fourth or fifth, where eight tries do not always reach it.
 
     ``hull_lean``: ``_rounded``'s ``lean``. ``search`` in the result: (sets tried, the moves taken with what each saved in bn USD);
     ``search_cpu``: the CPU seconds all of it took.
@@ -1287,10 +1295,21 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
 
             def proposals(a: frozenset, rs: list) -> list:
                 ring = _other_weeks(scout, a, short(rs, a))
+                if drops_first:  # the unasking moves to the front, after whatever ``unshort`` leads with
+                    lead = [m for m in ring[:2] if m[0] == "unshort"]
+                    mine = unask(a)
+                    seen = {x for _k, x in lead} | {x for _k, x in mine}
+                    ring = lead + mine + [m for m in ring if m[1] not in seen]
                 if not (cycle and probs):
                     return ring
                 cyc = cycles.proposals(probs, a, limit=cycle)
                 return ring[:cycle_after] + cyc + ring[cycle_after:]
+
+            def unask(a: frozenset) -> list:
+                """The moves that take a week back: the empty set, then each asked week dropped on its own."""
+                out = [("none", frozenset())] if a else []
+                out += [("drop_one", a - {key}) for key in sorted(a)] if len(a) > 1 else []
+                return out
 
             queue = proposals(asked, recs2)
             while queue and len(tried) <= search:
