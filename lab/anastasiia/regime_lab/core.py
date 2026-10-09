@@ -174,6 +174,28 @@ class Episode:
         """
         inst, T, nc = self.inst, self.T, self.nc
         _stock, end_k, weeks = end[0], end[1], float(end[2])
+        peak = float(end[4]) if len(end) > 4 and end[4] else 0.0  # next_lab P2: share of a whole week's chips
+        # P2, the corrected form. The true value of fuel is **convex** (``FINDINGS.md``: 4.1 m USD a GWh of
+        # shed base load against 11, 25 or 40 m in the peak), because fuel goes to the base load first and
+        # only the units that complete a week open the peak. An LP can hold a concave credit and not a convex
+        # one, so the dear rate is not a first link of a schedule - it is paid only to a grid that **already**
+        # holds a week's burn of every one of its gate fuels, where the next unit really does open the peak.
+        # ``end[5]`` is that set of grids, read off the observation by the caller, so the rate stays a
+        # constant of the row and nothing of the state enters the program.
+        ready = set(end[5]) if len(end) > 5 and end[5] else set()
+        week_worth, n_gate = {}, {}
+        if peak > 0:  # USD a whole week of a grid's fabs sells for, and how many of its fuels hold the peak
+            pi = {}
+            for d in inst.demands:
+                pi[d.k] = max(pi.get(d.k, 0.0), d.pi)
+            for o in inst.osats:
+                for raw, packed in inst.nodes[o].osat.packages.items():
+                    pi[raw] = max(pi.get(raw, 0.0), pi.get(packed, 0.0))
+            for gi2, g2 in enumerate(inst.grids):
+                ga2 = inst.nodes[g2].grid
+                week_worth[g2] = sum(float(inst.nodes[inst.fabs[fi]].fab.cap0) * pi.get(inst.nodes[inst.fabs[fi]].fab.product, 0.0)
+                                     for fi in inst.grid_fabs[gi2])
+                n_gate[g2] = sum(1 for kk in ga2.fuels if ga2.shares.get(kk, 0.0) * ga2.deliverable > 0)
         after = float(end[3]) if len(end) > 3 and end[3] is not None else None  # plan_lab: weeks of the episode past the window
         supply, chk = set(inst.supply_nodes), set(inst.chokepoints)
         fuels = sorted({k for g in inst.grids for k in inst.nodes[g].grid.fuels if end_k[k] > 0})
@@ -192,6 +214,25 @@ class Episode:
                 cap = float(ga.ibar.get(k, 0.0)) + weeks * burn
                 if after is not None:  # plan_lab: no more than the grid can still burn before the episode ends
                     cap = min(cap, after * burn)
+                # next_lab P2. Today a unit of fuel left at the window's end is worth one rate everywhere
+                # (``end_fuel``), which is the rate of shed base load - 4.1 m USD a GWh. But a unit of a gate fuel is
+                # worth the whole week it lets a grid close, and that is 25 to 40 m in the peak (a full week of JP's
+                # memory fab is 7.2 bn USD against 0.74 bn for the same energy in the base load; ``FINDINGS.md``,
+                # "Energy and fabs"). ``peak`` pays that dearer rate on the first week's burn of each gate fuel and
+                # the old rate on the rest: a concave credit of two links, so the program fills the dear one first.
+                # The rate is divided by the count of the grid's gate fuels, so only all of them together are worth a
+                # whole week - a grid holding one of two collects only its share. The break point is a week's burn,
+                # which is a constant of the instance, so nothing of the state enters a row and the cell stays an LP.
+                hi = min(cap, burn) * float(peak)
+                if hi > 0 and n_gate.get(g, 0) > 0 and g in ready:
+                    rate = float(week_worth.get(g, 0.0)) / (burn * n_gate[g]) if burn > 0 else 0.0
+                    if rate > float(end_k[k]):  # a dearer first link, else the credit would not be concave
+                        for x in [g] + [x for x in terms if (x, k) in inst.slot_index]:
+                            owner[(x, k)] = len(pools)
+                        pools.append({"k": k, "value": rate, "cap": min(cap, burn), "cols": []})
+                        pools.append({"k": k, "value": float(end_k[k]), "cap": max(0.0, cap - burn),
+                                      "cols": [], "over": len(pools) - 1})
+                        continue
                 pools.append({"k": k, "value": float(end_k[k]), "cap": cap, "cols": []})
         for k in fuels:
             burn = sum(inst.nodes[g].grid.shares.get(k, 0.0) * inst.nodes[g].grid.deliverable for g in inst.grids)
@@ -261,7 +302,12 @@ class Episode:
                         held[self.owner.get((inst.edges[sh.edge].head, sh.k), self.rest[sh.k])] += float(sh.qty)
                     else:
                         value += end_k[sh.k] * sh.qty
-                value += sum(pool["value"] * min(float(h), pool["cap"]) for pool, h in zip(self.pools, held))
+                if any("over" in pool for pool in self.pools):  # a pair of links shares one holding, dear one first
+                    for i, pool in enumerate(self.pools):
+                        h = float(held[pool["over"]]) - self.pools[pool["over"]]["cap"] if "over" in pool else float(held[i])
+                        value += pool["value"] * min(max(0.0, h), pool["cap"])
+                else:  # one link a pool: the sum of before, so a run without ``end_peak`` matches it to the cent
+                    value += sum(pool["value"] * min(float(h), pool["cap"]) for pool, h in zip(self.pools, held))
             else:
                 value += float(np.dot(end_stock, stock))
                 value += sum(end_k[sh.k] * sh.qty for sh in state.pipeline)
@@ -378,7 +424,11 @@ class Episode:
         for (t, g), v in ref["rho"].items():
             z[self.jrho(t, g)] = v
         for i, pool in enumerate(self.pools):
-            z[self.n2 + i] = min(float(z[pool["cols"]].sum()), pool["cap"])
+            if "over" in pool:  # a pair of links shares one holding, the dear one first
+                over = self.pools[pool["over"]]
+                z[self.n2 + i] = min(max(0.0, float(z[over["cols"]].sum()) - over["cap"]), pool["cap"])
+            else:
+                z[self.n2 + i] = min(float(z[pool["cols"]].sum()), pool["cap"])
         return z
 
     # ----- regimes -------------------------------------------------------------------------------------------------
@@ -732,7 +782,11 @@ class Episode:
                         C.ub[j] = C.ub[j + 1] = 0.0
         for i, pool in enumerate(self.pools):  # the fuel a pool is paid for: no more than it holds, nor than its cap
             C.ub[self.n2 + i] = pool["cap"]
-            C.row([(self.n2 + i, 1.0)] + [(j, -1.0) for j in pool["cols"]], -INF, 0.0)
+            if "over" in pool:  # next_lab P2: this link is the dearer one's overflow, so the pair shares one holding
+                j0 = self.n2 + pool["over"]
+                C.row([(self.n2 + i, 1.0), (j0, 1.0)] + [(j, -1.0) for j in pool["cols"]], -INF, 0.0)
+            else:
+                C.row([(self.n2 + i, 1.0)] + [(j, -1.0) for j in pool["cols"]], -INF, 0.0)
         return C
 
     def _lots(self, C: Cell, mode: dict, ref: dict, t: int, fi: int, gm: str, jr: int | None, rho0: float, gi: int | None) -> None:
