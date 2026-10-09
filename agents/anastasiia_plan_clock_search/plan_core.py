@@ -152,6 +152,16 @@ class Episode:
         self.disposal_slots = [s for s in self.plain if inst.stock_slots[s].node not in supply]
         self.lanes = [key[1:] for key in self.tm if key[0] == "Q" and key[3] is not None]  # (c, k, lane)
         self.psi = inst.params.psi
+        # how ``solve`` treats a cell that does not solve at once (set by whoever owns the episode; None: as before),
+        # and a note of every run of the solver
+        self.warm_limit: float | None = None  # seconds the simplex may take from a basis before it starts cold
+        self.tol_retry: float | None = None  # primal feasibility tolerance of one more run of a cell left unsolved
+        # seconds: a run with less than this left of its limit does not start. HiGHS's interior point takes a limit
+        # shorter than its presolve for no limit at all (a run given 0.06 s took 0.59 s on a cell of Full)
+        self.least = 0.0
+        self.rough_tol = 1e-4  # the interior point's optimality tolerance in a "rough" solve of an exact cell
+        self.tol: float | None = None  # primal feasibility tolerance of every run (None: HiGHS's own, 1e-7)
+        self.solves: list[dict] = []
 
     def _pools(self, end: tuple) -> tuple[list, dict, dict]:
         """The capped end credit for fuel: (pools, the pool of a (node, fuel), the pool of the rest of a fuel).
@@ -164,7 +174,7 @@ class Episode:
         """
         inst, T, nc = self.inst, self.T, self.nc
         _stock, end_k, weeks = end[0], end[1], float(end[2])
-        after = float(end[3]) if len(end) > 3 and end[3] is not None else None
+        after = float(end[3]) if len(end) > 3 and end[3] is not None else None  # plan_lab: weeks of the episode past the window
         supply, chk = set(inst.supply_nodes), set(inst.chokepoints)
         fuels = sorted({k for g in inst.grids for k in inst.nodes[g].grid.fuels if end_k[k] > 0})
         pools, owner, rest = [], {}, {}
@@ -180,7 +190,7 @@ class Episode:
                 for x in [g] + [x for x in terms if (x, k) in inst.slot_index]:
                     owner[(x, k)] = len(pools)
                 cap = float(ga.ibar.get(k, 0.0)) + weeks * burn
-                if after is not None:
+                if after is not None:  # plan_lab: no more than the grid can still burn before the episode ends
                     cap = min(cap, after * burn)
                 pools.append({"k": k, "value": float(end_k[k]), "cap": cap, "cols": []})
         for k in fuels:
@@ -751,7 +761,9 @@ class Episode:
         A dual above ``eps`` (USD per unit) on a column or row says the cost would fall if its value were lower;
         below ``-eps``, if it were higher. Fuel: the set of regimes to prefer at a tie ("S" when the fuel on hand
         equals what the segment may burn, "R" when last week's stock is at the ration's threshold). Fab: 0 or 1
-        (wafers on hand equal the capacity). Plant: 0 or 1. Grid: "OFF", "MID" or "ON".
+        (wafers on hand equal the capacity). Plant: 0 or 1. Grid: "OFF", "MID" or "ON". "value": for every short
+        (week, grid), what the lots of a full week would be worth there at this solution's prices (USD; nothing reads
+        it as a hint, ``share_features`` does: it is what the solve with the hull weighs and the state does not show).
         """
         cd, rd = sol["col_dual"], sol["row_dual"]
         out = {"grid": {}, "fuel": {}, "fab": {}, "osat": {}}
@@ -794,6 +806,7 @@ class Episode:
                 out["grid"][key] = "MID" if value.get(key, 0.0) > 1e3 * eps else "OFF"
             elif gm == "ON":
                 out["grid"][key] = "MID" if value.get(key, 0.0) > 1e3 * eps else "ON"
+        out["value"] = {key: float(value.get(key, 0.0)) for key, gm in mode["grid"].items() if gm == "OFF"}
         return out
 
     # ----- solve ---------------------------------------------------------------------------------------------------
@@ -826,15 +839,42 @@ class Episode:
         return float(viol[i]), where
 
     def solve(self, C: Cell, method: str = "simplex", time_limit: float = 600.0, basis: tuple | None = None,
-              crossover: bool = True) -> dict:
+              crossover: bool = True, what: str = "", ipm_tol: float | None = None, big: str = "ipm") -> dict:
         """The cell's optimum: status, objective in USD (the simulator's J when the cell is exact), x, the duals and
         the basis. ``basis`` (the column and row statuses of another cell's optimum, ``shifted`` when that cell
         started a week earlier) is where the simplex starts: every cell has the same columns and rows. ``method``
         "auto": the simplex on a small program, the interior-point method on a large one (Full, a window of 26
-        weeks: a steady 1.2 to 1.6 s a solve where the simplex, from a basis or not, takes 0.6 to 18 s)."""
+        weeks: a steady 1.2 to 1.6 s a solve where the simplex, from a basis or not, takes 0.6 to 18 s).
+
+        A cell that does not solve at once is run again, each way once:
+
+        - cold, when the simplex started from a basis it could not use. The interior point reads no basis (with one
+          set its run is the cold run to the last bit), so it is not run twice. With ``self.warm_limit`` (seconds)
+          the simplex from a basis also gives way to the cold run when it takes longer: from last week's basis it now
+          and then stalls for tens of seconds on a cell that solves cold in 0.1 s;
+        - with ``self.tol_retry`` as the primal feasibility tolerance (ten times ``self.tol`` when that is already as
+          loose), when it is left "Infeasible" or "Unknown".
+          HiGHS judges with 1e-7 in the program's own units, the regimes are read with a relative ``TOL``, and a cell
+          that holds its own trajectory to 1e-6 may fail by a rounding: such cells have an optimum at 1e-6 or 1e-5.
+
+        With either set the runs share ``time_limit``. Every run is noted in ``self.solves``, ``what`` being the
+        caller's name of the cell. ``ipm_tol``: the interior point's optimality tolerance (HiGHS's own is 1e-8), for a
+        solution that is only read roughly: without the crossover a tolerance of 1e-4 ends a Full cell after 30
+        iterations in place of 49.
+        """
         hs, Highs = highs()
         if method == "auto":  # the simplex (from a basis, if any) on a small program, interior point on a large one
-            method = "simplex" if self.N <= BIG else "ipm"
+            method = "simplex" if self.N <= BIG else big
+        # "rough": the interior point as it stops at ``self.rough_tol``, no crossover: a large program's exact cell in a
+        # week whose clock leaves no room for a vertex (a heavy episode of Full on a slow server). Its x is no vertex
+        # and its duals are approximate; the plan made of it is played on the model before it is taken
+        if method == "rough":
+            method, crossover, basis, ipm_tol = "ipm", False, None, self.rough_tol
+        # "devex": the dual simplex with devex weights from a cold start, for a large program's exact cell: on 45 cells
+        # of Full its median is 0.6 of the interior point's with the crossover, and its longest run no longer
+        devex = method == "devex"
+        if devex:
+            method, basis = "simplex", None
         A, lo, hi = self.rows(C)
         n_row, n_col = A.shape
         inf = hs.kHighsInf
@@ -848,38 +888,75 @@ class Episode:
         lp.a_matrix_.num_col_, lp.a_matrix_.num_row_ = n_col, n_row
         lp.a_matrix_.start_, lp.a_matrix_.index_ = A.indptr.astype(np.int32), A.indices.astype(np.int32)
         lp.a_matrix_.value_ = A.data.astype(np.float64)
-        h = Highs()
-        h.setOptionValue("output_flag", False)
-        h.setOptionValue("solver", method)
-        h.setOptionValue("time_limit", float(time_limit))
         rough = method == "ipm" and not crossover  # plan_lab: the interior point as it stops, a fifth faster: its x is
-        if rough:  # feasible and optimal to the solver's tolerance, but there is no basis and the duals are not to be read
-            h.setOptionValue("run_crossover", "off")
-        h.passModel(lp)
-        if basis is not None and len(basis[0]) == n_col and len(basis[1]) == n_row:
-            codes = _statuses(hs)
-            b = hs.HighsBasis()
-            b.col_status, b.row_status = [codes[i] for i in basis[0]], [codes[i] for i in basis[1]]
-            b.valid, b.alien = True, True  # HiGHS completes it: a shifted or another cell's basis need not be square
-            h.setBasis(b)
-        h.run()
-        status = h.modelStatusToString(h.getModelStatus())
-        if rough and status == "Unknown" and int(h.getInfo().primal_solution_status) == 2:
-            status = "Optimal"
-        if status not in ("Optimal", "Time limit reached") and basis is not None:  # a start HiGHS could not use: cold
-            return self.solve(C, method, max(0.01, time_limit * 0.5))
+        # feasible and optimal to the solver's tolerance, but there is no basis and the duals are not to be read
+        start = basis if basis is not None and len(basis[0]) == n_col and len(basis[1]) == n_row else None
+        done = ("Optimal", "Time limit reached")
+
+        def run(start: tuple | None, limit: float, attempt: str, tol: float | None = None):
+            h = Highs()
+            h.setOptionValue("output_flag", False)
+            h.setOptionValue("solver", method)
+            if devex:
+                h.setOptionValue("simplex_strategy", 1)
+                h.setOptionValue("simplex_dual_edge_weight_strategy", 1)
+            h.setOptionValue("time_limit", float(limit))
+            if rough:
+                h.setOptionValue("run_crossover", "off")
+            if ipm_tol is not None and method == "ipm":
+                h.setOptionValue("ipm_optimality_tolerance", float(ipm_tol))
+            if tol is not None or self.tol is not None:
+                h.setOptionValue("primal_feasibility_tolerance", float(self.tol if tol is None else tol))
+            h.passModel(lp)
+            if start is not None and method != "ipm":  # the interior point does not read it
+                codes = _statuses(hs)
+                b = hs.HighsBasis()
+                b.col_status, b.row_status = [codes[i] for i in start[0]], [codes[i] for i in start[1]]
+                b.valid, b.alien = True, True  # HiGHS completes it: a shifted or another cell's basis need not be square
+                h.setBasis(b)
+            t0 = time.process_time()
+            h.run()
+            status = h.modelStatusToString(h.getModelStatus())
+            info = h.getInfo()
+            if rough and status == "Unknown" and int(info.primal_solution_status) == 2:
+                status = "Optimal"
+            self.solves.append({
+                "what": what, "attempt": attempt, "method": method, "status": status, "cpu": time.process_time() - t0,
+                "seconds": float(h.getRunTime()), "limit": float(limit), "simplex": int(info.simplex_iteration_count),
+                "ipm": int(info.ipm_iteration_count), "crossover": int(info.crossover_iteration_count),
+                "rows": n_row, "cols": n_col, "end": time.process_time(),
+            })  # fmt: skip
+            return h, status
+
+        warm = start is not None and method == "simplex"
+        first = min(time_limit, self.warm_limit) if warm and self.warm_limit else time_limit
+        if self.least > 0 and time_limit < self.least:  # no time for a run
+            return {"status": "Time limit reached", "J": math.nan, "iterations": 0, "seconds": 0.0}
+        h, status = run(start, first, "cold" if start is None else "warm")
+        spent = float(h.getRunTime())
+        again = self.least <= 0 or time_limit - spent >= self.least  # another run has the time to start
+        if warm and again and (status not in done or (status == "Time limit reached" and first < time_limit)):
+            h, status = run(None, max(0.05, time_limit - spent) if self.warm_limit else time_limit, "cold")
+            spent += float(h.getRunTime())
+            again = self.least <= 0 or time_limit - spent >= self.least
+        if self.tol_retry and again and status not in done:  # looser than the run that failed, whatever its tolerance was
+            looser = max(self.tol_retry, 10.0 * self.tol) if self.tol else self.tol_retry
+            h, status = run(None, max(0.05, time_limit - spent), "tolerance", looser)
         out_seconds = float(h.getRunTime())
         info = h.getInfo()
         out = {"status": status, "J": float(info.objective_function_value) if status == "Optimal" else math.nan,
                "iterations": int(info.simplex_iteration_count), "seconds": out_seconds}
         if status == "Optimal":
-            sol, got = h.getSolution(), h.getBasis()
+            sol = h.getSolution()
+            # the basis is read only where a simplex can start from it, in this program or in next week's, one week
+            # shorter: reading it out of HiGHS takes 50 ms on a cell of Full
+            got = h.getBasis() if not rough and self.N * (self.T - 1) <= 1.05 * BIG * self.T else None
             if C.cost is not None:  # J without the anchor's price and the lots' bonus: what the simulator will charge
                 out["J"] -= float(C.cost @ np.asarray(sol.col_value, dtype=float))
             out.update(x=np.asarray(sol.col_value, dtype=float), col_dual=np.asarray(sol.col_dual),
                        row_dual=np.asarray(sol.row_dual)[self.base.shape[0] :],
-                       basis=None if rough else (np.array([int(v) for v in got.col_status], dtype=np.int8),
-                                                 np.array([int(v) for v in got.row_status], dtype=np.int8)))
+                       basis=None if got is None else (np.array([int(v) for v in got.col_status], dtype=np.int8),
+                                                       np.array([int(v) for v in got.row_status], dtype=np.int8)))
         return out
 
     def shifted(self, basis: tuple, weeks: int = 1) -> tuple | None:
@@ -919,7 +996,11 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
             price=None, bonus=None, played: tuple | None = None, deadline: float | None = None,
             force_first: bool = False, method: str = "simplex", hint: dict | None = None, close: float = 0.0,
             close_until: int | None = None, close_rationed: bool = False, hull: bool | str = False,
-            hull_rough: bool = False, hull_only: bool | str = False, marks: set | None = None) -> dict:
+            hull_rough: bool = False, hull_only: bool | str = False, marks: set | None = None,
+            chain_deadline: float | None = None, record: bool = False, hull_tol: float | None = None,
+            tilt: tuple | None = None,
+            big_exact: str = "ipm",
+            model: tuple | None = None, search: int = 0, hull_lean: float = 0.0, search_room: int = 1) -> dict:
     """The loop from ``acts`` (weekly (flows, overrides, holds)): the best played trajectory and how it was reached.
 
     Each pass reads the regimes of the trajectory the simulator played (a tie as the last solution's duals say, with
@@ -929,7 +1010,9 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
     ``force_first`` the first solution is taken even when the start, which need not respect them, is cheaper.
     ``played``: the start's (records, cost) when it has been played already. ``deadline``: process time after which no
     pass starts, and which a solve may not pass. ``hint``: how to read the start's ties (last week's, moved on by a
-    week: ``moved``); the last pass's hint comes back as ``hint``. ``close``: in the first cell the weeks a
+    week: ``moved``); the last pass's hint comes back as ``hint``. ``chain_deadline``: process time after which a
+    cell that did not solve is not written another way and solved again (without the whole weeks asked for, without
+    the hint, without ``tweak``): the start stands. ``close``: in the first cell the weeks a
     grid nearly closes are gathered into whole weeks (``_whole_weeks``), up to week ``close_until``; when that cell
     has no solution the plain one is solved. ``hull``: the worth of a whole week inside the program. "round" (or
     True): before the first cell, the same cell with every short week of a grid with fabs written as "HULL" is
@@ -938,9 +1021,20 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
     weeks leaves the cell without a solution (one more solve a call). "hard": the rounded weeks are written as
     closed instead, and the plain cell is solved when that has no solution. "burn": no solve before the first cell;
     the weeks are those ``_whole_weeks`` rounds the start's own burn into (``close``: the threshold, 1 when 0),
-    "SOFT" too. ``anchor`` and ``price``
+    "SOFT" too. "model": no solve before the first cell either; fitted trees name the weeks (``told_weeks``, ``model``:
+    (``share_model``'s tuple, the episode's weeks past the window)); with ``record`` the solve with the hull is run
+    beside them and its shares are kept, as they are when it decides (``shares``, ``share_features``), so that the
+    trees can be fitted on the states their own play meets. ``anchor`` and ``price``
     (``Episode.cell``): the loop then minimises the played cost plus the price of leaving the anchor; ``bonus``:
     minus the lots' bonus.
+
+    ``search``: after the first cell, up to so many other sets of whole weeks are tried, each in a cell of its own,
+    and the cheapest plan as the simulator plays it is kept (``_other_weeks``: the rounding of the hull's shares is
+    one of many sets its fuel could pay for, and neither the best placed nor always worth asking); no set is tried
+    past ``deadline``, and none at all unless ``search_room`` of them fit before it, each taken to cost what the
+    first cell did with its play (where a try is dear against the week, on a large network, the search stays out).
+    ``hull_lean``: ``_rounded``'s ``lean``. ``search`` in the result: (sets tried, the moves taken with what each saved in bn USD);
+    ``search_cpu``: the CPU seconds all of it took.
 
     Returns a dict: ``acts``, ``recs``, ``J`` (cents, played), ``J0`` (cents, the start as played), ``hist`` (per
     pass: the cell's claim in USD, the played cost in cents, CPU seconds of the pass), ``basis`` (of the last cell
@@ -949,6 +1043,10 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
     def away(a: list, r: list) -> int:
         return _beside(a, r, anchor, price, bonus)
 
+    def late() -> bool:
+        return chain_deadline is not None and time.process_time() >= chain_deadline
+
+    solved = ("Optimal", "Time limit reached")
     recs, J = ep.simulate(acts) if played is None else played
     out = {"J0": J, "hist": [], "basis": basis}
     J += away(acts, recs)  # from here on the cost compared includes these; ``out["J"]`` is the simulator's
@@ -961,16 +1059,37 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
             time_limit = min(time_limit, deadline - t0)
             if time_limit <= max(0.02, 1.25 * spent):
                 break
-
-        def lim() -> float:
-            """The limit left for ONE solve: ``descend`` handed the same ``time_limit`` to all of its solves and
-            ``Episode.solve`` retried with the full limit again, so a pass could take many times the limit."""
-            if deadline is None:
-                return float(time_limit)
-            return max(0.01, min(float(time_limit), deadline - time.process_time()))
         mode, ref = ep.regimes(recs, hint)
-        closed, reuse = 0, None
-        if hull == "burn" and number == 0:
+        closed, reuse, scout = 0, None, None
+        if hull == "model" and number == 0:  # no solve with the hull: a fitted model tells its shares (``told_shares``)
+            plain = dict(mode["grid"])
+            worth = (hint or {}).get("value")  # of the last cell solved, in this window's weeks
+            if record:  # the solve with the hull beside the model, for its answer in the states the model's play meets
+                for key, gm in plain.items():
+                    if gm == "OFF" and (close_until is None or key[0] <= close_until):
+                        mode["grid"][key] = "HULL"
+                C = ep.cell(mode, ref, anchor, price, bonus)
+                if tweak is not None:
+                    tweak(C)
+                wide = ep.solve(C, method=method, basis=out["basis"], time_limit=time_limit, what="hull beside")
+                mode["grid"] = dict(plain)
+                if wide["status"] == "Optimal":  # kept for the record only: neither its weeks nor its basis are used
+                    out["shares"] = {key: float(wide["x"][ep.jrho(*key)]) / rmax for key, rmax in C.hull.items()}
+                    out["share_features"] = share_features(ep, recs, mode, ref, list(C.hull), worth)
+            if len(model[0]) > 5 and model[0][5] is not None and not model[0][5].place:  # a network over all the plan's short weeks
+                for key in told_net(ep, recs, mode, ref, close_until, model[0][5], model[1], worth):
+                    mode["grid"][key] = "SOFT"
+                    closed += 1
+            elif model[0][3] is not None:  # the model tells the weeks themselves
+                for key in told_weeks(ep, recs, mode, ref, close_until, *model, worth):
+                    mode["grid"][key] = "SOFT"
+                    closed += 1
+            else:
+                told, domain = told_shares(ep, recs, mode, ref, close_until, *model, worth)
+                closed = _rounded_from(ep, told, domain, mode, write="SOFT")
+            out["hull"], out["rounded"] = "model", closed
+            out["marks"] = {key for key, gm in mode["grid"].items() if gm == "SOFT" and plain[key] != "SOFT"}
+        elif hull == "burn" and number == 0:
             plain = dict(mode["grid"])
             closed = _whole_weeks(ep, recs, mode, close or 1.0, close_until, True, write="SOFT")
             out["hull"] = "burn"
@@ -984,12 +1103,21 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
             if tweak is not None:
                 tweak(C)
             # plan_lab: only this solution's x is read (the shares to round), so it may be the rough one
+            # ``hull_tol``: nor need it be solved to the end: the interior point stops at this optimality tolerance
+            loose = hull_tol if hull_tol and not tail else None
+            _tilt(ep, C, tilt)  # next_lab: the earlier week of the hull cell is worth more
             wide = ep.solve(C, method=method, basis=out["basis"], time_limit=time_limit,
-                            crossover=tail or not hull_rough)
+                            crossover=tail or not (hull_rough or loose), what="hull", ipm_tol=loose)
             mode["grid"] = dict(plain)
             out["hull"] = wide["status"]
+            if record and wide["status"] == "Optimal":  # the shares the hull asked for, and what stood before them:
+                # read before the rounding writes its weeks into ``mode``, as a model in its place would read it
+                out["shares"] = {key: float(wide["x"][ep.jrho(*key)]) / rmax for key, rmax in C.hull.items()}
+                out["share_features"] = share_features(ep, recs, mode, ref, list(C.hull), (hint or {}).get("value"))
             if wide["status"] == "Optimal":
-                closed = _rounded(ep, C, wide["x"], mode, write="MID" if hull == "hard" else "SOFT")
+                if search:  # the short weeks the hull covered and the share of a whole week it asked of each
+                    scout = {key: float(wide["x"][ep.jrho(*key)]) / rmax for key, rmax in C.hull.items()}
+                closed = _rounded(ep, C, wide["x"], mode, write="MID" if hull == "hard" else "SOFT", lean=hull_lean)
                 if wide["basis"] is not None:
                     out["basis"] = wide["basis"]
             out["rounded"] = closed
@@ -1014,30 +1142,31 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
             if time_limit <= 0.05:
                 out["hist"].append(("no time", None, time.process_time() - t0))
                 break
+        t_cell = time.process_time()  # from here to the played plan: what one more set of whole weeks would cost
         if reuse is not None:
             sol, closed = reuse, 0
         else:
             C = ep.cell(mode, ref, anchor, price, bonus)
             if tweak is not None:
                 tweak(C)
-            sol = ep.solve(C, method=method, basis=out["basis"], time_limit=lim())
-        if closed and sol["status"] not in ("Optimal", "Time limit reached") and lim() > 0.05:  # no fuel for all of them: the plain cell
+            sol = ep.solve(C, method=method, basis=out["basis"], time_limit=time_limit, what="exact", big=big_exact)
+        if closed and sol["status"] not in solved and not late():  # no fuel for all of them: the plain cell
             mode["grid"] = plain
             closed = 0
             C = ep.cell(mode, ref, anchor, price, bonus)
             if tweak is not None:
                 tweak(C)
-            sol = ep.solve(C, method=method, basis=out["basis"], time_limit=lim())
+            sol = ep.solve(C, method=method, basis=out["basis"], time_limit=time_limit, what="plain", big=big_exact)
         out["closed"] = closed
-        if sol["status"] not in ("Optimal", "Time limit reached") and hint is not None and lim() > 0.05:  # a tie read the other way left no room
+        if sol["status"] not in solved and hint is not None and not late():  # a tie read the other way left no room
             mode, ref = ep.regimes(recs)
             C = ep.cell(mode, ref, anchor, price, bonus)
             if tweak is not None:
                 tweak(C)
-            sol = ep.solve(C, method=method, basis=out["basis"], time_limit=lim())
-        if sol["status"] not in ("Optimal", "Time limit reached") and tweak is not None and lim() > 0.05:  # the extra bounds left no room
+            sol = ep.solve(C, method=method, basis=out["basis"], time_limit=time_limit, what="no hint", big=big_exact)
+        if sol["status"] not in solved and tweak is not None and not late():  # the extra bounds left no room
             C = ep.cell(mode, ref, anchor, price, bonus)
-            sol = ep.solve(C, method=method, basis=out["basis"], time_limit=lim())
+            sol = ep.solve(C, method=method, basis=out["basis"], time_limit=time_limit, what="no tweak", big=big_exact)
         if sol["status"] != "Optimal":
             out["hist"].append((sol["status"], None, time.process_time() - t0))
             break
@@ -1050,6 +1179,46 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
         first = force_first and len(out["hist"]) == 1
         if J2 < best[0] or first:
             best = (J2, acts2, recs2)
+        roomy = deadline is None or time.process_time() + search_room * (time.process_time() - t_cell) <= deadline
+        if search and number == 0 and scout is not None and reuse is None and roomy:  # other sets of whole weeks, the cheapest kept
+            began = time.process_time()
+            asked = frozenset(key for key, gm in mode["grid"].items() if gm == "SOFT" and plain[key] != "SOFT")
+            cost, tried, taken = 0.0, {asked}, []
+
+            def short(rs: list, weeks: frozenset) -> frozenset:  # the asked weeks that the plan does not close
+                return frozenset((t, gi) for t, gi in weeks if rs[t - 1].shed[gi] > 1e-6 * max(1.0, float(ep.marks.y_bar[t - 1][gi])))
+
+            queue = _other_weeks(scout, asked, short(recs2, asked))
+            while queue and len(tried) <= search:
+                kind, weeks = queue.pop(0)
+                now = time.process_time()
+                if weeks in tried:
+                    continue
+                if deadline is not None and now + 1.3 * cost > deadline:
+                    break
+                tried.add(weeks)
+                trial = {**mode, "grid": dict(plain)}
+                for key in weeks:
+                    if plain.get(key) == "OFF":
+                        trial["grid"][key] = "SOFT"
+                Ct = ep.cell(trial, ref, anchor, price, bonus)
+                if tweak is not None:
+                    tweak(Ct)
+                st = ep.solve(Ct, method=method, basis=sol["basis"], what="search " + kind, big=big_exact,
+                              time_limit=time_limit if deadline is None else max(0.05, min(time_limit, deadline - now)))
+                if st["status"] == "Optimal":
+                    at = ep.actions(st["x"])
+                    rt, Jt = ep.simulate(at)
+                    Jt += away(at, rt)
+                    if Jt < J2 - 1e6:  # cheaper by more than 10,000 USD: this set stands, the next ones start from it
+                        taken.append(f"{kind}:{(J2 - Jt) / 1e11:.2f}")  # the move and what it saves, bn USD
+                        J2, acts2, recs2, C, sol, mode, asked = Jt, at, rt, Ct, st, trial, weeks
+                        queue = _other_weeks(scout, asked, short(recs2, asked))
+                cost = max(cost, time.process_time() - now)
+            out.update(search=(len(tried) - 1, ",".join(taken) or "0"), basis=sol["basis"], marks=set(asked), closed=len(asked),
+                       search_cpu=time.process_time() - began)  # the sets' cells, solves and plays together
+            if J2 < best[0]:
+                best = (J2, acts2, recs2)
         idle = idle + 1 if J2 >= J - min_gain else 0
         if not first and (idle > patience or J2 > J + 100 * min_gain):
             break
@@ -1057,6 +1226,441 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
         hint = ep.hints(C, sol, mode) if hints else None
     out.update(J=best[0] - away(best[1], best[2]), J_compared=best[0], acts=best[1], recs=best[2], hint=hint)
     return out
+
+
+def _other_weeks(scout: dict, asked: frozenset, short: frozenset = frozenset()) -> list:
+    """Sets of whole weeks next to ``asked``, the likeliest to pay first: [(the move's name, frozenset of (week, grid))].
+
+    ``scout``: the share of a whole week the solve with the hull asked of every short (week, grid) it covered. The
+    rounding gives each grid the whole weeks its shares sum to, at the weeks the sums are reached; here are its
+    neighbours: when the plan leaves some asked weeks short (``short``), the set without them and the empty set; a
+    grid's weeks one short week earlier; one more grid given a whole week, its last short week (the two grids whose
+    shares were largest and rounded to nothing first); no week at all; a grid's weeks one short week later; the other
+    grids' last weeks; one grid's weeks dropped; one more week after a grid's last; then a wider ring of the same
+    moves.
+    """
+    weeks, own = {}, {}
+    for t, gi in sorted(scout):
+        weeks.setdefault(gi, []).append(t)
+    for t, gi in sorted(asked):
+        own.setdefault(gi, []).append(t)
+    wish = {gi: sum(scout[(t, gi)] for t in ts) for gi, ts in weeks.items()}
+
+    def moved(gi: int, by: int) -> frozenset:
+        ts, out = weeks.get(gi, []), {key for key in asked if key[1] != gi}
+        out.update((ts[ts.index(t) + by], gi) for t in own[gi] if t in ts and 0 <= ts.index(t) + by < len(ts))
+        return frozenset(out)
+
+    free = sorted((gi for gi in weeks if gi not in own and wish[gi] > 1e-6), key=lambda gi: -wish[gi])
+    more = [("more", asked | {(weeks[gi][-1], gi)}) for gi in free]
+    # the order is by what a try saved in the plays of 9 October on both networks. An asked week that the plan does not
+    # close (``short``) is the sign of a plan bent by the price on its shed load: with one, the plan is dearer than
+    # the plan without any asked week in half of the cases (in 3 % when all are closed), and dropping the weeks saves
+    # three to seven times what another try does. So with such a week: first without the weeks left short, then
+    # without any; else a week earlier, then one more grid's week, and no week at all only after those.
+    lead = []
+    if short:
+        lead = [("unshort", asked - short)] + ([("none", frozenset())] if asked - short else [])
+    out = lead + [("earlier", moved(gi, -1)) for gi in own] + more[:2] + ([("none", frozenset())] if asked else [])
+    out += [("later", moved(gi, 1)) for gi in own] + more[2:]
+    if len(own) > 1:
+        out += [("drop", frozenset(key for key in asked if key[1] != gi)) for gi in own]
+    for gi, mine in own.items():
+        ts = weeks.get(gi, [])
+        if mine[-1] in ts and ts.index(mine[-1]) + 1 < len(ts):
+            out.append(("next", asked | {(ts[ts.index(mine[-1]) + 1], gi)}))
+    # a wider ring, tried only when the count allows: a grid's weeks two short weeks away; one more grid's week where
+    # its share was largest; one week of a grid moved or dropped alone; one more week before a grid's first
+    out += [("earlier2", moved(gi, -2)) for gi in own] + [("later2", moved(gi, 2)) for gi in own]
+    out += [("more_top", asked | {(max(weeks[gi], key=lambda t: scout[(t, gi)]), gi)}) for gi in free]
+    for gi, mine in own.items():
+        ts = weeks.get(gi, [])
+        if len(mine) > 1:
+            for t in mine:
+                rest = asked - {(t, gi)}
+                out.append(("drop_one", rest))
+                out += [(f"one{by:+d}", rest | {(ts[ts.index(t) + by], gi)}) for by in (-1, 1) if t in ts and 0 <= ts.index(t) + by < len(ts)]
+        if mine[0] in ts and ts.index(mine[0]) > 0:
+            out.append(("before", asked | {(ts[ts.index(mine[0]) - 1], gi)}))
+    for gi in weeks:  # and a grid the hull asked nothing of at all: its last short week
+        if gi not in own and gi not in free:
+            out.append(("more_zero", asked | {(weeks[gi][-1], gi)}))
+    seen, kept = {asked}, []
+    for kind, x in out:
+        if x not in seen:
+            seen.add(x)
+            kept.append((kind, x))
+    return kept
+
+
+SHARE_FEATURES = (
+    "week", "rmax", "fab_load", "fab_worth", "wafers", "shed", "burn_lng", "burn_crude", "burn_nuc", "burn_min",
+    "burn_cum", "stock_lng", "stock_crude", "stock_nuc", "term_lng", "term_crude", "rationed", "ration_need",
+    "lost_le", "lost_mat", "thrown", "others_min", "whole_prev", "whole_next", "lots_value", "has_value",
+)  # fmt: skip
+
+
+def share_features(ep: "Episode", recs: list, mode: dict, ref: dict, keys: list, value: dict | None = None) -> dict:
+    """What a model standing in for the solve with the hull may know of a short (week, grid): {key: floats}.
+
+    All of it is read from the trajectory the week's plan starts from (``recs``, with its regimes ``mode`` and
+    ``ref``) and is relative, so that one model serves every network: the week as a share of the window; the fab
+    ratio a whole week would give; the fabs' load as a share of the base load; the worth of a whole week's lots per
+    USD of lost load their energy stands for; wafers on hand as a share of capacity; the shed share of the base
+    load; each fuel segment's burn as a share of its cap, their smallest and its running sum over the grid's short
+    weeks; the fuel at the grid and at its terminals in weeks of burn; whether the rationed fuel burns under its
+    ration and the stock, in weeks of burn, that lifts it; the lost share of each chip's demand; chips thrown away
+    as a share of all fabs' capacity; the other grids' smallest burn share; whether the weeks before and after
+    are closed; what the lots of a full week would be worth at the prices of the last cell solved (``value``:
+    ``hints``'s, moved to this window's weeks), per USD of lost load their energy stands for as the fabs' worth is,
+    and whether there was such a price. The order is ``SHARE_FEATURES``'s.
+    """
+    inst, marks, psi, T = ep.inst, ep.marks, ep.psi, ep.T
+    com = [c.id for c in inst.commodities]
+    lng, crude, nuc = (com.index(n) if n in com else None for n in ("lng", "crude", "nucfuel"))
+    supply, chk = set(inst.supply_nodes), set(inst.chokepoints)
+    pi = np.zeros(len(com))
+    for d in inst.demands:
+        pi[d.k] = max(pi[d.k], d.pi)
+    for o in inst.osats:
+        for raw, packed in inst.nodes[o].osat.packages.items():
+            pi[raw] = max(pi[raw], pi[packed])
+    dk = np.array([d.k for d in inst.demands])
+    chips = [(dk == com.index(n)) if n in com else np.zeros(len(dk), dtype=bool) for n in ("chip_le", "chip_mat")]
+    chip_slots = [i for i, sl in enumerate(inst.stock_slots) if pi[sl.k] > 0 and sl.node not in supply]
+    cap_all = sum(inst.nodes[f].fab.cap0 for f in inst.fabs) or 1.0
+    with_fabs = [gi for gi in range(len(inst.grids)) if inst.grid_fabs[gi]]
+    burn, low = {}, np.ones((T, len(inst.grids)))
+    for gi, g in enumerate(inst.grids):
+        ga = inst.nodes[g].grid
+        for t in range(1, T + 1):
+            for k in ga.fuels:
+                cap = ga.shares[k] * float(marks.G_bar[t - 1][gi])
+                burn[(t, gi, k)] = float(recs[t - 1].segment[(gi, k)]) / cap if cap > 0 else 1.0
+                low[t - 1, gi] = min(low[t - 1, gi], burn[(t, gi, k)])
+    out, total = {}, {}
+    for t, gi in sorted(keys, key=lambda key: (key[1], key[0])):
+        g = inst.grids[gi]
+        ga, rec, ti = inst.nodes[g].grid, recs[t - 1], t - 1
+        Gbar, ybar = float(marks.G_bar[ti][gi]), float(marks.y_bar[ti][gi])
+        tails = dict.fromkeys(inst.edges[e].tail for e in inst.in_edges[g])
+        terms = [x for x in tails if x not in supply and x not in chk and inst.nodes[x].grid is None
+                 and all(inst.edges[e].head == g for e in inst.out_edges[x])]
+        tot = worth = wafers = room = 0.0
+        for fi in inst.grid_fabs[gi]:
+            fa = inst.nodes[inst.fabs[fi]].fab
+            capf, R = float(ep.m.ub[ep.col("p", t, fi)]), float(marks.R[ti][fi])
+            if fa.e > 0 and R > 0:
+                tot += fa.e * capf / R
+            worth += capf * pi[fa.product]
+            wafers += float(ref["W"].get((t, fi), 0.0))
+            room += capf
+        caps = {k: ga.shares[k] * Gbar for k in ga.fuels}
+
+        def weeks(node, k):  # the stock of fuel ``k`` at ``node`` in weeks of this grid's burn
+            if k is None or k not in caps or caps[k] <= 0 or (node, k) not in inst.slot_index:
+                return 0.0
+            return float(rec.stock[inst.slot_index[(node, k)]]) / caps[k]
+
+        kr = ga.rationed if ga.rationed in ga.fuels else None
+        rationed = kr is not None and mode["fuel"].get((t, gi, kr)) == "R"
+        total[gi] = total.get(gi, 0.0) + low[ti, gi]
+        others = [low[ti, x] for x in with_fabs if x != gi]
+        out[(t, gi)] = (
+            t / T,
+            min(1.0, max(0.0, (Gbar - ybar) / tot)) if tot > 0 else 0.0,
+            tot / ybar if ybar > 0 else 0.0,
+            worth / (float(ga.voll) * tot) if tot > 0 else 0.0,
+            wafers / room if room > 0 else 0.0,
+            float(rec.shed[gi]) / ybar if ybar > 0 else 0.0,
+            burn.get((t, gi, lng), 1.0), burn.get((t, gi, crude), 1.0), burn.get((t, gi, nuc), 1.0),
+            float(low[ti, gi]), total[gi],
+            weeks(g, lng), weeks(g, crude), weeks(g, nuc),
+            sum(weeks(x, lng) for x in terms), sum(weeks(x, crude) for x in terms),
+            1.0 if rationed else 0.0,
+            psi * float(ga.ibar.get(kr, 0.0)) / caps[kr] if kr is not None and caps[kr] > 0 else 0.0,
+            *(float(rec.lost[m].sum()) / max(1.0, float(rec.demand[m].sum())) for m in chips),
+            float(rec.disposal[chip_slots].sum()) / cap_all,
+            float(np.mean(others)) if others else 1.0,
+            1.0 if t > 1 and mode["grid"].get((t - 1, gi)) != "OFF" else 0.0,
+            1.0 if t < T and mode["grid"].get((t + 1, gi)) != "OFF" else 0.0,
+            max(0.0, float(value[(t, gi)])) / (float(ga.voll) * tot) if value and (t, gi) in value and tot > 0 else 0.0,
+            1.0 if value and (t, gi) in value else 0.0,
+        )
+    return out
+
+
+PLAN_HORIZONS = (2, 4, 6, 8, 10, 14)
+_PLAN_MEANS = ("burn_lng", "burn_crude", "shed", "wafers", "lost_le", "lost_mat", "thrown", "others_min")
+_PLAN_FIRST = ("rmax", "fab_load", "fab_worth", "stock_lng", "stock_crude", "stock_nuc", "term_lng", "term_crude",
+               "rationed", "whole_prev")  # fmt: skip
+PLAN_FEATURES = (
+    ["window", "after", "first_week", "weeks_short", "need"]
+    + [f"burn_by_{h}" for h in PLAN_HORIZONS] + [f"short_by_{h}" for h in PLAN_HORIZONS]
+    + [f"paid_by_{h}" for h in PLAN_HORIZONS] + [f"{n}_by_{h}" for h in (4, 14) for n in _PLAN_MEANS]
+    + [f"{n}_first" for n in _PLAN_FIRST] + ["whole_next_mean", "term_lng_max", "term_crude_max", "wafers_max"]
+    + ["lots_value_max", "lots_value_mean", "lots_value_last", "lots_value_week", "has_value"]
+)  # fmt: skip
+_RIVAL = ("lots_value_max", "fab_worth_first", "paid_by_14")
+RIVAL_FEATURES = ("rivals",) + tuple(f"{n}_{kind}" for n in _RIVAL for kind in ("rank", "gap"))
+MODEL_FEATURES = tuple(PLAN_FEATURES) + RIVAL_FEATURES  # what the fitted trees read, in this order
+
+
+def plan_features(t: np.ndarray, x: np.ndarray, window: float, after: float) -> np.ndarray:
+    """One grid's short weeks of a plan as one vector (``PLAN_FEATURES``): ``t`` their weeks in the window, rising,
+    ``x`` their rows of ``SHARE_FEATURES``. The scarce fuel's burn summed up to each horizon (the whole weeks the
+    start's own fuel would pay for by then), as it is and in units of the price of a first whole week; the count of
+    short weeks by horizon; means of the rest over the first 4 and the first 14 weeks; the first short week's state;
+    the worth of a full week's lots at the last prices: its largest value, its mean, its value in the last short
+    week, the week of the largest, and whether the prices were there (rows without these columns: zeros).
+    ``after``: the episode's weeks past the window, no more than 26, so that the length of the episode says nothing."""
+    c = {n: i for i, n in enumerate(SHARE_FEATURES)}
+    burn, first = x[:, c["burn_min"]], x[0]
+    worth = x[:, c["lots_value"]] if x.shape[1] > c["lots_value"] else np.zeros(len(t))
+    priced = float(x[:, c["has_value"]].max()) if x.shape[1] > c["has_value"] else 0.0
+    need = max(1.0, float(first[c["ration_need"]])) if first[c["rationed"]] > 0.5 else 1.0
+    by = [float(burn[t <= h].sum()) for h in PLAN_HORIZONS]
+    means = [float(x[t <= h, c[n]].mean()) if (t <= h).any() else 0.0 for h in (4, 14) for n in _PLAN_MEANS]
+    return np.array(
+        [window, min(float(after), 26.0), float(t[0]), float(len(t)), need, *by, *(float((t <= h).sum()) for h in PLAN_HORIZONS),
+         *(v / need for v in by), *means, *(float(first[c[n]]) for n in _PLAN_FIRST), float(x[:, c["whole_next"]].mean()),
+         float(x[:, c["term_lng"]].max()), float(x[:, c["term_crude"]].max()), float(x[:, c["wafers"]].max()),
+         float(worth.max()), float(worth.mean()), float(worth[-1]), float(t[int(np.argmax(worth))]) if worth.max() > 0 else 0.0, priced]
+    )  # fmt: skip
+
+
+def with_rivals(plans: dict) -> dict:
+    """{grid: its plan's features (``plan_features``) followed by where it stands among the other grids that have
+    short weeks in the same plan (``RIVAL_FEATURES``)}: their number, and for the worth of a week's lots (at the last
+    prices and at the list prices) and the fuel the start pays for, the share of the others below it and its distance
+    to the best of them. The grids draw on the same fuel, so a whole week goes to the one that is worth more, not to
+    each that is worth something."""
+    idx = [PLAN_FEATURES.index(n) for n in _RIVAL]
+    out = {}
+    for gi, v in plans.items():
+        others = [w for g, w in plans.items() if g != gi]
+        extra = [float(len(others))]
+        for i in idx:
+            rest = [float(w[i]) for w in others]
+            extra += [float(np.mean([r < v[i] for r in rest])) if rest else 0.5, float(v[i] - max(rest)) if rest else 0.0]
+        out[gi] = np.r_[v, extra]
+    return out
+
+
+class Trees:
+    """Boosted trees read from arrays (``shares.py fit`` writes them): numpy alone, as the scoring image has."""
+
+    def __init__(self, data, name: str) -> None:
+        self.feature, self.threshold = data[f"{name}_feature"], data[f"{name}_threshold"]
+        self.left, self.right, self.value = data[f"{name}_left"], data[f"{name}_right"], data[f"{name}_value"]
+        self.start, self.base = data[f"{name}_start"], float(data[f"{name}_base"])
+
+    def raw(self, v: np.ndarray) -> float:
+        total = self.base
+        for root in self.start:
+            i = int(root)
+            while self.left[i] >= 0:
+                i = int(self.left[i] if v[self.feature[i]] <= self.threshold[i] else self.right[i]) + int(root)
+            total += float(self.value[i])
+        return total
+
+
+def share_model(path) -> tuple:
+    """(trees for "a week is marked", trees for the whole weeks asked, the probability to act on, trees for the first
+    whole week's place in the window or None when the file has none, the number of ``PLAN_FEATURES`` the trees were
+    fitted on: features added since stand after them)."""
+    data = np.load(path)
+    when = Trees(data, "when") if "when_base" in data.files else None
+    net = Net(data) if "net_in_w" in data.files else None
+    return Trees(data, "mark"), Trees(data, "total"), float(data["threshold"]), when, len(data["features"]), net
+
+
+NET_SHARE = 24  # the first so many of ``SHARE_FEATURES`` are a token's own features (the ones every record has)
+NET_EXTRA = ("place", "place_back", "weeks_short", "after", "last")
+
+
+NET_PLAN = 53  # with ``window``, a token also carries the first so many of its grid's ``PLAN_FEATURES``
+
+
+def net_tokens(rows: dict, after: float, window: float | None = None) -> tuple:
+    """A plan's short weeks as tokens for ``Net``: ([(week, grid)], features (n, ``NET_SHARE`` + 5), same (n, n)).
+
+    ``rows``: ``_short_weeks``'s {grid: [(week, its ``SHARE_FEATURES``)]}. Beside its own features a token carries
+    its place among its grid's short weeks from the start and from the end, their count, the episode's weeks past
+    the window and whether it is the grid's last short week; ``same`` is 1 for two tokens of one grid: the grids
+    have no names, so that one network serves any number of them. With ``window`` (the window's length) every token
+    also carries its grid's sums over its short weeks, the ones the trees read (``plan_features``).
+    """
+    keys, feats, grid = [], [], []
+    for gi in sorted(rows):
+        own = rows[gi]
+        n = len(own)
+        wide = []
+        if window is not None:
+            wide = plan_features(np.array([r[0] for r in own], dtype=float), np.array([r[1] for r in own], dtype=float),
+                                 float(window), after)[:NET_PLAN].tolist()
+        for i, (t, f) in enumerate(own):
+            keys.append((int(t), gi))
+            feats.append([*f[:NET_SHARE], i / n, (n - 1 - i) / n, n / 14.0, min(float(after), 26.0) / 26.0, 1.0 if i == n - 1 else 0.0, *wide])
+            grid.append(gi)
+    g = np.array(grid)
+    width = NET_SHARE + len(NET_EXTRA) + (NET_PLAN if window is not None else 0)
+    return keys, np.array(feats, dtype=float).reshape(len(keys), width), (g[:, None] == g[None, :]).astype(float)
+
+
+class Net:
+    """A small attention network over a plan's tokens, read from arrays (``net.py`` fits and writes them): numpy
+    alone. Every token looks at every other one, with a learnt leaning to the tokens of its own grid; out come, per
+    token, the probability that the solve with the hull asks that week to be whole and the share it asks of it."""
+
+    def __init__(self, data) -> None:
+        self.p = {k[4:]: np.asarray(data[k], dtype=float) for k in data.files if k.startswith("net_")}
+        self.layers, self.heads = int(self.p["layers"]), int(self.p["heads"])
+        self.threshold = float(self.p["threshold"])  # a grid is asked a week when its likeliest week reaches this
+        self.more = float(self.p.get("more", 2.0))  # and its other weeks are asked too when they reach this
+        self.place = bool(self.p.get("place", 0.0))  # the trees say which grid and how many weeks, the network which week
+        self.wide = self.p["in_w"].shape[1] > NET_SHARE + len(NET_EXTRA)  # fitted on tokens with their grid's sums
+
+    @staticmethod
+    def _norm(h: np.ndarray, w: np.ndarray, b: np.ndarray) -> np.ndarray:
+        m = h.mean(-1, keepdims=True)
+        return (h - m) / np.sqrt(((h - m) ** 2).mean(-1, keepdims=True) + 1e-5) * w + b
+
+    def out(self, x: np.ndarray, same: np.ndarray) -> np.ndarray:
+        """(n, 2): the mark's logit and the share, for tokens ``x`` (n, features) with ``same`` (n, n)."""
+        p = self.p
+        h = ((x - p["mean"]) / p["std"]) @ p["in_w"].T + p["in_b"]
+        n, d = h.shape
+        H = self.heads
+        for i in range(self.layers):
+            a = self._norm(h, p[f"l{i}_ln1_w"], p[f"l{i}_ln1_b"])
+            q, k, v = ((a @ p[f"l{i}_{c}_w"].T + p[f"l{i}_{c}_b"]).reshape(n, H, d // H).transpose(1, 0, 2) for c in "qkv")
+            att = q @ k.transpose(0, 2, 1) / math.sqrt(d // H) + p[f"l{i}_same"][:, None, None] * same[None]
+            att = np.exp(att - att.max(-1, keepdims=True))
+            att /= att.sum(-1, keepdims=True)
+            h = h + (att @ v).transpose(1, 0, 2).reshape(n, d) @ p[f"l{i}_o_w"].T + p[f"l{i}_o_b"]
+            f = self._norm(h, p[f"l{i}_ln2_w"], p[f"l{i}_ln2_b"])
+            h = h + np.maximum(f @ p[f"l{i}_f1_w"].T + p[f"l{i}_f1_b"], 0.0) @ p[f"l{i}_f2_w"].T + p[f"l{i}_f2_b"]
+        return self._norm(h, p["ln_w"], p["ln_b"]) @ p["out_w"].T + p["out_b"]
+
+
+def told_net(ep: "Episode", recs: list, mode: dict, ref: dict, until: int | None, net: "Net", after: float,
+             value: dict | None = None) -> set:
+    """The (week, grid) a fitted network asks to be whole in place of the solve with the hull: all of a plan's short
+    weeks are read together (``net_tokens``); a grid whose likeliest week reaches the network's threshold is asked
+    that week, and any other week of it that reaches the second threshold (``Net.more``)."""
+    rows = _short_weeks(ep, recs, mode, ref, until, value)
+    if not rows:
+        return set()
+    keys, x, same = net_tokens(rows, after, float(ep.T) if net.wide else None)
+    prob = 1.0 / (1.0 + np.exp(-net.out(x, same)[:, 0]))
+    weeks = set()
+    for gi in rows:
+        own = [i for i, key in enumerate(keys) if key[1] == gi]
+        top = max(own, key=lambda i: prob[i])
+        if prob[top] >= net.threshold:
+            weeks.add(keys[top])
+            weeks.update(keys[i] for i in own if prob[i] >= net.more)
+    return weeks
+
+
+def told_shares(ep: "Episode", recs: list, mode: dict, ref: dict, until: int | None, model: tuple, after: float,
+                value: dict | None = None) -> tuple:
+    """The shares of whole weeks a fitted model tells in place of the solve with the hull: ({(week, grid): share},
+    the (week, grid) the hull would have covered). For every grid the model reads the state the plan starts from
+    (``plan_features``): where it finds a whole week likely, the whole weeks it tells (at least the price of one)
+    are spread over the grid's short weeks as the start's scarce fuel is burned."""
+    mark, total, threshold = model[:3]
+    i_burn = SHARE_FEATURES.index("burn_min")
+    rows, told = _short_weeks(ep, recs, mode, ref, until, value), {}
+    plans = _plans(ep, rows, after)
+    for gi, own in rows.items():
+        t, x = np.array([r[0] for r in own], dtype=float), np.array([r[1] for r in own], dtype=float)
+        v = plans[gi]
+        if 1.0 / (1.0 + math.exp(-mark.raw(v))) < threshold:
+            continue
+        need = v[PLAN_FEATURES.index("need")]
+        whole = max(total.raw(v), need + 1e-3)
+        burn = x[:, i_burn]
+        spread = burn / burn.sum() if burn.sum() > 0 else np.full(len(t), 1.0 / len(t))
+        for (week, _f), share in zip(own, whole * spread):
+            told[(int(week), gi)] = float(share)
+    return told, {(int(t), gi) for gi, own in rows.items() for t, _f in own}
+
+
+def _short_weeks(ep: "Episode", recs: list, mode: dict, ref: dict, until: int | None, value: dict | None = None) -> dict:
+    """{grid: [(week, its ``SHARE_FEATURES``)] in the order of the weeks}: the short weeks the hull would cover."""
+    inst = ep.inst
+    keys = [key for key, gm in mode["grid"].items() if gm == "OFF" and (until is None or key[0] <= until) and inst.grid_fabs[key[1]]]
+    i_rmax, rows = SHARE_FEATURES.index("rmax"), {}
+    for (t, gi), f in share_features(ep, recs, mode, ref, keys, value).items():
+        if f[i_rmax] > 0.0:
+            rows.setdefault(gi, []).append((t, f))
+    for own in rows.values():
+        own.sort(key=lambda r: r[0])
+    return rows
+
+
+def _plans(ep: "Episode", rows: dict, after: float) -> dict:
+    """{grid: what the fitted trees read of it (``MODEL_FEATURES``)} from ``_short_weeks``'s rows."""
+    return with_rivals({gi: plan_features(np.array([r[0] for r in own], dtype=float), np.array([r[1] for r in own], dtype=float),
+                                          float(ep.T), after) for gi, own in rows.items()})
+
+
+def told_weeks(ep: "Episode", recs: list, mode: dict, ref: dict, until: int | None, model: tuple, after: float,
+               value: dict | None = None) -> set:
+    """The (week, grid) a fitted model asks to be whole in place of the solve with the hull, when it also tells
+    where the first whole week falls (``share_model``'s fourth): for every grid it finds a whole week likely in, the
+    short week nearest to the week told, and after it as many of the grid's next short weeks as the whole weeks told
+    pay for beyond the price of the first. No shares are rounded: where the hull puts a week follows from the fuel
+    it re-routes, which the start's own burn does not show."""
+    mark, total, threshold, when, fitted = model[:5]
+    net = model[5] if len(model) > 5 and model[5] is not None and model[5].place else None
+    weeks = set()
+    rows = _short_weeks(ep, recs, mode, ref, until, value)
+    plans = _plans(ep, rows, after)
+    likely = {}
+    if net is not None and rows:  # the network reads all the plan's short weeks together: its likeliest week of a grid
+        keys, x, same = net_tokens(rows, after, float(ep.T) if net.wide else None)
+        likely = dict(zip(keys, net.out(x, same)[:, 0]))
+    for gi, own in rows.items():
+        t, v = np.array([r[0] for r in own], dtype=float), plans[gi]
+        if 1.0 / (1.0 + math.exp(-mark.raw(v))) < threshold:
+            continue
+        if net is not None:
+            first = max(range(len(t)), key=lambda i: likely[(int(t[i]), gi)])
+        else:
+            first = int(np.argmin(np.abs(t - when.raw(np.r_[v[:fitted], t[-1], float(len(t))]))))
+        count = 1 + max(0, int(math.floor(total.raw(v) - v[PLAN_FEATURES.index("need")])))
+        weeks.update((int(week), gi) for week in t[first : first + count])
+    return weeks
+
+
+def _rounded_from(ep: "Episode", shares: dict, domain: set, mode: dict, write: str = "SOFT") -> int:
+    """``_rounded`` for shares that come as a table: ``domain`` are the (week, grid) the hull would have covered."""
+    inst, marks, psi = ep.inst, ep.marks, ep.psi
+    count = 0
+    for gi, g in enumerate(inst.grids):
+        ga = inst.nodes[g].grid
+        k = ga.rationed
+        have, after_whole = 0.0, False
+        for t in range(1, ep.T + 1):
+            if (t, gi) not in domain:
+                after_whole = mode["grid"][(t, gi)] != "OFF"
+                continue
+            share = float(shares.get((t, gi), 0.0))
+            cap = ga.shares[k] * float(marks.G_bar[t - 1][gi]) if k in ga.fuels else 0.0
+            if not after_whole and cap > 0 and psi * ga.ibar[k] > 0 and mode["fuel"][(t, gi, k)] == "R":
+                need, ready = max(1.0, psi * ga.ibar[k] / cap), have
+            else:
+                need, ready = 1.0, have + share
+            have += share
+            after_whole = ready >= need - 1e-6
+            if after_whole:
+                have -= need
+                mode["grid"][(t, gi)] = write
+                count += 1
+    return count
 
 
 def moved(hint: dict | None, weeks: int = 1) -> dict | None:
@@ -1067,7 +1671,52 @@ def moved(hint: dict | None, weeks: int = 1) -> dict | None:
             for kind, table in hint.items()}
 
 
-def _rounded(ep: "Episode", C: Cell, x: np.ndarray, mode: dict, write: str = "MID") -> int:
+def _tilt(ep: "Episode", C: Cell, tilt: tuple | None) -> int:
+    """next_lab: the earlier week of the hull cell is worth more, so that scarce fuel is brought forward.
+
+    ``tilt`` is ``(worth, span)``: ``worth`` USD a unit of a grid's fab ratio is worth, by grid, and ``span`` the
+    weeks over which that falls to zero. Written on the hull cell only, on ``jrho`` - the share with which a grid
+    feeds its fabs in a week the program may make whole. Returns the cells priced.
+
+    Why on ``jrho`` and not on the lots. Without it two schedules of the same whole weeks cost the program the same,
+    so it takes the one easier to reach, which is the later one (fuel arrives over 2 to 6 weeks and a terminal holds
+    more of it later). ``_rounded`` then marks a whole week late in the window, only the first week of the plan is
+    played, and next week the same choice is made again: the full week is always "in a few weeks". Measured on Small
+    111, episode 62, grid KR: the base holds ``lots 0.00`` for fourteen weeks in a row and writes "whole 1 of 1"
+    every week; with the tilt weeks 15, 16 and 20 give 0.99, 0.23 and 1.00, and the episode goes 0.9007 to 0.9665.
+
+    Not ``lot_tilt``, which paid per lot and was measured to lose (0.1/0.25/0.5 gave +0.033/+0.030/+0.025 against
+    +0.038 without it): a bonus on lots is earned by starting more lots, including ones that never sell, while a
+    share cannot be raised without fuel actually being there, so this one is earned only by moving fuel earlier.
+
+    Nor is it a price for keeping a dated whole week: that was measured a nil by construction (the output matched to
+    the cent with a price ten times the largest coefficient of the objective), because ``_rounded`` scans the weeks
+    from the first and marks where the banked fuel first pays for a whole week - the date follows the fuel's arrival
+    and is not a variable of the objective (``hub/tried/mpc.md``, next_lab).
+
+    Measured, paired on the tuning sets against ``anastasiia_plan_hull``: Small 111 x64 +0.0029 (+0.0010..+0.0051),
+    cheaper in 38 of 64, at no CPU; Full 111 x32 +0.0008 with the interval holding zero. The grid of the number is a
+    plateau (0.02 the same, 0.04 worse). It does not carry to the one-solve form (-0.0007 Small / -0.0035 Full), and
+    ``hull_every`` 1 there is worse still: with ``hull_only`` "tail" the relaxation is played as the action.
+    """
+    if not tilt:
+        return 0
+    worth, span = tilt
+    if worth is None:
+        return 0
+    if C.cost is None:
+        C.cost = np.zeros(ep.N)
+    reach = max(1.0, float(span))
+    n = 0
+    for t, gi in C.hull:
+        w = max(0.0, 1.0 - (t - 1) / reach) * (float(worth[gi]) if np.ndim(worth) else float(worth))
+        if w > 0.0:
+            C.cost[ep.jrho(t, gi)] -= w
+            n += 1
+    return n
+
+
+def _rounded(ep: "Episode", C: Cell, x: np.ndarray, mode: dict, write: str = "MID", lean: float = 0.0) -> int:
     """Whole weeks from a solution with "HULL" weeks: ``mode["grid"]`` changed in place, the count of weeks written.
 
     Along each grid's weeks the shares of a whole week the solution asked for are summed, and each time the sum
@@ -1075,7 +1724,9 @@ def _rounded(ep: "Episode", C: Cell, x: np.ndarray, mode: dict, write: str = "MI
     the fabs on what is above it). The price is one week's burn, or, for a week whose rationed fuel burns under its
     ration and that does not follow a whole week, the stock the ration asks for the week before (more than a week's
     burn), counted from the fuel of the weeks before it: a ration is lifted by last week's stock. The number of whole
-    weeks is then no more than the solution's fuel pays for, each no earlier than its fuel was there.
+    weeks is then no more than the solution's fuel pays for, each no earlier than its fuel was there. ``lean``: a
+    week is written already when the sum is this share of a whole week short of the price (0.5: rounding to the
+    nearest instead of down); what was missing is owed by the grid's later shares.
     """
     inst, marks, psi = ep.inst, ep.marks, ep.psi
     count = 0
@@ -1095,7 +1746,7 @@ def _rounded(ep: "Episode", C: Cell, x: np.ndarray, mode: dict, write: str = "MI
             else:
                 need, ready = 1.0, have + share
             have += share
-            after_whole = ready >= need - 1e-6
+            after_whole = ready >= need - lean - 1e-6
             if after_whole:
                 have -= need
                 mode["grid"][(t, gi)] = write
