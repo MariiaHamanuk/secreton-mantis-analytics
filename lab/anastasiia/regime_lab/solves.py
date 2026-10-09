@@ -4,6 +4,7 @@
     uv run python lab/anastasiia/regime_lab/solves.py table hull_a hull_abc --task=full --entropy=111 --episodes=32
     uv run python lab/anastasiia/regime_lab/solves.py meter L_hre1 hull_a F_t2 --task=full --entropy=111 --episodes=32
     uv run python lab/anastasiia/regime_lab/solves.py claims hull_abc --task=full --entropy=111 --episodes=32
+    uv run python lab/anastasiia/regime_lab/solves.py turns hull2_fit54 --task=full --entropy=111 --episodes=16
 
 Reads ``play.py``'s records (``outputs/regime_lab/play/<tag>_<task>_<entropy>.pkl``); plays nothing. ``same``: the
 episodes two tags played at the same cost to the cent, and the others. ``table``: the runs of the solver by cell,
@@ -137,5 +138,37 @@ def claims(*tags: str, task: str = "full", entropy: int = 111, episodes: int = 3
             print(f"  {how:36s} {len(x):6d} weeks   median {np.median(x):.4f}  p95 {np.percentile(x, 95):.4f}  max {x.max():.3f}  over 1 bn: {int((x > 1).sum())}")
 
 
+def turns(*tags: str, task: str = "full", entropy: int = 111, episodes: int = 32, first: int = 0) -> None:
+    """The weeks of a record by what the clock that looks ahead (``fit``) chose and how the week ended."""
+    for tag in tags:
+        d = _load(tag, task, entropy, episodes, first)
+        kinds, cut, cpu = Counter(), Counter(), defaultdict(list)
+        for e in d.values():
+            for entry, detail in zip(e["log"], e["detail"]):
+                note = " ".join(str(x) for x in entry[1:])
+                if "error" in note:
+                    kind = "an error"
+                elif "hull alone" in note:
+                    kind = "both solves, the exact one stopped: the hull's weeks wait"
+                elif "exact first" in note:
+                    kind = "the exact solve first" + (", with the weeks that waited" if "pending" in note else "") + (
+                        ", then the hull" if "hull after" in note else "")
+                elif "no hull" in note:
+                    kind = "the exact solve alone" + (", with the weeks that waited" if "pending" in note else "")
+                elif any(r["what"] == "hull" for r in detail["solves"]):
+                    kind = "both solves"
+                else:
+                    kind = "no solve with the hull by the week's own rule" if detail["solves"] else "no solve"
+                kinds[kind] += 1
+                kept = ":kept" in note or "rules alone" in note
+                cut[kind] += kept
+                cpu[kind].append(float(entry[0]))
+        total = sum(kinds.values())
+        print(f"{tag}: {task}, root {entropy}, {len(d)} episodes, {total} weeks")
+        for kind, n in kinds.most_common():
+            print(f"  {kind:62s} {n:5d} ({100 * n / total:5.2f} %)   the week's start stood in {cut[kind]:5d}   "
+                  f"CPU s a week: median {np.median(cpu[kind]):.2f} p95 {np.percentile(cpu[kind], 95):.2f} max {max(cpu[kind]):.2f}")
+
+
 if __name__ == "__main__":
-    fire.Fire({"same": same, "meter": meter, "table": table, "claims": claims})
+    fire.Fire({"same": same, "meter": meter, "table": table, "claims": claims, "turns": turns})

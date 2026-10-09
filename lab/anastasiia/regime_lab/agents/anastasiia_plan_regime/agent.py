@@ -42,6 +42,7 @@ import numpy as np
 HERE = Path(__file__).resolve().parent
 OVERRIDE, HOLD = 1, 2  # release_mode codes
 BUDGET_S = {"small": 2.0, "full": 4.0}  # the boards' CPU seconds per week, by the instance's kind
+EPISODE_S = {"small": 180.0, "full": 480.0}  # the boards' wall-clock seconds for an episode, from its container's start
 
 PARAMS = {
     "horizon": 26,  # weeks planned; 0: to the end of the episode
@@ -101,6 +102,9 @@ PARAMS = {
     # the interior point's optimality tolerance in the solve with the hull, which then runs without the crossover too
     # (0: HiGHS's own, 1e-8): only the shares of whole weeks are read from that solution, and they are rounded
     "hull_tol": 0.0,
+    # the solver of the exact cell of a large program (Full), where "auto" takes the interior point: "ipm", or "devex",
+    # the dual simplex with devex weights from a cold start. A small program (Small) is not touched
+    "big_exact": "ipm",
     # the week of the solve with the hull has no other solve: the carried plan stands that week, and the weeks the
     # hull asks to be whole are written into the cells of the weeks after it, until the next such solve
     # "tail": that week's plan is the solve with the hull itself, its first week exact and the later ones a mix
@@ -118,6 +122,49 @@ PARAMS = {
     # whole budget is taken off the next week's share (the meter charges it to that week, and a week over its budget
     # is played by the naive rule)
     "carry_debt": False,
+    # the clock looks ahead and stops the solves where the work after them still fits in its ``share``, so a week is
+    # not over the budget on a server of any speed. Before the week's solves it reckons, from this episode's own times
+    # (``fit`` times the third quartile of the last eight weeks'), whether the solve with the hull, the exact one and
+    # the work around them are likely to fit. If so, the week is the model's: the hull, then the exact cell with its
+    # whole weeks. If not, the exact solve goes first, so that the week has a new plan, with the whole weeks the last
+    # solve with the hull asked for (``pending``, moved on by a week); the hull is then solved from that plan in what
+    # is left of the week, for the next week's exact solve, and it is the one the clock stops. A second round of the
+    # hull (``hull_rounds``) starts only where both its solves are likely to fit. 0: no such clock
+    "fit": 0.0,
+    "exact_first": False,  # a lab's test: with ``fit``, the exact solve goes first every week, likely to fit or not
+    # with ``fit``: a week that would have the exact solve first has the hull first instead when last week had no
+    # solve with the hull at all (it did not fit after the exact one): its whole weeks then wait for the next week's
+    # exact solve if the clock stops this week's. The hull is solved every second week at least
+    "fit_turns": False,
+    # with ``fit``, a large program (Full): when the clock stops the exact solve of a week that had it first, the
+    # exact cells of the next weeks are solved by the interior point as it stops at ``rough_tol``, no crossover
+    # (two weeks, then four after the next stop, up to sixteen; a vertex solve that ends resets the count). In an
+    # episode whose vertex solve never fits the week the plan is otherwise never renewed and the rules play.
+    # "turns": in those weeks the hull has no room after the exact solve, so every second of them has the hull first
+    # (its whole weeks wait for the next week's exact solve, and the plan stands if the clock stops the exact one)
+    "exact_rough": False,
+    "rough_tol": 1e-4,
+    # with ``fit`` and an ``anchor``: the rules alone are not rolled out in a week where the rollout and both solves
+    # are not likely to fit; their plan of the last rollout, moved on, is the anchor (as between rollouts with
+    # ``anchor_every``), for this many weeks in a row at most (0: rolled out always)
+    "fit_rules": 0,
+    # with ``fit_rules``: in such a week the rules are rolled out for the window's first so many weeks and the rest of
+    # their plan is that of the last rollout, moved on and played from there (0: no rollout at all that week)
+    "fit_fresh": 0,
+    "part_always": False,  # a lab's test: the rollout is cut so every week ``fit_rules`` lets it, likely to fit or not
+    # with ``fit``: the window's weeks from the week the clock finds that the week of the whole window (the rules'
+    # rollout, both solves and the work around them) is not likely to fit, to the end of the episode; the hull still
+    # asks whole weeks up to the same week of the window (``hull_until`` is taken that much shorter). A cell of 20
+    # weeks has three quarters of the rows of one of 26 and solves in less. 0: the window stays as it is
+    "fit_horizon": 0,
+    # with ``fit``: the share of the episode's wall-clock seconds (``EPISODE_S``, counted here from ``Agent(config)``)
+    # the weeks may take in all; a week's clock is no longer than an even part of what is left of them. On Full 104
+    # weeks at the whole budget are 416 of the 480 seconds, so a server whose wall clock runs ahead of its CPU clock
+    # would stop the episode before its last weeks (0: no such limit)
+    "episode_share": 0.0,
+    # a lab's test: the week's CPU budget as a multiple of the board's, to stand for a slower server under the
+    # scorer's meter (0.54 with the meter at 0.54 of the budget: a server 1.85 times slower than this machine)
+    "budget_scale": 1.0,
     "solve_seconds": 3.0,  # HiGHS's time limit for one cell, with or without the clock
     # a cell that does not solve at once, in shares of the week's CPU budget so that one rule serves both networks
     # (0: off). ``solve_share``: HiGHS's time limit for one cell, in place of ``solve_seconds``. ``warm_share``: the
@@ -137,6 +184,23 @@ PARAMS = {
     # a lab's record: every week the solve with the hull ran, the shares of whole weeks it asked for by (week, grid)
     # and what a model in its place may know of them (``plan_core.share_features``), kept in ``detail``
     "record_shares": False,
+    # after the week's first plan, up to so many other sets of whole weeks are tried next to the ones the rounding
+    # gave (one more grid's week, a week earlier or later, none), each in an exact cell, and the cheapest plan as the
+    # simulator plays it stands (``plan_core.descend``'s ``search``); with a clock, none is tried past its deadline
+    "search": 0,
+    # with a clock, the search starts only when this many tries fit before the week's deadline, each taken to cost
+    # what the week's exact cell did (1: any room for one; 3 keeps it out of a network where a try is dear)
+    "search_room": 1,
+    # the last weeks of the window the solve with the hull leaves alone: it asks whole weeks only up to the window's
+    # length minus this many weeks (12: weeks 1 to 14 of a window of 26)
+    "hull_until": 12,
+    # the rounding of the hull's shares writes a whole week when their sum is this share of a week short of its price
+    # (0: only when the price is reached; 0.5: to the nearest whole week)
+    "hull_lean": 0.0,
+    # the window's instance is named by its own object and not by a hash of all its fields: the simulator and the
+    # program only check that the marks, the state and the rows were made for the same instance, and the hash of a
+    # window of Full takes 36 ms a week
+    "window_name": False,
     # HiGHS's solver: "simplex", "ipm", or "auto": the simplex from last week's basis on a small program (Small),
     # the interior-point method on a large one (Full), where the simplex's time is anywhere between 0.6 and 18 s
     "method": "auto",
@@ -173,13 +237,24 @@ def _load(name: str, path: Path):
 _hybrid = _load(f"{HERE.name}_hybrid", HERE / "hybrid_agent.py")  # its lp_part puts sbfv/ on the path
 _model = _load(f"{HERE.name}_model", HERE / "sim_model.py")
 _core = _load(f"{HERE.name}_core", HERE / "plan_core.py")
+if PARAMS["window_name"] and not hasattr(_model.L.rolled_window, "named"):
+    _rolled_window, _windows = _model.L.rolled_window, [0]
+
+    def _named_window(inst, obs, weeks):
+        inst_r, backlog = _rolled_window(inst, obs, weeks)
+        _windows[0] += 1
+        inst_r._memo["content_digest"] = f"window {_windows[0]}"
+        return inst_r, backlog
+
+    _named_window.named = True
+    _model.L.rolled_window = _named_window
 _core.PKG = "sbfv"
 from sbfv.dynamics import sim  # noqa: E402 - sbfv/ sits beside this file
 
 
 class Agent(_hybrid.Agent):
     def __init__(self, config=None):
-        made = time.process_time()
+        made, self.born = time.process_time(), time.monotonic()
         super().__init__(config)
         self.p = dict(PARAMS)
         self.made, self.debt = made, 0.0  # for ``carry_debt``
@@ -209,8 +284,18 @@ class Agent(_hybrid.Agent):
         if self.model is None:
             return
         inst = self.model.inst
-        self.budget = BUDGET_S.get(inst.kind, 2.0)
+        self.budget = BUDGET_S.get(inst.kind, 2.0) * float(self.p["budget_scale"])
+        # for ``fit``: CPU seconds of the weeks so far in the solves of each kind, around them (from the clock's look
+        # to the end of ``act``, the solves aside) and after the last of them; weeks since a solve with the hull; the
+        # whole weeks it asked for that no exact solve has taken yet
+        self.took = {"hull": [], "exact": [], "rough": [], "around": [], "after": [], "rules": [], "before": []}
+        self.backoff, self.rough_left, self.rough = 1, 0, False  # for ``exact_rough``
+        self.short = False  # for ``fit_horizon``: the window is the short one from now on
+        self.looked, self.hull_age, self.pending, self.rounds, self.searched = None, 99, set(), 1, 0.0
+        self.rules_age, self.rolled = 0, 0.0  # weeks since the rules alone were rolled out; CPU seconds of this week's
+        self.fresh = 0  # for ``fit_fresh``: the weeks of this week's rollout that the rules play (0: all of them)
         self.seconds = float(self.p["share"]) * self.budget
+        self.wall_end = self.born + float(self.p["episode_share"]) * EPISODE_S.get(inst.kind, 180.0)
         fed = {e.head for e in inst.edges}
         self.valves = np.array([  # a valve: a fuel slot of one edge from a terminal into a grid (it acts this week)
             lane is None and inst.nodes[inst.edges[e].head].grid is not None and inst.edges[e].tail in fed
@@ -312,20 +397,28 @@ class Agent(_hybrid.Agent):
         flows[self.valves] = plan["flows"][self.valves]
         return {"flows": flows, "override_qty": plan["override_qty"], "release_mode": plan["release_mode"]}
 
-    def _roll(self, observation, w, ep, act_of) -> tuple:
+    def _roll(self, observation, w, ep, act_of, fresh: int = 0, rest: list | None = None) -> tuple:
         """The window played on the model, ``act_of(week, observation)`` the flat action of each week: the cost, the
-        weeks as the simulator took them, the records."""
+        weeks as the simulator took them, the records. With ``rest`` (a plan of the window, one week each),
+        ``act_of`` plays the first ``fresh`` weeks only and ``rest`` the weeks after them."""
         m = self.model
         seen, acts, recs = observation, [], []
         for h in range(w.inst.T):
-            wire = m.wire(act_of(h, seen), np.asarray(w.marks.prohibited[h]))
+            told = rest is not None and h >= fresh
+            wire = rest[h] if told else m.wire(act_of(h, seen), np.asarray(w.marks.prohibited[h]))
             acts.append(wire)
             recs.append(sim.step(w.inst, w.marks, w.state, *wire))
-            if h + 1 < w.inst.T:
+            if h + 1 < w.inst.T and (rest is None or h + 1 < fresh):
                 seen = m.flat(observation, w)
         return ep.cost(recs, w.state), acts, recs
 
     # ----- the week ---------------------------------------------------------------------------------------------------
+    def _reckon(self, kind: str) -> float:
+        """CPU seconds a week's work of a kind is likely to take: ``fit`` times the third quartile of the last eight
+        weeks' (0 before the first)."""
+        last = self.took[kind][-8:]
+        return float(self.p["fit"]) * float(np.percentile(last, 75)) if last else 0.0
+
     def act(self, observation):
         t0 = time.process_time()
         if self.p["carry_debt"] and self.made is not None:
@@ -333,6 +426,20 @@ class Agent(_hybrid.Agent):
         week = int(np.asarray(observation["week"]).ravel()[0])
         every = int(self.p["anchor_every"]) if self.p["anchor"] else int(self.p["rules_every"])
         alone = self.acts is None or (every > 0 and (week - 1) % every == 0)
+        self.rules_age, self.rolled, self.started, self.fresh = self.rules_age + 1, 0.0, t0, 0
+        if (alone and self.acts is not None and self.p["fit"] > 0 and self.rules_age <= int(self.p["fit_rules"])
+                and getattr(self, "ruled", None) and self.seconds > 0):
+            need = sum(self._reckon(kind) for kind in ("before", "rules", "hull", "exact", "around"))
+            # the whole rollout is not likely to fit beside both solves
+            if self.seconds - self.debt < need or self.p["part_always"]:
+                self.fresh = int(self.p["fit_fresh"])
+                alone = self.fresh > 0
+        if (self.p["fit"] > 0 and self.p["fit_horizon"] and not self.short and self.seconds > 0
+                and len(self.took["exact"]) >= 3):
+            need = sum(self._reckon(kind) for kind in ("before", "rules", "hull", "exact", "around"))
+            if self.seconds - self.debt < need:  # the week of the whole window is not likely to fit
+                self.short, self.hint = True, None
+                self.took = {kind: [] for kind in self.took}  # the short window's times are its own
         fuel0 = copy.deepcopy(self.fuel)  # the rules' memory before this week
         rules0 = copy.deepcopy((self.chips, self.strait)) if alone else None
         flows = np.zeros(self.n_slots)
@@ -340,7 +447,10 @@ class Agent(_hybrid.Agent):
         plan, note = None, ("no model",)
         self.week_solves, self.week_passes, self.week_shares = [], [], None
         if self.model is not None:
-            self.deadline = t0 + self.seconds - self.debt if self.seconds > 0 else None
+            seconds = self.seconds
+            if self.p["fit"] > 0 and self.p["episode_share"] > 0:  # an even part of the episode's wall clock at most
+                seconds = min(seconds, (self.wall_end - time.monotonic()) / max(1, self.model.inst.T - week + 1))
+            self.deadline = t0 + seconds - self.debt if self.seconds > 0 else None
             self.chain_deadline = None
             if self.p["chain_share"] > 0:
                 self.chain_deadline = t0 + float(self.p["chain_share"]) * self.budget - self.debt
@@ -367,6 +477,22 @@ class Agent(_hybrid.Agent):
             fuel_slots = ~self.chip_slots if self.p["orders"] == "plan" else self.valves
             flows[fuel_slots] = planned["flows"][fuel_slots]
             action["override_qty"], action["release_mode"] = planned["override_qty"], planned["release_mode"]
+        if self.looked is not None:  # ``fit``: what the week's solves and the work around and after them took
+            now = time.process_time()
+            exact = ("exact", "plain", "no hint", "no tweak")  # the search over sets of whole weeks is not counted
+            solves = {"hull": sum(s["cpu"] for s in self.week_solves if s["what"] == "hull"),
+                      "exact": sum(s["cpu"] for s in self.week_solves if s["what"] in exact)}
+            for kind, took in solves.items():  # a week of two rounds counts as two
+                if took > 0:
+                    self.took["rough" if kind == "exact" and self.rough else kind].append(took / self.rounds)
+            self.took["before"].append(self.looked - self.started - self.rolled)
+            if self.rolled > 0 and self.fresh == 0:  # a whole rollout
+                self.took["rules"].append(self.rolled)
+            if self.week_solves and plan is not None:  # a week without a plan has the hybrid's program after the solves
+                around = now - self.looked - sum(solves.values()) - self.searched
+                self.took["around"].append(around / self.rounds)
+                self.took["after"].append(now - self.week_solves[-1]["end"])
+            self.looked = None
         self.log.append((time.process_time() - t0, *note))
         self.detail.append({"solves": self.week_solves, "passes": self.week_passes, "shares": self.week_shares})
         if self.p["tol_sticky"] and any(s["attempt"] == "tolerance" and s["status"] == "Optimal" for s in self.week_solves):
@@ -379,7 +505,9 @@ class Agent(_hybrid.Agent):
         """The first week of the best plan as (flows, overrides, holds), or None: the rules alone are the cheapest."""
         m, p = self.model, self.p
         left = m.inst.T - week + 1
-        H = left if not p["horizon"] else min(int(p["horizon"]), left)
+        horizon = int(p["fit_horizon"]) if self.short else int(p["horizon"])
+        H = left if not horizon else min(horizon, left)
+        hull_until = max(0, int(p["hull_until"]) - (int(p["horizon"]) - horizon if self.short else 0))
         w = m.window(observation, H, self._network(observation, week, H), pending=bool(p["pending"]))
         capped = H < left and bool(p["end_fuel"] or p["end_chip"])
         own = p["orders"] == "plan"  # the plan's own orders are played, not the fuel rules'
@@ -389,6 +517,9 @@ class Agent(_hybrid.Agent):
         ep.warm_limit = float(p["warm_share"]) * self.budget if p["warm_share"] > 0 else None
         ep.tol_retry = float(p["tol_retry"]) if p["tol_retry"] > 0 else None
         ep.tol = float(p["tol_retry"]) if self.loose else float(p["tol"]) if p["tol"] > 0 else None
+        ep.rough_tol = float(p["rough_tol"])
+        if p["fit"] > 0:  # no run of the solver starts with less than this left of its limit
+            ep.least = max(0.04 * self.budget, 0.5 * min(self.took["hull"][-8:] + self.took["exact"][-8:], default=0.0))
         self.week_solves = ep.solves
         ref, name, ruled = None, "", None
         if self.acts is not None:
@@ -413,7 +544,14 @@ class Agent(_hybrid.Agent):
                 fuel.fill(seen, flows)
                 return {"flows": flows, **strait.fill(seen)}
 
-            cand = self._roll(observation, m.restart(w), ep, by_rules)
+            rolled, rest = time.process_time(), None
+            if self.fresh > 0:  # the rules play the first weeks, the last rollout's plan, moved on, the rest
+                moved = self.ruled[1:] + [self.ruled[-1]]
+                rest = ep.clean((moved + [moved[-1]] * H)[:H])
+            cand = self._roll(observation, m.restart(w), ep, by_rules, fresh=self.fresh, rest=rest)
+            self.rolled = time.process_time() - rolled
+            if rest is None:
+                self.rules_age = 0
             ruled = cand[1]
             self.ruled = list(ruled)
             if ref is None or cand[0] < ref[0]:
@@ -453,31 +591,88 @@ class Agent(_hybrid.Agent):
         if p["lot_bonus"] > 0 or p["lot_tilt"] > 0:
             weeks = np.arange(H)
             bonus = (self.chip_worth, float(p["lot_bonus"]) * (weeks < H - 14) + float(p["lot_tilt"]) * (1.0 - weeks / H))
+        fits = ""  # ``fit``: what the clock chose for this week
+        deadline, fit = self.deadline, p["fit"] > 0 and self.deadline is not None
+        if fit:
+            self.looked = time.process_time()
+            self.hull_age += 1
+            self.pending = {(t - 1, gi) for (t, gi) in self.pending if t > 1}
+            room, self.rounds = self.deadline - self.looked, 1
+            both = self._reckon("hull") + self._reckon("exact") + self._reckon("around")
+            self.rough = bool(p["exact_rough"]) and self.rough_left > 0 and ep.N > _core.BIG
+            if self.rough:
+                self.rough_left -= 1
+            # the exact solve first, the hull after it
+            after = hull_week and (room < both or p["exact_first"] or self.rough) and not p["hull_only"]
+            if after and self.hull_age >= 2 and (p["fit_turns"] or (self.rough and p["exact_rough"] == "turns")):
+                after = False  # the hull's turn to go first
+            if after:
+                hull_week, fits = False, " exact first" + (" rough" if self.rough else "")
+                if self.pending:
+                    marks, fits = self.pending, fits + f" pending {len(self.pending)}"
+            # before the first week's solves are timed, the work after them is taken as half of the work before them
+            deadline -= self._reckon("after") if self.took["after"] else 0.5 * (self.looked - self.started)
         d = _core.descend(
-            ep, acts_ref, iters=int(p["passes"]), hints=bool(p["hints"]), tweak=tweak, played=(recs_ref, J_ref),
+            ep, acts_ref, iters=int(p["passes"]), hints=bool(p["hints"]), tweak=tweak,
+            played=(recs_ref, J_ref),
             basis=ep.shifted(self.basis) if p["warm"] and (p["method"] != "auto" or ep.N <= _core.BIG) else None,
-            bonus=bonus, deadline=self.deadline,
+            bonus=bonus, deadline=deadline,
             min_gain=max(1e6, p["min_gain"] * abs(J_ref)), anchor=ruled if price is not None else None, price=price,
             time_limit=limit, method=p["method"],
             hint=_core.moved(self.hint) if p["carry_hints"] and name == "carried" else None,
-            close=float(p["close"]), close_until=H - 12, close_rationed=bool(p["close_rationed"]),
+            close=float(p["close"]), close_until=H - hull_until, close_rationed=bool(p["close_rationed"]),
             hull=p["hull"] if hull_week else False, hull_rough=bool(p["hull_rough"]),
             hull_tol=float(p["hull_tol"]) if p["hull_tol"] > 0 else None,
+            big_exact="rough" if fit and self.rough else str(p["big_exact"]),
             hull_only=p["hull_only"] if hull_week else False, marks=marks, chain_deadline=self.chain_deadline,
             record=bool(p["record_shares"]),
             model=(self.share_model, left - H) if p["hull"] == "model" else None,
+            search=int(p["search"]) if hull_week else 0, hull_lean=float(p["hull_lean"]), search_room=int(p["search_room"]),
         )
         self.week_passes = list(d["hist"])
+        self.searched = float(d.get("search_cpu", 0.0))  # CPU seconds of the search over sets of whole weeks
+        solved = any(h[1] is not None for h in d["hist"])  # an exact solve ended and its plan was played
+        if fit:
+            if p["exact_rough"] and after and not self.rough and ep.N > _core.BIG:  # the vertex solve had the week first
+                first = next((s for s in ep.solves if s["what"] == "exact"), None)
+                if first is not None and first["status"] == "Time limit reached":
+                    self.backoff = min(16, 2 * self.backoff)
+                    self.rough_left = self.backoff
+                elif solved:
+                    self.backoff = 1
+            if hull_week and d.get("hull") == "Optimal":
+                self.hull_age, self.pending = 0, set() if solved else set(d.get("marks", ()))
+                fits += "" if solved else " hull alone"
+            elif solved:
+                self.pending = set()
+            # the hull from the week's plan, where the shortest of its last eight solves would fit: a solve the
+            # clock stops costs the week nothing
+            if after and deadline - time.process_time() >= min(self.took["hull"][-8:], default=0.0):
+                d2 = _core.descend(
+                    ep, d["acts"], iters=1, hints=bool(p["hints"]), tweak=tweak, played=(d["recs"], d["J"]),
+                    bonus=bonus, deadline=deadline, min_gain=max(1e6, p["min_gain"] * abs(J_ref)),
+                    anchor=ruled if price is not None else None, price=price, time_limit=limit, method=p["method"],
+                    hint=d.get("hint"), close_until=H - hull_until, hull=p["hull"], hull_rough=bool(p["hull_rough"]),
+                    hull_tol=float(p["hull_tol"]) if p["hull_tol"] > 0 else None, hull_only=True,
+                    chain_deadline=self.chain_deadline, big_exact=str(p["big_exact"]),
+                )
+                if d2.get("hull") == "Optimal":
+                    self.hull_age, self.pending = 0, set(d2.get("marks", ()))
+                    fits += f" hull after {len(self.pending)}"
         if "shares" in d:  # the window's length, the episode's weeks past it, the shares, what stood before them
             self.week_shares = (H, left - H, d["shares"], d["share_features"], sorted(d.get("marks", ())))
         for _ in range(int(p["hull_rounds"]) - 1 if hull_week and not p["hull_only"] else 0):  # the hull again from its plan
+            if fit and (not solved or deadline - time.process_time() < both):
+                break
+            self.rounds += 1
             d2 = _core.descend(
                 ep, d["acts"], iters=int(p["passes"]), hints=bool(p["hints"]), tweak=tweak, played=(d["recs"], d["J"]),
                 basis=d.get("basis") if p["warm"] and (p["method"] != "auto" or ep.N <= _core.BIG) else None,
-                bonus=bonus, deadline=self.deadline, min_gain=max(1e6, p["min_gain"] * abs(J_ref)),
+                bonus=bonus, deadline=deadline, min_gain=max(1e6, p["min_gain"] * abs(J_ref)),
                 anchor=ruled if price is not None else None, price=price, time_limit=limit, method=p["method"],
-                hint=d.get("hint"), close_until=H - 12, hull=p["hull"], hull_rough=bool(p["hull_rough"]),
+                hint=d.get("hint"), close_until=H - hull_until, hull=p["hull"], hull_rough=bool(p["hull_rough"]),
                 hull_tol=float(p["hull_tol"]) if p["hull_tol"] > 0 else None, chain_deadline=self.chain_deadline,
+                big_exact=str(p["big_exact"]),
             )
             self.week_passes += list(d2["hist"])
             if d2["J_compared"] >= d["J_compared"] - 1e6:
@@ -494,10 +689,14 @@ class Agent(_hybrid.Agent):
         self.basis = d.get("basis")
         self.last = (ep, d, tweak, bonus, ruled if price is not None else None, price, H)  # for a look from a lab script
         better = d["J_compared"] < d["J0_compared"] - p["min_gain"] * abs(J_ref)  # with the lots' bonus, if any
-        if not better and name == "rules":  # nothing beats the rules alone: no plan this week
+        # nothing beats the rules alone: no plan this week, and the hybrid's own program decides the chips after the fab.
+        # Not so where the clock stopped the week's solve (``fit``): the rules' plan is played and carried, for a week
+        # without a carried plan takes longer, and the next solve would be stopped again
+        if not better and name == "rules" and (solved or not fit):
             self.acts = None
             return None, (J_ref / 1e11, J_ref / 1e11, "rules alone")
         best = d["acts"] if better else acts_ref
         self.acts = best[1:]
-        note = name + (":new" if better else ":kept") + (f" whole {d.get('closed', 0)} of {d.get('rounded', d.get('closed', 0))} {d['hull']}" if "hull" in d else "")
+        note = name + (":new" if better else ":kept") + (f" whole {d.get('closed', 0)} of {d.get('rounded', d.get('closed', 0))} {d['hull']}" if "hull" in d else "") + (
+            f" search {d['search'][0]} took {d['search'][1]}" if "search" in d else "") + fits
         return best[0], (J_ref / 1e11, min(d["J"], J_ref) / 1e11, note)
