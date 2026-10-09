@@ -1021,7 +1021,7 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
             if tweak is not None:
                 tweak(C)
             sol = ep.solve(C, method=method, basis=out["basis"], time_limit=lim())
-        if closed and sol["status"] not in ("Optimal", "Time limit reached"):  # no fuel for all of them: the plain cell
+        if closed and sol["status"] not in ("Optimal", "Time limit reached") and lim() > 0.05:  # no fuel for all of them: the plain cell
             mode["grid"] = plain
             closed = 0
             C = ep.cell(mode, ref, anchor, price, bonus)
@@ -1029,13 +1029,13 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
                 tweak(C)
             sol = ep.solve(C, method=method, basis=out["basis"], time_limit=lim())
         out["closed"] = closed
-        if sol["status"] not in ("Optimal", "Time limit reached") and hint is not None:  # a tie read the other way left no room
+        if sol["status"] not in ("Optimal", "Time limit reached") and hint is not None and lim() > 0.05:  # a tie read the other way left no room
             mode, ref = ep.regimes(recs)
             C = ep.cell(mode, ref, anchor, price, bonus)
             if tweak is not None:
                 tweak(C)
             sol = ep.solve(C, method=method, basis=out["basis"], time_limit=lim())
-        if sol["status"] not in ("Optimal", "Time limit reached") and tweak is not None:  # the extra bounds left no room
+        if sol["status"] not in ("Optimal", "Time limit reached") and tweak is not None and lim() > 0.05:  # the extra bounds left no room
             C = ep.cell(mode, ref, anchor, price, bonus)
             sol = ep.solve(C, method=method, basis=out["basis"], time_limit=lim())
         if sol["status"] != "Optimal":
