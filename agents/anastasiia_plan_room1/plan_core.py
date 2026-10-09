@@ -32,8 +32,6 @@ import types
 import numpy as np
 import scipy.sparse as sp
 
-import cycles  # paradigm_lab P17: the whole-week schedule of a grid as a cycle, and its proposals
-
 
 PKG = "shockbench_flow"  # the package the simulator and the oracle program come from; an agent sets its copy ("sbfv")
 TOL = 1e-7  # relative tolerance when a regime is read from the simulator's numbers
@@ -1069,8 +1067,7 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
             tilt: tuple | None = None,
             gate: bool = False,
             big_exact: str = "ipm",
-            model: tuple | None = None, search: int = 0, hull_lean: float = 0.0, search_room: int = 1,
-            cycle: int = 0, cycle_after: int = 0, drops_first: bool = False) -> dict:
+            model: tuple | None = None, search: int = 0, hull_lean: float = 0.0, search_room: int = 1) -> dict:
     """The loop from ``acts`` (weekly (flows, overrides, holds)): the best played trajectory and how it was reached.
 
     Each pass reads the regimes of the trajectory the simulator played (a tie as the last solution's duals say, with
@@ -1103,29 +1100,6 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
     one of many sets its fuel could pay for, and neither the best placed nor always worth asking); no set is tried
     past ``deadline``, and none at all unless ``search_room`` of them fit before it, each taken to cost what the
     first cell did with its play (where a try is dear against the week, on a large network, the search stays out).
-    ``cycle`` (paradigm_lab P17): so many of the sets ``search`` tries come from the grid's **cycle schedule**
-    rather than from the ring of weeks next to the rounding (``cycles.proposals``), and they are tried first. The
-    rounding spends the fuel bank earliest first, and a week that does not follow a whole week may not pay with its
-    own share, so the bank buys isolated weeks where waiting would have bought a run; the cycle program takes the
-    optimum of that same problem for every week the cycle could begin at. Measured on Small 444 episodes 0-7: the
-    ring itself is exhausted (8 tries 0.9230, 60 tries 0.9234), so what is left is a different kind of proposal,
-    not more of the same. The judge is unchanged - the exact cell and the simulator's replay.
-
-    ``cycle_after``: so many of the ring's moves are tried **before** the cycle schedules. Prepending the cycles
-    outright was measured to lose at the budget the game has (eight tries: 0.9211 against the ring's 0.9230) while
-    winning where tries are free (sixty: 0.9245 against 0.9234), and the reason is not the proposals - by the
-    replay's own record they take 21 bn USD of the 26 bn the search takes at all, and the largest single move on
-    the set is a cycle (7.66 bn, episode 7) - but that they **starve** the ring's first two moves, which are the
-    ones measured to pay (``SPEC.md:112``). So the first ``cycle_after`` of the ring go first and the cycles follow.
-
-    ``drops_first``: the moves that **unask** a week - the empty set, and each asked week dropped on its own - are
-    tried before the rest of the ring. Measured, from a fixed state on Small 444 episodes 0-23: one exhaustive sweep
-    of the cheap single moves (a drop, or a slide by one short week) costs eight plays an episode and takes +0.0010
-    of the family's +0.0018, and the largest single move is a **drop** on six of the twenty-four episodes - episode
-    23 gives 6.55 bn USD for dropping the only week it asked for, episode 19 gives 5.52, episode 7 4.98, episode 1
-    4.80. So the rounding regularly asks for whole weeks that cost money, and the ring already holds the cure but
-    ranks it fourth or fifth, where eight tries do not always reach it.
-
     ``hull_lean``: ``_rounded``'s ``lean``. ``search`` in the result: (sets tried, the moves taken with what each saved in bn USD);
     ``search_cpu``: the CPU seconds all of it took.
 
@@ -1159,7 +1133,7 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
             if time_limit <= max(0.02, 1.25 * spent):
                 break
         mode, ref = ep.regimes(recs, hint)
-        closed, reuse, scout, probs = 0, None, None, None
+        closed, reuse, scout = 0, None, None
         if hull == "model" and number == 0:  # no solve with the hull: a fitted model tells its shares (``told_shares``)
             plain = dict(mode["grid"])
             worth = (hint or {}).get("value")  # of the last cell solved, in this window's weeks
@@ -1216,8 +1190,6 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
             if wide["status"] == "Optimal":
                 if search:  # the short weeks the hull covered and the share of a whole week it asked of each
                     scout = {key: float(wide["x"][ep.jrho(*key)]) / rmax for key, rmax in C.hull.items()}
-                    if cycle:  # read while ``mode`` still holds the plain regimes, as ``_rounded`` reads them
-                        probs = cycles.problems(ep, C, wide["x"], mode)
                 closed = _rounded(ep, C, wide["x"], mode, write="MID" if hull == "hard" else "SOFT", lean=hull_lean)
                 ys = [float(wide["x"][ep.jrho(t, gi)]) / r for (t, gi), r in C.hull.items() if r > 0]
                 out["fracy"] = (sum(1 for y in ys if 0.01 < y < 0.99), len(ys))  # paradigm_lab E1a's first number
@@ -1293,25 +1265,7 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
             def short(rs: list, weeks: frozenset) -> frozenset:  # the asked weeks that the plan does not close
                 return frozenset((t, gi) for t, gi in weeks if rs[t - 1].shed[gi] > 1e-6 * max(1.0, float(ep.marks.y_bar[t - 1][gi])))
 
-            def proposals(a: frozenset, rs: list) -> list:
-                ring = _other_weeks(scout, a, short(rs, a))
-                if drops_first:  # the unasking moves to the front, after whatever ``unshort`` leads with
-                    lead = [m for m in ring[:2] if m[0] == "unshort"]
-                    mine = unask(a)
-                    seen = {x for _k, x in lead} | {x for _k, x in mine}
-                    ring = lead + mine + [m for m in ring if m[1] not in seen]
-                if not (cycle and probs):
-                    return ring
-                cyc = cycles.proposals(probs, a, limit=cycle)
-                return ring[:cycle_after] + cyc + ring[cycle_after:]
-
-            def unask(a: frozenset) -> list:
-                """The moves that take a week back: the empty set, then each asked week dropped on its own."""
-                out = [("none", frozenset())] if a else []
-                out += [("drop_one", a - {key}) for key in sorted(a)] if len(a) > 1 else []
-                return out
-
-            queue = proposals(asked, recs2)
+            queue = _other_weeks(scout, asked, short(recs2, asked))
             while queue and len(tried) <= search:
                 kind, weeks = queue.pop(0)
                 now = time.process_time()
@@ -1336,7 +1290,7 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
                     if Jt < J2 - 1e6:  # cheaper by more than 10,000 USD: this set stands, the next ones start from it
                         taken.append(f"{kind}:{(J2 - Jt) / 1e11:.2f}")  # the move and what it saves, bn USD
                         J2, acts2, recs2, C, sol, mode, asked = Jt, at, rt, Ct, st, trial, weeks
-                        queue = proposals(asked, recs2)
+                        queue = _other_weeks(scout, asked, short(recs2, asked))
                 cost = max(cost, time.process_time() - now)
             out.update(search=(len(tried) - 1, ",".join(taken) or "0"), basis=sol["basis"], marks=set(asked), closed=len(asked),
                        search_cpu=time.process_time() - began)  # the sets' cells, solves and plays together

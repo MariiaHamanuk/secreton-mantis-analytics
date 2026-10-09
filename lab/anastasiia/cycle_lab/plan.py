@@ -95,7 +95,7 @@ def both(refs: list[dict], costs: list[int]) -> str:
 
 
 def _one(task, entropy, n, which, time_limit, iters, switch, hull=0, search=0, gate: bool = False,
-         start_agent: str = "anastasiia_hybrid_chiplp", cycle: int = 0, cycle_after: int = 0):
+         start_agent: str = "anastasiia_hybrid_chiplp", cycle: int = 0, cycle_after: int = 0, drops_first: bool = False):
     ep = core.Episode.of(task, entropy, n)
     out = {}
     method = "ipm" if ep.N > 4 * core.BIG else "simplex"
@@ -106,7 +106,7 @@ def _one(task, entropy, n, which, time_limit, iters, switch, hull=0, search=0, g
         t0 = time.process_time()
         d = core.switch_on(ep, acts, passes=iters, last_week=ep.T - 12) if switch else descend(ep, acts, iters)
         for _ in range(hull):  # rounds of whole weeks asked for by the hull of the short weeks, each followed by a descent
-            d2 = core.descend(ep, d["acts"], iters=iters, hull="round", close_until=ep.T - 12, method=method, search=search, gate=gate, cycle=cycle, cycle_after=cycle_after)
+            d2 = core.descend(ep, d["acts"], iters=iters, hull="round", close_until=ep.T - 12, method=method, search=search, gate=gate, cycle=cycle, cycle_after=cycle_after, drops_first=drops_first)
             if d2["J"] > d["J"] - 1e8:
                 break
             d = {**d2, "J0": d["J0"], "hist": d["hist"] + d2["hist"]}
@@ -124,7 +124,8 @@ def _one(task, entropy, n, which, time_limit, iters, switch, hull=0, search=0, g
 def starts(task: str = "small", entropy: int = 444, episodes: int = 8, which: str | tuple = "hybrid,oracle",
            time_limit: float = 60.0, iters: int = 60, n_jobs: int = 3, first: int = 0, switch: bool = False,
            hull: int = 0, search: int = 0, gate: bool = False,
-           start_agent: str = "anastasiia_hybrid_chiplp", cycle: int = 0, cycle_after: int = 0) -> None:
+           start_agent: str = "anastasiia_hybrid_chiplp", cycle: int = 0, cycle_after: int = 0,
+           drops_first: bool = False) -> None:
     """Descent from each start on episodes ``first .. first + episodes - 1``: played cost before and after, and RSS.
     ``--switch``: with grid-weeks switched on away from a border (``core.switch_on``); the count printed is theirs.
     ``--hull=N``: after the descent, up to N rounds of whole weeks asked for by the hull of the short weeks
@@ -135,7 +136,7 @@ def starts(task: str = "small", entropy: int = 444, episodes: int = 8, which: st
     first moves, which are the ones measured to pay."""
     which = tuple(which.split(",")) if isinstance(which, str) else tuple(which)
     refs = references(task, entropy, first + episodes)[first:]
-    res = Parallel(n_jobs=n_jobs)(delayed(_one)(task, entropy, n, which, time_limit, iters, switch, hull, search, gate, start_agent, cycle, cycle_after) for n in range(first, first + episodes))
+    res = Parallel(n_jobs=n_jobs)(delayed(_one)(task, entropy, n, which, time_limit, iters, switch, hull, search, gate, start_agent, cycle, cycle_after, drops_first) for n in range(first, first + episodes))
     for n, out in res:
         print(f"ep {n}: " + " | ".join(f"{k} {v[0] / 1e11:8.1f} -> {v[1] / 1e11:8.1f} ({v[2]} it, {v[3]:.1f} s)" for k, v in out.items()), flush=True)
     for name in which:
