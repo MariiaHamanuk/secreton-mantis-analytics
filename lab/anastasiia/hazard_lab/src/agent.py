@@ -126,6 +126,9 @@ PARAMS = {
     # of duration is needed, so it also takes the end week of a long cut (0: off). An edge whose requests
     # ``watch_ask`` raised is left as that left it
     "ask_scale": 0.0,
+    # with ``ask_scale``: the tanker releases out of a strait onto a cut edge that the plan's releases fill are
+    # multiplied the same way (the override step clips with the same code: the edge first, pro rata)
+    "ask_scale_out": False,
     # plan_lab, the week's time. ``hull_every``: weeks between solves with the hull (the weeks between keep the whole
     # weeks of the carried plan); ``hull_rough``: that solve without the crossover; ``anchor_every``: weeks between
     # rollouts of the rules alone when there is an ``anchor`` (their plan of the last rollout, moved on, is the anchor
@@ -476,6 +479,20 @@ class Agent(_hybrid.Agent):
                 planned["flows"][slots] *= min(top, nominal / seen[e])
                 self.scaled = getattr(self, "scaled", 0) + 1
                 self.notes = (getattr(self, "notes", None) or {}) | {"scaled": self.scaled}
+        if not self.p["ask_scale_out"]:
+            return
+        by_edge = {}
+        for o in np.flatnonzero(planned["override_qty"] > 0):
+            if planned["release_mode"][int(m.ov_pair[o])] == OVERRIDE:
+                by_edge.setdefault(int(m.ov_edge[o]), []).append(int(o))
+        for e, slots in by_edge.items():
+            nominal = m.inst.edges[e].u0
+            if e in skip or nominal is None or not np.isfinite(seen[e]) or seen[e] <= 0 or seen[e] >= 0.999 * nominal:
+                continue
+            if planned["override_qty"][slots].sum() >= 0.999 * seen[e]:
+                planned["override_qty"][slots] *= min(top, nominal / seen[e])
+                self.scaled_out = getattr(self, "scaled_out", 0) + 1
+                self.notes = (getattr(self, "notes", None) or {}) | {"scaled_out": self.scaled_out}
 
     def _ask_early(self, planned: dict) -> set:
         """hazard_lab (``watch_ask``): this week's requests under a short cut, raised in place to the plan's own of
