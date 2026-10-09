@@ -1,0 +1,209 @@
+diff --git a/agents/anastasiia_plan_hull2/chip_part.py b/agents/anastasiia_plan_hull2/chip_part.py
+index 225af56..061dd0b 100644
+--- a/agents/anastasiia_plan_hull2/chip_part.py
++++ b/agents/anastasiia_plan_hull2/chip_part.py
+@@ -1,3 +1,4 @@
++import copy
+ """pull's rules for the fuel, explicit routing for the chip chain (wafers, raw chips, packaged chips).
+ 
+ The fuel slots (lng, crude, nucfuel) are exactly ``pull``'s: ``_pull_flows`` is its loop, unchanged. ``fill_chip_flows``
+@@ -60,6 +61,7 @@ Every number is read from ``config``; the same code runs on Tiny, Small and Full
+ replaces ``PARAMS``.
+ """
+ 
++import itertools
+ import json
+ from pathlib import Path
+ 
+@@ -123,6 +125,9 @@ EPS = 1e-6
+ FAR = 10**6  # an arrival week that never comes (a strait that is closed)
+ 
+ 
++_SALE_MEMO = {}  # (agent token, week, the arrays sale_rates reads) -> its result
++_TOKENS = itertools.count()
++
+ class Flow:
+     """Max-flow (Dinic) on a small graph; capacities can be raised and the flow continued."""
+ 
+@@ -182,7 +187,19 @@ class Flow:
+ 
+ 
+ class Agent:
++    _MEMORY = ("last_forecast", "last_mask", "ov_hist", "ov_prev", "ov_reset", "sent_hist", "shed_hist")
++
++    def __deepcopy__(self, memo):
++        """A copy that shares the tables built once and copies the memory the rules change from week to week."""
++        new = self.__class__.__new__(self.__class__)
++        new.__dict__.update(self.__dict__)
++        for name in self._MEMORY:
++            if name in self.__dict__:
++                new.__dict__[name] = copy.deepcopy(self.__dict__[name], memo)
++        return new
++
+     def __init__(self, config=None):
++        self._token = next(_TOKENS)
+         static, layout = config["static"], config["layout"]
+         edges, lanes, slots = static["edges"], static["lanes"], static["action_slots"]
+         self.T = int(config["T"])
+@@ -700,6 +717,24 @@ class Agent:
+         return {f: min(1.0, phi / max(self.fab[f]["cap0"], EPS)) for f, phi in self.sale_rates(c).items()}
+ 
+     def sale_rates(self, c):
++        """``_sale_rates`` kept by its inputs (the window's rollouts meet the same network week after week)."""
++        key = (
++            self._token,
++            c.t,
++            c.cap.tobytes(),
++            c.lead.tobytes(),
++            c.u.tobytes(),
++            c.thr_eff.tobytes(),
++            c.forecast.tobytes(),
++        )
++        hit = _SALE_MEMO.get(key)
++        if hit is None:
++            if len(_SALE_MEMO) > 20000:
++                _SALE_MEMO.clear()
++            hit = _SALE_MEMO[key] = self._sale_rates(c)
++        return dict(hit)
++
++    def _sale_rates(self, c):
+         """fab node -> chips a week that can still go from the fab to markets.
+ 
+         A max-flow of the fab alone: fab -> plants (alive raw routes; a plant packages at most its throughput) ->
+diff --git a/agents/anastasiia_plan_hull2/fuel_part.py b/agents/anastasiia_plan_hull2/fuel_part.py
+index 4200dba..27778f1 100644
+--- a/agents/anastasiia_plan_hull2/fuel_part.py
++++ b/agents/anastasiia_plan_hull2/fuel_part.py
+@@ -1,3 +1,4 @@
++import copy
+ """pull's rules everywhere except on fuel; on the fuel slots (lng, crude, nucfuel) a planner that fills grids in time.
+ 
+ Everything that is not a fuel slot is ``pull``'s code, unchanged (``Agent._pull``): value_first on shared routes and
+@@ -136,6 +137,14 @@ EPS = 1e-9
+ 
+ class FuelRules:
+     """Fills the fuel entries of ``flows`` (see the module docstring)."""
++    def __deepcopy__(self, memo):
++        """A copy that shares the tables built once and copies the memory the rules change from week to week."""
++        new = self.__class__.__new__(self.__class__)
++        new.__dict__.update(self.__dict__)
++        for attr in ("_last", "trace"):
++            new.__dict__[attr] = copy.deepcopy(self.__dict__[attr], memo)
++        return new
++
+ 
+     def __init__(self, config, params):
+         self.P = params
+diff --git a/agents/anastasiia_plan_hull2/strait_part.py b/agents/anastasiia_plan_hull2/strait_part.py
+index c595464..68f58c9 100644
+--- a/agents/anastasiia_plan_hull2/strait_part.py
++++ b/agents/anastasiia_plan_hull2/strait_part.py
+@@ -1,3 +1,4 @@
++import copy
+ """Tanker cargo waiting at a strait behind a throttled out-edge is released onto another out-edge that has room.
+ 
+ By default a strait releases each queued lot onto the next edge of the lane it was dispatched on, within that edge's
+@@ -40,6 +41,14 @@ EPS = 1e-9
+ 
+ 
+ class StraitRules:
++    def __deepcopy__(self, memo):
++        """A copy that shares the tables built once and copies the memory the rules change from week to week."""
++        new = self.__class__.__new__(self.__class__)
++        new.__dict__.update(self.__dict__)
++        for attr in ("_last", "trace"):
++            new.__dict__[attr] = copy.deepcopy(self.__dict__[attr], memo)
++        return new
++
+     def __init__(self, config, params=None):
+         self.P = dict(STRAIT, **(params or {}))
+         static, layout, inst = config["static"], config["layout"], config["static"]["instance"]
+diff --git a/agents/anastasiia_plan_hull2/plan_core.py b/agents/anastasiia_plan_hull2/plan_core.py
+index 729c243..0e46efe 100644
+--- a/agents/anastasiia_plan_hull2/plan_core.py
++++ b/agents/anastasiia_plan_hull2/plan_core.py
+@@ -79,9 +79,10 @@ class Cell:
+ 
+     def row(self, coefs, lo: float, hi: float, tag: tuple | None = None) -> int:
+         i = len(self.lo)
++        add_r, add_c, add_v = self.r.append, self.c.append, self.v.append
+         for j, a in coefs:
+             if a != 0.0:
+-                self.r.append(i), self.c.append(j), self.v.append(a)
++                add_r(i), add_c(j), add_v(a)
+         self.lo.append(lo), self.hi.append(hi)
+         if tag is not None:
+             self.tags.append((*tag, "row", i))
+diff --git a/agents/anastasiia_plan_hull2/sbfv/digest.py b/agents/anastasiia_plan_hull2/sbfv/digest.py
+index 30aa60f..0ee0723 100644
+--- a/agents/anastasiia_plan_hull2/sbfv/digest.py
++++ b/agents/anastasiia_plan_hull2/sbfv/digest.py
+@@ -50,3 +50,33 @@ def semantic_digest(obj) -> str:
+     h = hashlib.sha256()
+     _feed(h, obj)
+     return h.hexdigest()
++
++
++_FIELD_DIGESTS: dict[int, tuple[object, bytes]] = {}  # id of a field's value -> (the value, kept alive; its digest)
++
++
++def instance_digest(inst) -> str:
++    """The same identity as ``semantic_digest(inst)`` gives (equal content, equal digest), faster across a rolling window.
++
++    A rolled instance shares most of its big fields with its parent (``dataclasses.replace`` copies references), so each
++    big field's digest is kept by the identity of its value and only fields that are new objects are walked again. The
++    string differs from ``semantic_digest``'s; it is only ever compared with another ``content_digest``.
++    """
++    h = hashlib.sha256(b"Instance(")
++    for f in dataclasses.fields(inst):
++        if not f.compare:
++            continue
++        v = getattr(inst, f.name)
++        h.update(f.name.encode() + b"=")
++        if isinstance(v, (tuple, dict, np.ndarray)) or (dataclasses.is_dataclass(v) and not isinstance(v, type)):
++            hit = _FIELD_DIGESTS.get(id(v))
++            if hit is None or hit[0] is not v:
++                sub = hashlib.sha256()
++                _feed(sub, v)
++                hit = (v, sub.digest())
++                _FIELD_DIGESTS[id(v)] = hit
++            h.update(hit[1])
++        else:
++            _feed(h, v)
++    h.update(b")")
++    return h.hexdigest()
+diff --git a/agents/anastasiia_plan_hull2/sbfv/instance/schema.py b/agents/anastasiia_plan_hull2/sbfv/instance/schema.py
+index 9ba251f..2beb63f 100644
+--- a/agents/anastasiia_plan_hull2/sbfv/instance/schema.py
++++ b/agents/anastasiia_plan_hull2/sbfv/instance/schema.py
+@@ -14,7 +14,7 @@ from collections.abc import Callable
+ from dataclasses import dataclass, field
+ from typing import Any, Mapping
+ 
+-from sbfv.digest import semantic_digest
++from sbfv.digest import instance_digest, semantic_digest
+ 
+ 
+ SCHEMA_VERSION = "1"
+@@ -391,7 +391,7 @@ class Instance:
+     @property
+     def content_digest(self) -> str:
+         """SHA-256 of the instance's content (every compared field), the V3 identity the simulator and LP check."""
+-        return self.memo("content_digest", semantic_digest)
++        return self.memo("content_digest", instance_digest)
+ 
+     @property
+     def rungs(self) -> tuple[float, ...]:
+diff --git a/agents/anastasiia_plan_hull2/sbfv/dynamics/clip.py b/agents/anastasiia_plan_hull2/sbfv/dynamics/clip.py
+index 41d0f3f..75a445f 100644
+--- a/agents/anastasiia_plan_hull2/sbfv/dynamics/clip.py
++++ b/agents/anastasiia_plan_hull2/sbfv/dynamics/clip.py
+@@ -314,6 +314,8 @@ def fleet_slack(
+     totals = fleet_totals(inst, items)
+     out = [q for _e, _k, _lane, q in items]
+     for b, (total, cap) in enumerate(zip(totals, caps)):
++        if math.isfinite(total) and total <= cap:
++            continue  # the pool does not bind: ``fleet_scaled`` returns every release unchanged
+         pool = inst.commodity_pool
+         members = [i for i, (e, k, lane, _q) in enumerate(items) if pool[k] == b and on_dup(inst, e, lane)]
+         if math.isfinite(total) and (total <= cap or all(_normal_product(out[i], cap) for i in members)):
