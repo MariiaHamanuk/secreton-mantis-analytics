@@ -243,65 +243,6 @@ PARAMS = {
     # HiGHS's solver: "simplex", "ipm", or "auto": the simplex from last week's basis on a small program (Small),
     # the interior-point method on a large one (Full), where the simplex's time is anywhere between 0.6 and 18 s
     "method": "auto",
-    # cycle_lab, track 3: descend from BOTH starts of the week and keep the plan the model's simulator plays
-    # cheaper, instead of picking the start by the cost of the start itself.
-    # Why. In a week that rolls the rules beside the carried plan there are two starts, and today the cheaper of
-    # the two **as a start** becomes the reference (``cand[0] < ref[0]``) and only it is descended from. But the
-    # start decides the cell, and the measured relation is an inversion, not noise: offline, from the board's
-    # oracle plan - the cheaper start by construction - the loop ends at 0.806, and from the hybrid's own
-    # trajectory, a worse start, at 0.920. Choosing by the start's own cost is the "model accounting is the judge"
-    # error this repository has measured three times.
-    # ``multi`` is the share of the week's clock left for the second descent; 0: off, and then every action is the
-    # base's to the cent. The alternative is given ONE descent and no further hull rounds, so a switch happens only
-    # where it wins with strictly less work than the winner had
-    "multi": 0.0,
-    # cycle_lab, track 1 moved from the program into the JUDGE: (lam, optimistic quantile). The program stays
-    # deterministic - one forecast, no extra column, no CVaR row - but the week's two candidate plans (the new one
-    # and the reference it must beat) are **replayed on several forecasts** and the winner is the one best by
-    # ``mean + lam * (worst - mean)``.
-    # Why here and not in the program. Measured in this lab: a solve costs 98 % of a candidate's judgement and the
-    # replay 1 % (Small 0.32 s against 0.02 s; Full 10.78 against 0.13), so scenarios in the program multiply the
-    # dear part and scenarios in the judge multiply the cheap one - which is why P3's scenario form never fitted
-    # Full. And the repository's one standing lesson is that optimising the model's own accounting does not pay
-    # while judging by the replay does, so a scenario belongs in the judge.
-    # The scenarios bracket the point forecast rather than guessing past it: ``persist`` (the watched cuts never
-    # end - what the agent assumed before hazard_lab), the point forecast itself, and ``optimistic`` (the same
-    # tracker at a lower quantile, so the cuts end sooner). 0: off, and then every action is the base's to the cent
-    "scen": None,
-    # cycle_lab: the week the optimistic pole of the bracket puts every edge that is cut now back at its nominal
-    # capacity. The bracket must not be built out of the tracker's watched event types: those are rare (a strait
-    # closure runs about 1.3 an episode on Small), and measured here, the watched set is empty in 24 of the first
-    # 24 weeks of episode 0, so all the poles were the same network and the judge compared identical plans - 0
-    # flips in 101 weeks. Edge capacity is the opposite: 28.8 cuts an episode on Small, median 8 weeks, and
-    # "it stays as it is" is wrong for 35 to 49 % of them, so a generic pole exists in almost every week.
-    # The lag is not a forecast and must not be read as one: a point forecast of the recovery was measured at
-    # -0.033 (``closed.py --recover``), because it helps where the cut did end and hurts where it did not. Here the
-    # pole only asks the judge "would this plan still be sound if the cut lifted", which is insurance, and insurance
-    # is what FINDINGS says this task needs ("страхуватись треба сценаріями")
-    "scen_lag": 13,
-    # cycle_lab: the pessimistic pole - the fuel edge the reference plan leans on hardest is cut to this share of
-    # its capacity from week ``scen_lag``. This is the pole that can actually discriminate, and the reason is
-    # arithmetic: lifting a cut is a **relaxation**, so it makes both candidates no dearer and leaves the better
-    # one better - an optimistic pole cannot flip a comparison, and measured here it never did (0 flips in 101
-    # weeks, twice). A new cut is the opposite: a plan that put everything through one gateway is punished and a
-    # plan that spread is not, which is exactly the fragility ``lam * CVaR`` is meant to price. The pole is chosen
-    # from the REFERENCE's flows, not from each candidate's, so the scenario is fixed before the comparison and
-    # cannot be gamed by either plan. 0: no such pole
-    "scen_hit": 0.25,
-    # cycle_lab, track 2: carry the whole-week marks from week to week and feed them to the weeks that do not solve
-    # the hull. The machinery is already here but dead in the two-solve form: ``marks`` is only ever carried under
-    # ``hull_only``, so with ``hull_every`` 1 the hull re-derives the marks every week and with ``hull_every`` 2 the
-    # off weeks simply lose them. Measured here: ``hull_every`` 2 without carrying is -0.0024 (-0.0045..-0.0002) at
-    # half the week's CPU (0.23 against 0.51), which is the price of **switching the machinery off**, not of
-    # committing. Commitment is this flag.
-    # Its basis is measured: ``u`` in the window does not move (median 0.00 %) while the regimes move every week
-    # (median 4.13 %), the marks agree with last week's in only 26 % of weeks on Full, and skipping the hull solve
-    # cost -0.0034 with the note that a carried plan with its marks is a better start than a fresh plan without them
-    "carry_marks": False,
-    # ``trigger``: revise the marks when the premise broke rather than on a calendar. Runs the hull when there are
-    # no carried marks, or when last week's plan left a week it had asked for short - the commitment was not
-    # honoured - and at the latest every ``trigger`` weeks. 0: the calendar rule of ``hull_every`` stands
-    "trigger": 0,
 }
 if (HERE / "regime.json").is_file():
     PARAMS |= json.loads((HERE / "regime.json").read_text())
@@ -781,7 +722,6 @@ class Agent(_hybrid.Agent):
             ep.least = max(0.04 * self.budget, 0.5 * min(self.took["hull"][-8:] + self.took["exact"][-8:], default=0.0))
         self.week_solves = ep.solves
         ref, name, ruled = None, "", None
-        alt, alt_name = None, ""  # cycle_lab track 3: the week's other start, when the week has one
         if self.acts is not None:
             carried = list(self.acts)
             while len(carried) < H:  # a capped window moved on by a week: its last week repeats the one before
@@ -815,9 +755,7 @@ class Agent(_hybrid.Agent):
             ruled = cand[1]
             self.ruled = list(ruled)
             if ref is None or cand[0] < ref[0]:
-                ref, name, alt, alt_name = cand, "rules", ref, "carried"
-            else:
-                alt, alt_name = cand, "rules"  # cycle_lab track 3: the start the cost of the start rejected
+                ref, name = cand, "rules"
         elif p["anchor"] and getattr(self, "ruled", None):  # the rules' plan of an earlier week, moved on to this window
             self.ruled = self.ruled[1:] + [self.ruled[-1]]
             ruled = ep.clean((self.ruled + [self.ruled[-1]] * H)[:H])
@@ -846,18 +784,9 @@ class Agent(_hybrid.Agent):
         if p["hull_only"] and name != "carried":
             hull_week = False
         marks = None
-        if p["hull_only"] or p["carry_marks"] or int(p["trigger"]) > 0:
+        if p["hull_only"]:
             self.marks = {(t - 1, gi) for (t, gi) in getattr(self, "marks", set()) if t > 1}
             marks = None if hull_week else self.marks
-        if int(p["trigger"]) > 0 and bool(p["hull"]) and not p["hull_only"]:
-            # cycle_lab track 2: the hull runs when the premise broke, not on a calendar. The first week has no
-            # carried marks and no history, so it runs it
-            self.since = getattr(self, "since", 10 ** 6) + 1
-            due = self.since >= int(p["trigger"])  # the ceiling: never carry longer than this
-            hull_week = bool(not self.marks or getattr(self, "broke", True) or due)
-            marks = None if hull_week else self.marks
-            if hull_week:
-                self.since = 0
         bonus = None
         if p["lot_bonus"] > 0 or p["lot_tilt"] > 0:
             weeks = np.arange(H)
@@ -951,47 +880,8 @@ class Agent(_hybrid.Agent):
                 break
             d2["J0"], d2["J0_compared"] = d["J0"], d["J0_compared"]  # the week's start stays the reference
             d = d2
-        # cycle_lab track 3: the same descent from the start the week rejected, judged by the played cost
-        self.multi = None
-        if p["multi"] > 0 and alt is not None and self.deadline is not None:
-            spare = (self.deadline - time.process_time()) / max(1e-9, self.budget)
-            if spare >= float(p["multi"]):
-                J_alt0, acts_alt, recs_alt = alt
-                da = _core.descend(
-                    ep, acts_alt, iters=int(p["passes"]), hints=bool(p["hints"]), tweak=tweak,
-                    played=(recs_alt, J_alt0), bonus=bonus, deadline=self.deadline,
-                    min_gain=max(1e6, p["min_gain"] * abs(J_ref)),
-                    anchor=ruled if price is not None else None, price=price,
-                    time_limit=limit, method=p["method"],
-                    close=float(p["close"]), close_until=H - hull_until,
-                    close_rationed=bool(p["close_rationed"]),
-                    hull=p["hull"] if hull_week else False, hull_rough=bool(p["hull_rough"]),
-                    hull_tol=float(p["hull_tol"]) if p["hull_tol"] > 0 else None,
-                    tilt=(float(p["hull_tilt"]) * self.week_worth, float(p["tilt_weeks"])) if p["hull_tilt"] > 0 else None,
-                    big_exact=str(p["big_exact"]), chain_deadline=self.chain_deadline,
-                    search=int(p["search"]) if hull_week else 0, hull_lean=float(p["hull_lean"]),
-                    search_room=int(p["search_room"]),
-                )
-                # what the week would have chosen, and what it chooses now: the inversion's frequency, logged
-                self.multi = (name, J_ref / 1e11, d["J_compared"] / 1e11,
-                              alt_name, J_alt0 / 1e11, da["J_compared"] / 1e11)
-                if da["J_compared"] < d["J_compared"] - 1e6:  # cheaper as the simulator plays it
-                    d, name = da, alt_name + "*"
-                    J_ref, acts_ref, recs_ref = J_alt0, acts_alt, recs_alt
-                    self.week_passes += list(da["hist"])
-        if (p["hull_only"] or p["carry_marks"] or int(p["trigger"]) > 0) and "marks" in d:
+        if p["hull_only"] and "marks" in d:
             self.marks = set(d["marks"])
-        # cycle_lab track 2: was a week the plan asked to be whole left short? then the commitment did not hold
-        self.broke = False
-        if int(p["trigger"]) > 0 and d.get("recs") is not None:
-            asked = set(d.get("marks", ())) or set(marks or ())
-            for (tt, gi) in asked:
-                if 1 <= tt <= len(d["recs"]):
-                    r = d["recs"][tt - 1]
-                    ybar = float(ep.marks.y_bar[tt - 1][gi])
-                    if float(r.shed[gi]) > 1e-6 * max(1.0, ybar):
-                        self.broke = True
-                        break
         self.hint = d.get("hint")
         if p["switch"] and d["hist"] and (self.deadline is None or time.process_time() < self.deadline):
             d = _core.switch_step(ep, d, tries=int(p["switch"]), tweak=tweak, bonus=bonus, deadline=self.deadline,
@@ -1000,78 +890,6 @@ class Agent(_hybrid.Agent):
         self.basis = d.get("basis")
         self.last = (ep, d, tweak, bonus, ruled if price is not None else None, price, H)  # for a look from a lab script
         better = d["J_compared"] < d["J0_compared"] - p["min_gain"] * abs(J_ref)  # with the lots' bonus, if any
-        # cycle_lab: the same accept-or-keep decision, judged on several forecasts instead of one
-        self.scen = None
-        room_left = self.deadline is None or time.process_time() < self.deadline
-        if p["scen"] and d.get("acts") is not None and room_left:
-            lam, q_opt = float(p["scen"][0]), float(p["scen"][1])
-            worlds = []
-            try:
-                plain = m.window(observation, H, None, pending=bool(p["pending"]), patch=None)
-                worlds.append(("persist", _core.Episode(plain.inst, plain.marks, end=end if capped else None,
-                                                        anchored=bool(p["anchor"]))))
-                lag = int(p["scen_lag"])
-                if lag > 0:
-                    u0 = np.array([np.inf if e.u0 is None else float(e.u0) for e in m.inst.edges])
-
-                    def _lift(arr, hh, _lag=lag, _u0=u0):
-                        """The optimistic pole: every edge cut now back at its nominal capacity from week ``lag``."""
-                        u = arr.get("u")
-                        if u is None or _lag >= len(u):
-                            return 0
-                        cut = np.isfinite(_u0) & (np.asarray(u[0]) < _u0 - 1e-9)
-                        if not cut.any():
-                            return 0
-                        u[_lag:, cut] = np.broadcast_to(_u0[cut], (len(u) - _lag, int(cut.sum())))
-                        return int(cut.sum())
-
-                    soon = m.window(observation, H, None, pending=bool(p["pending"]),
-                                    patch=lambda arr, hh: (self._seen(arr, hh), _lift(arr, hh))[-1])
-                    worlds.append(("lifted", _core.Episode(soon.inst, soon.marks, end=end if capped else None,
-                                                           anchored=bool(p["anchor"]))))
-                hit = float(p["scen_hit"])
-                if hit > 0 and lag > 0:
-                    # the fuel edge the reference leans on hardest, over the whole window
-                    load = {}
-                    for fl, _ov, _ho in acts_ref:
-                        for s, qv in (fl.items() if isinstance(fl, dict) else enumerate(fl)):
-                            if qv > 0 and not self.chip_slots[int(s)]:
-                                e = int(m.slot_edge[int(s)])
-                                load[e] = load.get(e, 0.0) + float(qv)
-                    worst = max(load, key=load.get) if load else None
-
-                    def _hit(arr, hh, _e=worst, _lag=lag, _f=hit):
-                        """The pessimistic pole: the gateway the plan leans on, cut from week ``lag``."""
-                        u = arr.get("u")
-                        if u is None or _e is None or _lag >= len(u):
-                            return 0
-                        u[_lag:, _e] = u[_lag:, _e] * _f
-                        return 1
-
-                    if worst is not None:
-                        bad = m.window(observation, H, None, pending=bool(p["pending"]),
-                                       patch=lambda arr, hh: (self._seen(arr, hh), _hit(arr, hh))[-1])
-                        worlds.append(("hit", _core.Episode(bad.inst, bad.marks, end=end if capped else None,
-                                                            anchored=bool(p["anchor"]))))
-            except Exception:
-                worlds = []
-            if worlds:
-                def spread(acts):  # the plan's cost on the point forecast and on every bracketing one
-                    js = [float(_j)]
-                    for _nm, e in worlds:
-                        try:
-                            js.append(float(e.simulate(e.clean(acts))[1]))
-                        except Exception:
-                            pass
-                    mean = sum(js) / len(js)
-                    return mean + lam * (max(js) - mean), js
-                _j = d["J_compared"]
-                s_new, js_new = spread(d["acts"])
-                _j = d["J0_compared"]
-                s_ref, js_ref = spread(acts_ref)
-                flip = (s_new < s_ref - p["min_gain"] * abs(J_ref)) != better
-                self.scen = (better, s_new < s_ref - p["min_gain"] * abs(J_ref), len(js_new) - 1, flip)
-                better = s_new < s_ref - p["min_gain"] * abs(J_ref)
         # nothing beats the rules alone: no plan this week, and the hybrid's own program decides the chips after the fab.
         # Not so where the clock stopped the week's solve (``fit``): the rules' plan is played and carried, for a week
         # without a carried plan takes longer, and the next solve would be stopped again
@@ -1081,7 +899,5 @@ class Agent(_hybrid.Agent):
         best = d["acts"] if better else acts_ref
         self.acts = best[1:]
         note = name + (":new" if better else ":kept") + (f" whole {d.get('closed', 0)} of {d.get('rounded', d.get('closed', 0))} {d['hull']}" if "hull" in d else "") + (
-            f" search {d['search'][0]} took {d['search'][1]}" if "search" in d else "") + fits + (
-            f" multi {self.multi[0]}{self.multi[2]:.1f}/{self.multi[3]}{self.multi[5]:.1f}" if self.multi else "") + (
-            f" scen{self.scen[2]}{'FLIP' if self.scen[3] else ''}" if self.scen else "")
+            f" search {d['search'][0]} took {d['search'][1]}" if "search" in d else "") + fits
         return best[0], (J_ref / 1e11, min(d["J"], J_ref) / 1e11, note)
