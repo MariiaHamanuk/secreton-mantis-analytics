@@ -128,6 +128,11 @@ PARAMS = {
     # fab whose plant's store of its packaged chip was full in one of the last four weeks (those lots are thrown away)
     "hull_rounds": 1,
     "end_left": False,
+    # next_lab P2: the share of a whole week of a grid's fabs that the first week's burn of each of its gate
+    # fuels is worth at the window's end, on top of ``end_fuel`` for the rest of it. Today one flat rate is
+    # paid everywhere - the rate of shed base load - while a unit of a gate fuel is worth the whole week it
+    # lets the grid close. 0: one flat rate, exactly as before
+    "end_peak": 0.0,
     "anchor_free": None,
     "share": 0.45,  # share of the week's CPU budget the planner may reach, from the start of ``act`` (0: no clock)
     # the clock counts as the server's meter does: ``Agent(config)`` belongs to week 1, and what a week took over the
@@ -379,6 +384,40 @@ class Agent(_hybrid.Agent):
         if self.p["truth"]:
             self.truth = truth["marks"]
 
+    def _ready(self, observation) -> tuple:
+        """next_lab P2: the grids that already hold a week's burn of every one of their gate fuels.
+
+        The dear end-of-window rate is only right where the next unit of fuel opens the peak rather than going to the
+        base load, and that is where a week's burn of **every** gate fuel is already there (the week's energy for the
+        fabs is the peak minus the shortfall of each fuel, so one missing fuel keeps the fabs off; ``FINDINGS.md``,
+        "Energy and fabs"). Counted from the observation's stocks at the grid and at the terminals that feed it alone,
+        so the caller hands ``_pools`` a set of grids and the rate stays a constant of the row.
+        """
+        inst = self.model.inst
+        if not hasattr(self, "_ready_slots"):
+            supply, chk = set(inst.supply_nodes), set(inst.chokepoints)
+            where = {(int(n), int(k)): i for i, (n, k) in enumerate(self.planner.stock)}
+            self._ready_slots = {}
+            for g in inst.grids:
+                ga = inst.nodes[g].grid
+                tails = dict.fromkeys(inst.edges[e].tail for e in inst.in_edges[g])
+                terms = [x for x in tails if x not in supply and x not in chk and inst.nodes[x].grid is None
+                         and all(inst.edges[e].head == g for e in inst.out_edges[x])]
+                rows = []
+                for k in ga.fuels:
+                    burn = ga.shares.get(k, 0.0) * ga.deliverable
+                    if burn <= 0:
+                        continue
+                    slots = [where[(x, k)] for x in [g] + terms if (x, k) in where]
+                    rows.append((burn, slots))
+                self._ready_slots[g] = rows
+        stock = np.asarray(observation["stock.qty"], dtype=float)
+        out = []
+        for g, rows in self._ready_slots.items():
+            if rows and all(sum(stock[i] for i in slots) >= burn for burn, slots in rows):
+                out.append(g)
+        return tuple(out)
+
     def _network(self, observation, week: int, H: int):
         """The window's network: None (as observed), or the forecast with the fields of ``truth`` the scenario's own."""
         if self.truth is None:
@@ -528,7 +567,9 @@ class Agent(_hybrid.Agent):
         w = m.window(observation, H, self._network(observation, week, H), pending=bool(p["pending"]))
         capped = H < left and bool(p["end_fuel"] or p["end_chip"])
         own = p["orders"] == "plan"  # the plan's own orders are played, not the fuel rules'
-        end = (self.end_stock, self.end_k, float(p["end_weeks"]), (left - H) if p["end_left"] else None)
+        ready = self._ready(observation) if p["end_peak"] > 0 else ()  # next_lab P2: grids a week's burn is there for
+        end = (self.end_stock, self.end_k, float(p["end_weeks"]), (left - H) if p["end_left"] else None,
+               float(p["end_peak"]), ready)
         ep = _core.Episode(w.inst, w.marks, end=end if capped else None, anchored=bool(p["anchor"]))
         limit = float(p["solve_share"]) * self.budget if p["solve_share"] > 0 else float(p["solve_seconds"])
         ep.warm_limit = float(p["warm_share"]) * self.budget if p["warm_share"] > 0 else None
