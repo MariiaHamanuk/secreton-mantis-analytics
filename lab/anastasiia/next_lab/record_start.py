@@ -29,6 +29,8 @@ def one(agent: str, task: str, entropy: int, n: int) -> tuple[int, int]:
     import shockbench_flow_gym  # noqa: F401 - registers the environments
     from shockbench_flow_agent.convert import agent_config
 
+    from shockbench_flow_agent.convert import action_to_wire
+
     from sbf_starter import env_id
     from sbf_starter.agents import load, resolve
 
@@ -39,11 +41,11 @@ def one(agent: str, task: str, entropy: int, n: int) -> tuple[int, int]:
     actions = []
     while True:
         action = ag.act(obs)
-        # ``validate_action`` wants the week in the action itself (the gym wrapper puts it there, an agent does not),
-        # and ``Episode.validated`` replays from week 1, so it is kept here with the week the observation carries
-        kept = {k: (v.copy() if hasattr(v, "copy") else v) for k, v in action.items()}
-        kept["week"] = int(np.asarray(obs["week"]).ravel()[0])
-        actions.append(kept)
+        # The agent speaks the gym Dict action; the protocol's wire action (what `validate_action` and so
+        # `Episode.validated` read) carries the week and names the flows by slot. The wrapper converts, so the same
+        # converter is used here rather than a hand-rolled one
+        week = int(np.asarray(obs["week"]).ravel()[0])
+        actions.append(action_to_wire(u.layout, week, action))
         obs, _r, term, trunc, _i = env.step(action)
         if term or trunc:
             break
