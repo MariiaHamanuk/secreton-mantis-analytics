@@ -77,16 +77,22 @@ def play(
     suffix: str = "",
     speed: bool = False,
     soft: bool = False,
+    model: str = "anastasiia_plan_hull3",
+    params: str = "",
 ) -> None:
     """``soft``: the shipped hook (a failed term is no term). ``speed``: with lab/nazar's speedups. ``clock``: the
-    model's own settings (a winner's check); ``suffix`` then names those folders and files apart."""
+    model's own settings (a winner's check); ``suffix`` then names those folders and files apart. ``model``: the
+    committed model the names are built on; ``params``: JSON of settings on top of the form's own."""
     from joblib import Parallel, delayed
 
     todo, kept = [], {}
+    extra = [f"--model={model}"] + (
+        [f"--params={params if isinstance(params, str) else json.dumps(params)}"] if params else []
+    )
     for name in _names(names):
         terms = [] if name == "base" else [f"--terms={HERE / 'terms' / (name + '.py')}"]
         made = subprocess.run(
-            [sys.executable, str(HERE / "assemble.py"), f"--name={name}{suffix}", *terms]
+            [sys.executable, str(HERE / "assemble.py"), f"--name={name}{suffix}", *terms, *extra]
             + (["--clock"] if clock else [])
             + (["--speed"] if speed else [])
             + (["--soft"] if soft else []),
@@ -134,22 +140,33 @@ def meter(
     budget: float = 0.0,
     speed: bool = False,
     soft: bool = False,
+    model: str = "anastasiia_plan_hull3",
+    params: str = "",
+    tag: str = "",
+    room: bool = False,
 ) -> None:
     """Names in the model's own settings (clocks and all), played as the scorer plays under its CPU meter: a week
     over the budget is the naive rule's and what it took over is charged to the next. One name after another, each
-    alone on the machine, so that no arm's weeks are slowed by another's. Costs go to ``<name>_clock`` files."""
+    alone on the machine, so that no arm's weeks are slowed by another's. Costs go to ``<name>_clock`` files.
+    ``model``: the committed model the names are built on; ``params``: JSON of settings on top of its own;
+    ``tag`` names such a variant apart in the folders and files (``budget`` other than the task's needs the same
+    share in the model's clock: ``params`` with ``budget_scale``). ``room``: with ``assemble.py``'s ``ROOM`` patch."""
     from sbf_starter import scoring
 
     limit = float(budget) or {"small": 2.0, "full": 4.0}[task]
     es = scoring.episode_set(task, list(range(first, first + episodes)), entropy=entropy, n_jobs=n_jobs, verbose=False)
-    suffix = "_clock" + ("_s" if speed else "") + ("_soft" if soft else "")
+    suffix = "_clock" + ("_s" if speed else "") + ("_soft" if soft else "") + (f"_{tag}" if tag else "")
+    extra = [f"--model={model}"] + (
+        [f"--params={params if isinstance(params, str) else json.dumps(params)}"] if params else []
+    )
     (OUT / "costs").mkdir(parents=True, exist_ok=True)
     for name in _names(names):
         terms = [] if name == "base" else [f"--terms={HERE / 'terms' / (name + '.py')}"]
         made = subprocess.run(
-            [sys.executable, str(HERE / "assemble.py"), f"--name={name}{suffix}", "--clock", *terms]
+            [sys.executable, str(HERE / "assemble.py"), f"--name={name}{suffix}", "--clock", *terms, *extra]
             + (["--speed"] if speed else [])
-            + (["--soft"] if soft else []),
+            + (["--soft"] if soft else [])
+            + (["--room"] if room else []),
             capture_output=True,
             text=True,
         )
@@ -238,9 +255,11 @@ def score(
     ranges: str = "",
     level: float = 0.90,
     costs: str = "",
+    strata: bool = False,
 ) -> None:
     """``ranges``: stretches of episodes instead of one, "0-31,96-191" (ends included). ``level``: the interval's.
-    ``costs``: another folder of cost files for the base (the same base played on another machine: an A/A check)."""
+    ``costs``: another folder of cost files for the base (the same base played on another machine: an A/A check).
+    ``strata``: also each harm level apart (all that was saved over all that could be, within the level)."""
     all_refs = _refs(OUT / f"refs_{task}_{entropy}.json")
     wanted = _episodes(first, episodes, ranges)
     based = json.loads(_costs(base + suffix, task, entropy).read_text())["rows"]
@@ -280,16 +299,19 @@ def score(
             p = np.concatenate([rng.choice(g, len(g)) for g in groups])
             drawn.append(_rss([rs[i] for i in p], [a[i] for i in p]) - _rss([rs[i] for i in p], [b[i] for i in p]))
         lo, hi = np.percentile(drawn, [tail, 100 - tail])
-        if "cpu" in rows[str(ns[0])]:  # the form without clocks: the week's CPU seconds, weeks the planner raised in
+        free = ["cpu" in r[str(ns[0])] for r in (rows, based)]
+        if all(free):  # the form without clocks: the week's CPU seconds, weeks the planner raised in
             cpu = [np.median([r[str(n)]["cpu"][i] for n in ns]) for r in (rows, based) for i in (0, 1)]
             raised = sum(rows[str(n)].get("raised", 0) for n in ns), sum(based[str(n)].get("raised", 0) for n in ns)
             note = (
                 f"week {cpu[0]:.2f}/{cpu[1]:.2f} s against {cpu[2]:.2f}/{cpu[3]:.2f}; "
                 f"raised weeks {raised[0]} against {raised[1]}"
             )
-        else:  # under the meter: the weeks it handed to the naive rule
+        elif not any(free):  # under the meter: the weeks it handed to the naive rule
             naive = sum(rows[str(n)]["naive"] for n in ns), sum(based[str(n)]["naive"] for n in ns)
             note = f"weeks naive {naive[0]} against {naive[1]}; base {_rss(rs, b):.4f}"
+        else:  # one side without clocks, the other under the meter
+            note = f"base {_rss(rs, b):.4f}"
         print(
             f"{name:10s} {_rss(rs, a):.4f}  {_rss(rs, a) - _rss(rs, b):+.4f} ({lo:+.4f} to {hi:+.4f})  cheaper "
             f"{sum(1 for x, y in zip(a, b) if x < y)}, dearer {sum(1 for x, y in zip(a, b) if x > y)}, same "
@@ -297,6 +319,21 @@ def score(
             f"(levels {[int((levels == s).sum()) for s in (1, 2, 3, 4)]}); "
             f"{note}"
         )
+        for s in sorted(set(levels.tolist())) if strata else ():
+            ids = np.flatnonzero(levels == s)
+            part = [
+                _rss([rs[i] for i in p], [a[i] for i in p]) - _rss([rs[i] for i in p], [b[i] for i in p])
+                for p in (rng.choice(ids, len(ids)) for _ in range(draws))
+            ]
+            lo, hi = np.percentile(part, [tail, 100 - tail])
+            mine, theirs = (
+                _rss([rs[i] for i in ids], [a[i] for i in ids]),
+                _rss([rs[i] for i in ids], [b[i] for i in ids]),
+            )
+            print(
+                f"    level {s}: {mine:.4f}  {mine - theirs:+.4f} ({lo:+.4f} to {hi:+.4f})  cheaper "
+                f"{sum(1 for i in ids if a[i] < b[i])}, dearer {sum(1 for i in ids if a[i] > b[i])} of {len(ids)}"
+            )
 
 
 if __name__ == "__main__":

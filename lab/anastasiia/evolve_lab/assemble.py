@@ -125,6 +125,38 @@ AGENT = [
 ]
 
 
+# the week's clock on stderr, one line a week: for a play in the scoring container, which keeps the agent's stderr
+JOURNAL = [
+    (
+        '        self.detail.append({"solves": self.week_solves, "passes": self.week_passes, "shares": self.week_shares})\n',  # noqa: E501
+        '        self.detail.append({"solves": self.week_solves, "passes": self.week_passes, "shares": self.week_shares})\n'  # noqa: E501
+        '        print("JOURNAL " + json.dumps({"w": week, "t": round(time.process_time() - t0, 4),\n'
+        '                                       "note": [str(x) for x in note], "short": bool(self.short),\n'
+        '                                       "fresh": int(self.fresh),\n'
+        '                                       "solves": [[s["what"], s["attempt"], s["status"], round(s["cpu"], 4),\n'
+        '                                                   round(s["limit"], 3)] for s in self.week_solves]}),\n'
+        "              file=sys.stderr, flush=True)\n",
+    ),
+]
+
+# the short window (``fit_horizon``) also when a week of the long one has no room for the search: ``fit_tries`` tries
+# on top of the week's work, each taken to cost what the week's exact cell does (0: as the model). In the short
+# window the search starts when ``short_room`` tries fit before the deadline (0: ``search_room``, as in the long one)
+ROOM = [
+    (
+        '            need = sum(self._reckon(kind) for kind in ("before", "rules", "hull", "exact", "around"))\n'
+        "            if self.seconds - self.debt < need:  # the week of the whole window is not likely to fit\n",
+        '            need = sum(self._reckon(kind) for kind in ("before", "rules", "hull", "exact", "around"))\n'
+        '            need += int(self.p.get("fit_tries", 0)) * self._reckon("exact")  # room for the search as well\n'
+        "            if self.seconds - self.debt < need:  # the week of the whole window is not likely to fit\n",
+    ),
+    (
+        'search_room=int(p["search_room"]),\n',
+        'search_room=int((p.get("short_room") if self.short else 0) or p["search_room"]),\n',
+    ),
+]
+
+
 def tree_sha(folder: Path) -> str:
     h = hashlib.sha256()
     for p in sorted(folder.rglob("*")):
@@ -218,11 +250,15 @@ def main(
     speed: bool = False,
     soft: bool = False,
     model: str = "anastasiia_plan_hull3",
+    journal: bool = False,
+    room: bool = False,
 ) -> None:
     """``clock``: the model's own settings, clocks and all (a winner's check). ``params``: JSON of settings on top.
-    ``model``: the committed model the folder is built on (``MODELS``). ``soft``: the folder to ship: terms that
+    ``journal``: the agent writes its clock's week to stderr (``board.py`` reads it). ``model``: the committed
+    model the folder is built on (``MODELS``). ``soft``: the folder to ship: terms that
     raise or return no vector are left out that week instead of stopping
-    the episode (the scorer's shim does not catch a ``BaseException``)."""
+    the episode (the scorer's shim does not catch a ``BaseException``). ``room``: the clock reads ``fit_tries`` and
+    ``short_room`` (``ROOM``; without them in ``params`` the folder plays as without the patch)."""
     base = ROOT / "agents" / model
     if tree_sha(base) != MODELS[model]:
         raise SystemExit(f"{base} is not the committed model: {tree_sha(base)}")
@@ -237,6 +273,10 @@ def main(
     if hook:
         for file, patches in (("plan_core.py", CORE), ("agent.py", AGENT)):
             (target / file).write_text(_patched((target / file).read_text(), patches, SOFT if soft else STRICT))
+    if room:
+        (target / "agent.py").write_text(_patched((target / "agent.py").read_text(), ROOM))
+    if journal:  # decisions as they were: one line of stderr a week
+        (target / "agent.py").write_text(_patched((target / "agent.py").read_text(), JOURNAL))
     settings = json.loads((base / "regime.json").read_text())
     if not clock:
         settings = {k: v for k, v in settings.items() if k not in CLOCK} | FREE
@@ -252,7 +292,10 @@ def main(
     sped = hashlib.sha256(SPEED.read_bytes()).hexdigest() if speed else ""
     sha = hashlib.sha256(
         json.dumps(
-            [MODELS[model], bool(hook), source, settings, sped] + (["soft"] if soft else []), sort_keys=True
+            [MODELS[model], bool(hook), source, settings, sped]
+            + (["soft"] if soft else [])
+            + (["room"] if room else []),
+            sort_keys=True,
         ).encode()
     ).hexdigest()
     (OUT / f"{name}.json").write_text(
