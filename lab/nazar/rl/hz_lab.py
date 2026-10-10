@@ -31,6 +31,14 @@ PRESETS = {
     "rooms": {"hazard": {}, "room1": {"search_room": 1}, "room2": {"search_room": 2}, "room3": {"search_room": 3}},
     "search": {"room1": {"search_room": 1}, "room1_s4": {"search_room": 1, "search": 4}, "room1_s12": {"search_room": 1, "search": 12}},
     "esbest": {"room2": {"search_room": 2}, "es_best": {"search_room": 2, "watch": {"weather_closure": 0.39, "port_strike_stoppage": 0.3846, "port_strike_slowdown": 0.488}, "watch_ask": 0.2543, "fit": 1.2901}},
+    "ends": {
+        "room2": {"search_room": 2},
+        "fuel0.5": {"search_room": 2, "end_fuel": 1.65e6},
+        "fuel2": {"search_room": 2, "end_fuel": 6.6e6},
+        "chip0.3": {"search_room": 2, "end_chip": 0.3},
+        "chip0.9": {"search_room": 2, "end_chip": 0.9},
+    },
+    "prod": {"hazard": {}, "room2": {"search_room": 2}},
     "asks": {"room1": {"search_room": 1}, "ask0": {"search_room": 1, "watch_ask": 0.0}, "ask5": {"search_room": 1, "watch_ask": 0.5}},
 }
 
