@@ -136,6 +136,44 @@ PARAMS = {
     # more, its stock falls under the threshold and the next week is rationed though the terminal holds the gas.
     # A request above the terminal's stock is clipped for free (0: off)
     "grid_keep": 0,
+    # frontier_lab: the chips of a plant (packaged and raw in its store, raw on the way to it, what it is packaging)
+    # are worth their end value at the end of a capped window only up to ``weeks`` of what its exits carry then, and
+    # ``floor`` of it above (``plan_core.Episode._chip_pools``). The plain end credit pays a chip sent to a plant
+    # whose exits are prohibited as any other, and the window keeps starting lots for it. None: off
+    "chip_room": None,
+    # evolve_lab, step 3 (its ``ROOM`` patch): the whole window is kept only while its week has room for ``fit_tries``
+    # tries of the search besides, each at the cost of the week's exact solve; in the short window (``fit_horizon``)
+    # the search starts when ``short_room`` tries fit (0: ``search_room``, as in the whole window)
+    "fit_tries": 0,
+    "short_room": 0,
+    # frontier_lab: on a large program (Full) a try of the search over sets of whole weeks starts the simplex from
+    # the optimal basis of the cell it is a neighbour of (one grid-week differs), in place of a cold start; the basis
+    # of a large program's exact cell is then read out of the solver (50 ms). ``warm_share`` still bounds the run
+    "try_warm": False,
+    # frontier_lab: the search starts when ``search_room`` tries fit before the deadline, a try taken to cost what
+    # the last tries did (``fit`` times the third quartile of the last eight; before the first try, and with this
+    # off, what the week's first cell took: on a large program that is a cold solve, several times a warm try)
+    "try_gate": False,
+    "try_guess": 1.0,  # with ``try_gate``, before the first try: a try costs this share of the week's first cell
+    # frontier_lab: share of the week's budget a try's warm run may take; a try that does not solve in it is dropped,
+    # with no cold run after it (0: ``warm_share`` bounds the warm run and a cold run follows)
+    "try_share": 0.0,
+    # frontier_lab: the search also runs in a week whose exact cell is solved first from the whole weeks an earlier
+    # hull asked for (the clock had no room for both solves): it starts from that hull's shares, moved on with the
+    # weeks. ``hull_due``: with it, the tries leave the hull that follows its time only when no hull was solved
+    # for this many weeks (1: every week; 2: every other week the tries have all that is left)
+    "try_pending": False,
+    "hull_due": 1,
+    # frontier_lab: on a large program the week's exact cell starts the simplex from last week's basis moved on by a
+    # week, for this share of the week's budget at most, and cold after that (0: always cold, as the model does: from
+    # such a basis the simplex now and then stalls, which the limit is for)
+    "exact_warm": 0.0,
+    # frontier_lab: in the short window (``fit_horizon``) the window's last week stays the same week of the episode
+    # for this many weeks: the window is ``fit_horizon`` plus this minus one weeks long, then a week shorter every
+    # week, then long again. A window a week shorter with the same end is last week's program without its first
+    # week, so last week's basis without that week is where the simplex is already nearly done (``exact_warm``),
+    # and only the first of these weeks pays for a cold solve; it solves its exact cell first (1: off)
+    "hold_end": 1,
     # plan_lab, the week's time. ``hull_every``: weeks between solves with the hull (the weeks between keep the whole
     # weeks of the carried plan); ``hull_rough``: that solve without the crossover; ``anchor_every``: weeks between
     # rollouts of the rules alone when there is an ``anchor`` (their plan of the last rollout, moved on, is the anchor
@@ -293,6 +331,7 @@ def _load(name: str, path: Path):
 _hybrid = _load(f"{HERE.name}_hybrid", HERE / "hybrid_agent.py")  # its lp_part puts sbfv/ on the path
 _model = _load(f"{HERE.name}_model", HERE / "sim_model.py")
 _core = _load(f"{HERE.name}_core", HERE / "plan_core.py")
+_terms = _load(f"{HERE.name}_terms", HERE / "terms.py") if (HERE / "terms.py").is_file() else None
 _watch = _load(f"{HERE.name}_watch", HERE / "watch.py")  # hazard_lab: short disruptions read off the observations
 LAWS, law_end = _watch.LAWS, _watch.law_end
 if PARAMS["window_name"] and not hasattr(_model.L.rolled_window, "named"):
@@ -350,7 +389,9 @@ class Agent(_hybrid.Agent):
         # for ``fit``: CPU seconds of the weeks so far in the solves of each kind, around them (from the clock's look
         # to the end of ``act``, the solves aside) and after the last of them; weeks since a solve with the hull; the
         # whole weeks it asked for that no exact solve has taken yet
-        self.took = {"hull": [], "exact": [], "rough": [], "around": [], "after": [], "rules": [], "before": []}
+        self.took = {"hull": [], "exact": [], "rough": [], "around": [], "after": [], "rules": [], "before": [],
+                     "warm": []}  # "warm": an exact cell that solved from last week's basis (``exact_warm``)
+        self.tried: list = []  # CPU seconds of the search's last tries (``try_gate``)
         self.backoff, self.rough_left, self.rough = 1, 0, False  # for ``exact_rough``
         self.short = False  # for ``fit_horizon``: the window is the short one from now on
         self.looked, self.hull_age, self.pending, self.rounds, self.searched = None, 99, set(), 1, 0.0
@@ -683,6 +724,11 @@ class Agent(_hybrid.Agent):
         last = self.took[kind][-8:]
         return float(self.p["fit"]) * float(np.percentile(last, 75)) if last else 0.0
 
+    def _a_try(self) -> float | None:
+        """CPU seconds a try of the search is likely to take, as ``_reckon`` reckons (None before the first try)."""
+        last = self.tried[-8:]
+        return float(self.p["fit"] or 1.0) * float(np.percentile(last, 75)) if last else None
+
     def act(self, observation):
         t0 = time.process_time()
         if self.p["carry_debt"] and self.made is not None:
@@ -701,10 +747,12 @@ class Agent(_hybrid.Agent):
         if (self.p["fit"] > 0 and self.p["fit_horizon"] and not self.short and self.seconds > 0
                 and len(self.took["exact"]) >= 3):
             need = sum(self._reckon(kind) for kind in ("before", "rules", "hull", "exact", "around"))
+            a_try = self._a_try() if self.p["try_gate"] else None
+            need += int(self.p["fit_tries"]) * (a_try or self._reckon("exact"))  # room for the search as well
             if self.seconds - self.debt < need:  # the week of the whole window is not likely to fit
                 self.short, self.hint = True, None
                 self.took = {kind: [] for kind in self.took}  # the short window's times are its own
-        fuel0 = copy.deepcopy(self.fuel)  # the rules' memory before this week
+        fuel0 = self.fuel  # the rules' memory before this week: ``fill`` below is its first change, after the plan
         rules0 = copy.deepcopy((self.chips, self.strait)) if alone else None
         flows = np.zeros(self.n_slots)
         self.chips.fill_chip_flows(observation, flows)  # the rules' chip entries; keeps their memory
@@ -760,9 +808,12 @@ class Agent(_hybrid.Agent):
             exact = ("exact", "plain", "no hint", "no tweak")  # the search over sets of whole weeks is not counted
             solves = {"hull": sum(s["cpu"] for s in self.week_solves if s["what"] == "hull"),
                       "exact": sum(s["cpu"] for s in self.week_solves if s["what"] in exact)}
+            first = next((s for s in self.week_solves if s["what"] == "exact"), None)
+            warmed = first is not None and first["attempt"] == "warm" and first["status"] == "Optimal"
             for kind, took in solves.items():  # a week of two rounds counts as two
                 if took > 0:
-                    self.took["rough" if kind == "exact" and self.rough else kind].append(took / self.rounds)
+                    name = "rough" if kind == "exact" and self.rough else "warm" if kind == "exact" and warmed else kind
+                    self.took[name].append(took / self.rounds)
             self.took["before"].append(self.looked - self.started - self.rolled)
             if self.rolled > 0 and self.fresh == 0:  # a whole rollout
                 self.took["rules"].append(self.rolled)
@@ -771,6 +822,8 @@ class Agent(_hybrid.Agent):
                 self.took["around"].append(around / self.rounds)
                 self.took["after"].append(now - self.week_solves[-1]["end"])
             self.looked = None
+        self.tried.extend(getattr(self, "week_tries", ()))
+        self.week_tries = []
         self.log.append((time.process_time() - t0, *note))
         self.detail.append({"solves": self.week_solves, "passes": self.week_passes, "shares": self.week_shares})
         if self.p["tol_sticky"] and any(s["attempt"] == "tolerance" and s["status"] == "Optimal" for s in self.week_solves):
@@ -785,6 +838,13 @@ class Agent(_hybrid.Agent):
         left = m.inst.T - week + 1
         horizon = int(p["fit_horizon"]) if self.short else int(p["horizon"])
         H = left if not horizon else min(horizon, left)
+        self.rebased = False
+        if int(p["hold_end"]) > 1 and self.short and horizon and H < left:
+            end, top = getattr(self, "end_week", None), horizon + int(p["hold_end"]) - 1
+            if end is None or not horizon <= end - week + 1 <= top:  # a new end, ``top`` weeks from here
+                end, self.rebased = week + top - 1, True
+            self.end_week = end
+            H = min(end - week + 1, left)
         hull_until = max(0, int(p["hull_until"]) - (int(p["horizon"]) - horizon if self.short else 0))
         network = self._network(observation, week, H)
         watching = network is None and self.watch is not None and bool(self.watch.cuts or self.watch.shut)
@@ -792,10 +852,20 @@ class Agent(_hybrid.Agent):
         w = m.window(observation, H, network, pending=bool(p["pending"]), patch=self._seen if watching else None)
         capped = H < left and bool(p["end_fuel"] or p["end_chip"])
         own = p["orders"] == "plan"  # the plan's own orders are played, not the fuel rules'
-        end = (self.end_stock, self.end_k, float(p["end_weeks"]), (left - H) if p["end_left"] else None)
+        end = (self.end_stock, self.end_k, float(p["end_weeks"]), (left - H) if p["end_left"] else None, p["chip_room"])
         ep = _core.Episode(w.inst, w.marks, end=end if capped else None, anchored=bool(p["anchor"]))
+        if _terms is not None:
+            ep.terms, ep.info = _terms.add, {"week": week, "left": left, "window": H}
         limit = float(p["solve_share"]) * self.budget if p["solve_share"] > 0 else float(p["solve_seconds"])
         ep.warm_limit = float(p["warm_share"]) * self.budget if p["warm_share"] > 0 else None
+        ep.try_warm = bool(p["try_warm"])
+        if p["try_gate"]:
+            ep.try_cost, ep.try_guess = self._a_try(), float(p["try_guess"])
+        if p["try_share"] > 0:
+            ep.try_limit = float(p["try_share"]) * self.budget
+        if p["exact_warm"] > 0:
+            ep.exact_limit = float(p["exact_warm"]) * self.budget
+        self.week_tries = ep.tries
         ep.tol_retry = float(p["tol_retry"]) if p["tol_retry"] > 0 else None
         ep.tol = float(p["tol_retry"]) if self.loose else float(p["tol"]) if p["tol"] > 0 else None
         ep.rough_tol = float(p["rough_tol"])
@@ -874,17 +944,22 @@ class Agent(_hybrid.Agent):
             bonus = (self.chip_worth, float(p["lot_bonus"]) * (weeks < H - 14) + float(p["lot_tilt"]) * (1.0 - weeks / H))
         fits = ""  # ``fit``: what the clock chose for this week
         deadline, fit = self.deadline, p["fit"] > 0 and self.deadline is not None
+        pending, search_deadline = False, None
         if fit:
             self.looked = time.process_time()
             self.hull_age += 1
             self.pending = {(t - 1, gi) for (t, gi) in self.pending if t > 1}
+            self.scout = {(t - 1, gi): v for (t, gi), v in (getattr(self, "scout", None) or {}).items() if t > 1}
             room, self.rounds = self.deadline - self.looked, 1
-            both = self._reckon("hull") + self._reckon("exact") + self._reckon("around")
+            # ``exact_warm``: a week that can start its exact cell from last week's basis is likely to take what such
+            # weeks took, not what the cold solves did
+            warm = p["exact_warm"] > 0 and self.basis is not None and not self.rebased and bool(self.took["warm"])
+            both = self._reckon("hull") + self._reckon("warm" if warm else "exact") + self._reckon("around")
             self.rough = bool(p["exact_rough"]) and self.rough_left > 0 and ep.N > _core.BIG
             if self.rough:
                 self.rough_left -= 1
             # the exact solve first, the hull after it
-            after = hull_week and (room < both or p["exact_first"] or self.rough) and not p["hull_only"]
+            after = hull_week and (room < both or p["exact_first"] or self.rough or self.rebased) and not p["hull_only"]
             if after and self.hull_age >= 2 and (p["fit_turns"] or (self.rough and p["exact_rough"] == "turns")):
                 after = False  # the hull's turn to go first
             if after:
@@ -893,10 +968,13 @@ class Agent(_hybrid.Agent):
                     marks, fits = self.pending, fits + f" pending {len(self.pending)}"
             # before the first week's solves are timed, the work after them is taken as half of the work before them
             deadline -= self._reckon("after") if self.took["after"] else 0.5 * (self.looked - self.started)
+            pending = bool(p["try_pending"]) and after and marks is not None and bool(self.scout)
+            if pending and self.hull_age >= int(p["hull_due"]):  # the hull that follows keeps its time
+                search_deadline = deadline - self._reckon("hull")
         d = _core.descend(
             ep, acts_ref, iters=int(p["passes"]), hints=bool(p["hints"]), tweak=tweak,
             played=(recs_ref, J_ref),
-            basis=ep.shifted(self.basis) if p["warm"] and (p["method"] != "auto" or ep.N <= _core.BIG) else None,
+            basis=ep.shifted(self.basis) if p["warm"] and (p["method"] != "auto" or ep.N <= _core.BIG or p["exact_warm"] > 0) else None,
             bonus=bonus, deadline=deadline,
             min_gain=max(1e6, p["min_gain"] * abs(J_ref)), anchor=ruled if price is not None else None, price=price,
             time_limit=limit, method=p["method"],
@@ -909,7 +987,9 @@ class Agent(_hybrid.Agent):
             hull_only=p["hull_only"] if hull_week else False, marks=marks, chain_deadline=self.chain_deadline,
             record=bool(p["record_shares"]),
             model=(self.share_model, left - H) if p["hull"] == "model" else None,
-            search=int(p["search"]) if hull_week else 0, hull_lean=float(p["hull_lean"]), search_room=int(p["search_room"]),
+            search=int(p["search"]) if hull_week or pending else 0, hull_lean=float(p["hull_lean"]),
+            search_room=int((p["short_room"] if self.short else 0) or p["search_room"]),
+            scout0=self.scout if pending else None, search_deadline=search_deadline,
         )
         self.week_passes = list(d["hist"])
         self.searched = float(d.get("search_cpu", 0.0))  # CPU seconds of the search over sets of whole weeks
@@ -924,6 +1004,7 @@ class Agent(_hybrid.Agent):
                     self.backoff = 1
             if hull_week and d.get("hull") == "Optimal":
                 self.hull_age, self.pending = 0, set() if solved else set(d.get("marks", ()))
+                self.scout = dict(d.get("scout") or {})
                 fits += "" if solved else " hull alone"
             elif solved:
                 self.pending = set()
@@ -940,6 +1021,7 @@ class Agent(_hybrid.Agent):
                 )
                 if d2.get("hull") == "Optimal":
                     self.hull_age, self.pending = 0, set(d2.get("marks", ()))
+                    self.scout = dict(d2.get("scout") or {})
                     fits += f" hull after {len(self.pending)}"
         if "shares" in d:  # the window's length, the episode's weeks past it, the shares, what stood before them
             self.week_shares = (H, left - H, d["shares"], d["share_features"], sorted(d.get("marks", ())))

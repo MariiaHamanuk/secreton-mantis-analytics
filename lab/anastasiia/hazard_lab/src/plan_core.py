@@ -67,6 +67,13 @@ def world(task: str, entropy: int, n: int):
     return inst.at_digest(marks.instance_digest), marks
 
 
+from types import MappingProxyType as _View  # noqa: E402 - evolve_lab
+
+
+class TermsError(BaseException):
+    """A candidate's terms raised or returned no vector: not an ``Exception``, so the agent does not play on."""
+
+
 class Cell:
     """Column bounds and extra rows of one choice of regimes, with a tag on every regime constraint."""
 
@@ -78,11 +85,13 @@ class Cell:
         self.hull: dict = {}  # (week, grid) written as "HULL": the fab ratio a whole week would give there
 
     def row(self, coefs, lo: float, hi: float, tag: tuple | None = None) -> int:
-        i = len(self.lo)
+        lo_list = self.lo
+        i = len(lo_list)
+        add_r, add_c, add_v = self.r.append, self.c.append, self.v.append
         for j, a in coefs:
             if a != 0.0:
-                self.r.append(i), self.c.append(j), self.v.append(a)
-        self.lo.append(lo), self.hi.append(hi)
+                add_r(i), add_c(j), add_v(a)
+        lo_list.append(lo), self.hi.append(hi)
         if tag is not None:
             self.tags.append((*tag, "row", i))
         return i
@@ -97,12 +106,12 @@ class Cell:
             self.tags.append((*tag, "col", j))
 
     def cap(self, j: int, value: float, tag: tuple | None = None) -> None:
-        self.ub[j] = min(self.ub[j], value)
+        self.ub[j] = min(self.ub.item(j), value)
         if tag is not None:
             self.tags.append((*tag, "col", j))
 
     def floor(self, j: int, value: float, tag: tuple | None = None) -> None:
-        self.lb[j] = max(self.lb[j], value)
+        self.lb[j] = max(self.lb.item(j), value)
         if tag is not None:
             self.tags.append((*tag, "col", j))
 
@@ -127,6 +136,10 @@ class Episode:
         self.n2 = self.N  # where the anchor's columns end
         # a capped end credit for fuel (``end`` with a third item, weeks): one more column a (grid, fuel) and a fuel
         self.pools, self.owner, self.rest = self._pools(end) if end is not None and len(end) > 2 and end[2] else ([], {}, {})
+        # frontier_lab: a capped end credit for the chips of a plant (``end`` with a fifth item), more pools
+        self.chip_pool: dict = {}
+        if end is not None and len(end) > 4 and end[4]:
+            self._chip_pools(end)
         self.N += len(self.pools)
         self.i0 = np.asarray(initial_stock(inst), dtype=float)
         self.offset = -math.fsum(m.meta["salvage_const"])  # the credit of what is still out at the end
@@ -161,7 +174,20 @@ class Episode:
         self.least = 0.0
         self.rough_tol = 1e-4  # the interior point's optimality tolerance in a "rough" solve of an exact cell
         self.tol: float | None = None  # primal feasibility tolerance of every run (None: HiGHS's own, 1e-7)
+        self.try_warm = False  # frontier_lab: the search's tries on a large program start from their neighbour's basis
+        # frontier_lab: what a try of the search is taken to cost when the search asks whether its tries fit before the
+        # deadline (CPU seconds; None: what the week's first cell took, solve and play), the seconds a try's warm run
+        # may take (None: ``warm_limit``, and a cold run after it), and what this week's tries took
+        self.try_cost: float | None = None
+        self.try_guess = 1.0  # before a try was measured: this share of what the week's first cell took
+        self.try_limit: float | None = None
+        self.exact_limit: float | None = None  # seconds a large program's exact cell may take from last week's basis
+        self.tries: list = []
         self.solves: list[dict] = []
+        # evolve_lab: more terms of a cell's objective, ``terms(episode, mode, ref)`` -> USD per column or None
+        self.terms = None
+        self.info: dict = {}
+        self.credited = None  # the columns an end credit may pay, which take no such term
 
     def _pools(self, end: tuple) -> tuple[list, dict, dict]:
         """The capped end credit for fuel: (pools, the pool of a (node, fuel), the pool of the rest of a fuel).
@@ -212,6 +238,50 @@ class Episode:
                 pools[i]["cols"].extend(t * nc + j for t in range(max(0, T - edge.tau), T))
         return pools, owner, rest
 
+    def _chip_pools(self, end: tuple) -> None:
+        """frontier_lab: the capped end credit for the chips of a plant, one pool a (plant, packaged chip).
+
+        A pool is what a plant holds of a chip at the window's end: the packaged chips in its store, the raw ones in
+        its store and on the way to it from a fab, and what it is packaging. The plain end credit pays every chip in
+        the chain alike, so a window that stops before the episode does is paid for chips it sends to a plant whose
+        exits are prohibited, where they stay until the episode ends. Here a pool is worth the chip's end value up
+        to ``weeks`` of what the plant's exits carry as the window's last week has them (a prohibited exit and an
+        exit into a market that does not want the chip carry nothing), and no more than they carry in the weeks of
+        the episode past the window; above that, ``floor`` of the value.
+        """
+        inst, T, nc = self.inst, self.T, self.nc
+        end_k, weeks, floor = end[1], float(end[4]["weeks"]), float(end[4].get("floor", 0.0))
+        after = float(end[3]) if end[3] is not None else None
+        u, Z = np.asarray(self.marks.u[T - 1], dtype=float), np.asarray(self.marks.prohibited[T - 1])
+        sinks = {d.node for d in inst.demands}
+        wanted = {(d.node, d.k) for di, d in enumerate(inst.demands) if float(self.marks.demand[T - 1][di]) > 0}
+        for o in inst.osats:
+            for raw, packed in sorted(inst.nodes[o].osat.packages.items()):
+                if end_k[packed] <= 0:
+                    continue
+                carry = sum(float(u[e]) for e in inst.out_edges[o]
+                            if packed in inst.edges[e].K and not Z[e, packed]
+                            and (inst.edges[e].head not in sinks or (inst.edges[e].head, packed) in wanted))  # fmt: skip
+                self.chip_pool[(o, raw)] = self.chip_pool[(o, packed)] = len(self.pools)
+                self.pools.append({"k": packed, "value": (1.0 - floor) * float(end_k[packed]), "floor": floor,
+                                   "cap": (weeks if after is None else min(weeks, after)) * carry, "cols": []})  # fmt: skip
+        for key, j in self.tm.items():
+            if key[0] == "I":
+                sl = inst.stock_slots[key[1]]
+                if (sl.node, sl.k) in self.chip_pool:
+                    self.pools[self.chip_pool[(sl.node, sl.k)]]["cols"].append((T - 1) * nc + j)
+            elif key[0] == "x" and (inst.edges[key[1]].head, key[2]) in self.chip_pool:
+                cols = self.pools[self.chip_pool[(inst.edges[key[1]].head, key[2])]]["cols"]
+                cols.extend(t * nc + j for t in range(max(0, T - inst.edges[key[1]].tau), T))
+            elif key[0] == "xi" and (inst.osats[key[1]], key[2]) in self.chip_pool:
+                cols = self.pools[self.chip_pool[(inst.osats[key[1]], key[2])]]["cols"]
+                cols.extend(t * nc + j for t in range(max(0, T - inst.nodes[inst.osats[key[1]]].osat.tau), T))
+
+    def _plain(self, node: int, k: int) -> float:
+        """The share of its end value a chip at ``node`` is paid outside its pool (1: it has no pool)."""
+        i = self.chip_pool.get((node, k))
+        return 1.0 if i is None else self.pools[i]["floor"]
+
     def _end_columns(self) -> np.ndarray:
         """The end credit per column of the program (fuel with a capped credit is paid through its pools)."""
         inst, nc, T = self.inst, self.nc, self.T
@@ -221,7 +291,7 @@ class Episode:
         for key, j in self.tm.items():
             if key[0] == "I":
                 if inst.stock_slots[key[1]].k not in self.rest:
-                    credit[last + j] = end_stock[key[1]]
+                    credit[last + j] = end_stock[key[1]] * self._plain(inst.stock_slots[key[1]].node, inst.stock_slots[key[1]].k)
             elif key[0] == "Q":
                 if key[2] not in self.rest:
                     credit[last + j] = end_k[key[2]]
@@ -229,21 +299,23 @@ class Episode:
                 if key[2] in self.rest:
                     continue
                 for t in range(max(0, T - inst.edges[key[1]].tau), T):
-                    credit[t * nc + j] = end_k[key[2]]
+                    credit[t * nc + j] = end_k[key[2]] * self._plain(inst.edges[key[1]].head, key[2])
             elif key[0] == "p":  # lots still in process
                 fab = inst.nodes[inst.fabs[key[1]]].fab
                 for t in range(max(0, T - fab.tau), T):
                     credit[t * nc + j] = end_k[fab.product]
             elif key[0] == "xi":
                 for t in range(max(0, T - inst.nodes[inst.osats[key[1]]].osat.tau), T):
-                    credit[t * nc + j] = end_k[key[2]]
+                    credit[t * nc + j] = end_k[key[2]] * self._plain(inst.osats[key[1]], key[2])
         return credit
 
     def cost(self, recs: list, state) -> int:
         """The cost in cents of the weeks ``recs`` that end in ``state``: the weeks' costs minus the terminal salvage
         and, in a window with ``end``, minus what the state still holds."""
         value = pkg("dynamics.sim").terminal_salvage(self.inst, state)
-        if self.end is not None:
+        if self.end is not None and self.chip_pool:
+            value += self._held(state)
+        elif self.end is not None:
             inst = self.inst
             end_stock, end_k = self.end[0], self.end[1]
             stock = np.asarray(state.stock, dtype=float)
@@ -271,6 +343,41 @@ class Episode:
                 for lots in book.values():
                     value += sum(end_k[k] * q for k, q in lots.items())
         return sum(r.cost_cents for r in recs) - pkg("dynamics.state").cents(value)
+
+    def _held(self, state) -> float:
+        """What ``state`` still holds at the end of a window with ``end`` and the chips' pools, USD: as ``cost``
+        counts it without them, but a chip of a plant's pool is paid ``floor`` of its value and the pool the rest,
+        up to its cap."""
+        inst = self.inst
+        end_stock, end_k = self.end[0], self.end[1]
+        stock = np.asarray(state.stock, dtype=float)
+        held, value, supply = np.zeros(len(self.pools)), 0.0, set(inst.supply_nodes)
+        for sl_i, sl in enumerate(inst.stock_slots):
+            if sl.k in self.rest:
+                if sl.node not in supply:
+                    held[self.owner.get((sl.node, sl.k), self.rest[sl.k])] += stock[sl_i]
+            else:
+                value += float(end_stock[sl_i] * stock[sl_i]) * self._plain(sl.node, sl.k)
+                if (sl.node, sl.k) in self.chip_pool:
+                    held[self.chip_pool[(sl.node, sl.k)]] += stock[sl_i]
+        for sh in state.pipeline:
+            edge = inst.edges[sh.edge]
+            if sh.k in self.rest:
+                held[self.owner.get((edge.head, sh.k), self.rest[sh.k])] += float(sh.qty)
+            elif (edge.head, sh.k) in self.chip_pool:
+                value += end_k[sh.k] * sh.qty * self._plain(edge.head, sh.k)
+                held[self.chip_pool[(edge.head, sh.k)]] += float(sh.qty)
+            else:
+                value += end_k[sh.k] * sh.qty
+        for fi, book in state.fab_wip.items():
+            value += end_k[inst.nodes[inst.fabs[fi]].fab.product] * sum(book.values())
+        for oi, book in state.osat_wip.items():
+            for lots in book.values():
+                for k, q in lots.items():
+                    value += end_k[k] * q * self._plain(inst.osats[oi], k)
+                    if (inst.osats[oi], k) in self.chip_pool:
+                        held[self.chip_pool[(inst.osats[oi], k)]] += q
+        return value + sum(pool["value"] * min(float(h), pool["cap"]) for pool, h in zip(self.pools, held))
 
     @classmethod
     def of(cls, task: str, entropy: int, n: int) -> "Episode":
@@ -537,6 +644,11 @@ class Episode:
                     for fi in range(len(inst.fabs)):
                         C.cost[self.col("p", t, fi)] = -float(per_fab[fi]) * weights[t - 1]
         col, has = self.col, self.has
+        lane_cols = []  # the lane's flow and queue columns of week 1, which are in week t as many columns on
+        for c, k, lane in self.lanes:
+            e = inst.lane_through[(lane, c)][1]
+            if has("x", e, k, lane):
+                lane_cols.append((c, k, lane, self.tm[("x", e, k, lane)], self.tm[("Q", c, k, lane)]))
         for t in range(1, self.T + 1):
             ti = t - 1
             alpha, R = marks.alpha_bar[ti], marks.R[ti]
@@ -691,11 +803,8 @@ class Episode:
                     C.floor(col("lift", t, s), float(m.ub[col("lift", t, s)]), ("lift", (t, s), "LA"))
                 else:
                     C.floor(col("I", t, s), float(inst.stock_slots[s].storage), ("lift", (t, s), "LS"))
-            for c, k, lane in self.lanes:
-                e = inst.lane_through[(lane, c)][1]
-                if not has("x", e, k, lane):
-                    continue
-                jx, jQ = col("x", t, e, k, lane), col("Q", t, c, k, lane)
+            for c, k, lane, ox, oq in lane_cols:
+                jx, jQ = (t - 1) * self.nc + ox, (t - 1) * self.nc + oq
                 phi = mode["lane"][(t, c, k, lane)]
                 key = (t, c, k, lane)
                 if phi >= 1.0:
@@ -707,11 +816,15 @@ class Episode:
                 else:
                     C.row([(jx, 1.0 - phi), (jQ, -phi)], 0.0, 0.0, ("lane", key, "qp"))
             if self.anchored:  # one row a slot: dispatch = the anchor's + above - below
-                sent = anchor[t - 1][0] if anchor is not None and t <= len(anchor) else {}
+                if anchor is None or price is None or t > len(anchor):  # no slot is priced: no row, no deviation
+                    C.skip(self.S)
+                    C.ub[self.jdev(t, 0) : self.jdev(t, self.S)] = 0.0
+                    continue
+                sent = anchor[t - 1][0]
                 for s_, (e, k, lane) in enumerate(inst.action_slots):
                     j = self.jdev(t, s_)
-                    w = 0.0 if anchor is None or price is None else float(price[s_])
-                    if w > 0.0 and t <= len(anchor or ()):
+                    w = float(price[s_])
+                    if w > 0.0:
                         q = float(sent.get(s_, 0.0))
                         C.row([(col("x", t, e, k, lane), 1.0), (j, -1.0), (j + 1, 1.0)], q, q)
                         C.cost[j] = C.cost[j + 1] = w
@@ -721,6 +834,37 @@ class Episode:
         for i, pool in enumerate(self.pools):  # the fuel a pool is paid for: no more than it holds, nor than its cap
             C.ub[self.n2 + i] = pool["cap"]
             C.row([(self.n2 + i, 1.0)] + [(j, -1.0) for j in pool["cols"]], -INF, 0.0)
+        if self.terms is not None:
+            try:
+                views = [_View({k: _View(v) if isinstance(v, dict) else v for k, v in d.items()}) for d in (mode, ref)]
+                extra = self.terms(self, *views)
+                if extra is not None:
+                    extra = np.array(extra, dtype=float)
+                    if extra.shape != (self.N,) or not np.all(np.isfinite(extra)):
+                        raise ValueError("one finite number a column of the program")
+            except Exception as error:
+                extra = None  # shipped: a term that fails is no term this week, the week is the model's own
+            if extra is not None:
+                if self.credited is None:
+                    self.credited = np.zeros(self.N, dtype=bool)
+                    if self.end is not None:
+                        nodes, fabs, osats = self.inst.nodes, self.inst.fabs, self.inst.osats
+                        self.credited[self.n2 : self.n2 + len(self.pools)] = True
+                        for key, j in self.tm.items():
+                            if key[0] in ("I", "Q"):
+                                out = 1
+                            elif key[0] == "x":
+                                out = self.inst.edges[key[1]].tau
+                            elif key[0] == "p":
+                                out = nodes[fabs[key[1]]].fab.tau
+                            elif key[0] == "xi":
+                                out = nodes[osats[key[1]]].osat.tau
+                            else:
+                                continue
+                            for t in range(max(0, self.T - int(out)), self.T):
+                                self.credited[t * self.nc + j] = True
+                extra[self.credited] = 0.0
+                C.cost = extra if C.cost is None else C.cost + extra
         return C
 
     def _lots(self, C: Cell, mode: dict, ref: dict, t: int, fi: int, gm: str, jr: int | None, rho0: float, gi: int | None) -> None:
@@ -874,7 +1018,14 @@ class Episode:
         # of Full its median is 0.6 of the interior point's with the crossover, and its longest run no longer
         devex = method == "devex"
         if devex:
-            method, basis = "simplex", None
+            method = "simplex"
+            # frontier_lab (``try_warm``): a try of the search is its neighbour's cell with one grid-week changed, and
+            # starts from that neighbour's optimal basis; every other cell of a large program starts cold
+            # (``exact_limit``): the week's exact cell starts from last week's basis, moved on by a week, for that many
+            # seconds at most, and cold after that
+            if not (basis is not None and ((self.try_warm and what.startswith("search"))
+                                           or (self.exact_limit is not None and what == "exact"))):  # fmt: skip
+                basis = None
         A, lo, hi = self.rows(C)
         n_row, n_col = A.shape
         inf = hs.kHighsInf
@@ -930,16 +1081,21 @@ class Episode:
 
         warm = start is not None and method == "simplex"
         first = min(time_limit, self.warm_limit) if warm and self.warm_limit else time_limit
+        trying = warm and self.try_limit is not None and what.startswith("search")  # it solves at once or is dropped
+        if trying:
+            first = min(time_limit, self.try_limit)
+        elif warm and devex and self.exact_limit is not None and what == "exact":
+            first = min(time_limit, self.exact_limit)
         if self.least > 0 and time_limit < self.least:  # no time for a run
             return {"status": "Time limit reached", "J": math.nan, "iterations": 0, "seconds": 0.0}
         h, status = run(start, first, "cold" if start is None else "warm")
         spent = float(h.getRunTime())
         again = self.least <= 0 or time_limit - spent >= self.least  # another run has the time to start
-        if warm and again and (status not in done or (status == "Time limit reached" and first < time_limit)):
+        if warm and again and not trying and (status not in done or (status == "Time limit reached" and first < time_limit)):
             h, status = run(None, max(0.05, time_limit - spent) if self.warm_limit else time_limit, "cold")
             spent += float(h.getRunTime())
             again = self.least <= 0 or time_limit - spent >= self.least
-        if self.tol_retry and again and status not in done:  # looser than the run that failed, whatever its tolerance was
+        if self.tol_retry and again and not trying and status not in done:  # looser than the run that failed
             looser = max(self.tol_retry, 10.0 * self.tol) if self.tol else self.tol_retry
             h, status = run(None, max(0.05, time_limit - spent), "tolerance", looser)
         out_seconds = float(h.getRunTime())
@@ -950,7 +1106,8 @@ class Episode:
             sol = h.getSolution()
             # the basis is read only where a simplex can start from it, in this program or in next week's, one week
             # shorter: reading it out of HiGHS takes 50 ms on a cell of Full
-            got = h.getBasis() if not rough and self.N * (self.T - 1) <= 1.05 * BIG * self.T else None
+            keep = self.try_warm or self.exact_limit is not None or self.N * (self.T - 1) <= 1.05 * BIG * self.T
+            got = h.getBasis() if not rough and keep else None
             if C.cost is not None:  # J without the anchor's price and the lots' bonus: what the simulator will charge
                 out["J"] -= float(C.cost @ np.asarray(sol.col_value, dtype=float))
             out.update(x=np.asarray(sol.col_value, dtype=float), col_dual=np.asarray(sol.col_dual),
@@ -1000,7 +1157,8 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
             chain_deadline: float | None = None, record: bool = False, hull_tol: float | None = None,
             tilt: tuple | None = None,
             big_exact: str = "ipm",
-            model: tuple | None = None, search: int = 0, hull_lean: float = 0.0, search_room: int = 1) -> dict:
+            model: tuple | None = None, search: int = 0, hull_lean: float = 0.0, search_room: int = 1,
+            scout0: dict | None = None, search_deadline: float | None = None) -> dict:
     """The loop from ``acts`` (weekly (flows, overrides, holds)): the best played trajectory and how it was reached.
 
     Each pass reads the regimes of the trajectory the simulator played (a tie as the last solution's duals say, with
@@ -1121,8 +1279,11 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
                 out["shares"] = {key: float(wide["x"][ep.jrho(*key)]) / rmax for key, rmax in C.hull.items()}
                 out["share_features"] = share_features(ep, recs, mode, ref, list(C.hull), (hint or {}).get("value"))
             if wide["status"] == "Optimal":
-                if search:  # the short weeks the hull covered and the share of a whole week it asked of each
-                    scout = {key: float(wide["x"][ep.jrho(*key)]) / rmax for key, rmax in C.hull.items()}
+                # the short weeks the hull covered and the share of a whole week it asked of each
+                scout = {key: float(wide["x"][ep.jrho(*key)]) / rmax for key, rmax in C.hull.items()}
+                out["scout"] = scout
+                if not search:
+                    scout = None
                 closed = _rounded(ep, C, wide["x"], mode, write="MID" if hull == "hard" else "SOFT", lean=hull_lean)
                 if wide["basis"] is not None:
                     out["basis"] = wide["basis"]
@@ -1140,6 +1301,8 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
                 if mode["grid"].get(key) == "OFF" and (close_until is None or key[0] <= close_until):
                     mode["grid"][key] = "SOFT"
                     closed += 1
+            if search and scout0:  # frontier_lab: the search starts from that hull's shares, moved on as the marks are
+                scout = {key: v for key, v in scout0.items() if plain.get(key) == "OFF" or key in marks}
         elif close > 0 and number == 0:
             plain = dict(mode["grid"])
             closed = _whole_weeks(ep, recs, mode, close, close_until, close_rationed)
@@ -1187,11 +1350,13 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
         first = force_first and len(out["hist"]) == 1
         if J2 < best[0] or first:
             best = (J2, acts2, recs2)
-        roomy = deadline is None or time.process_time() + search_room * (time.process_time() - t_cell) <= deadline
+        a_try = ep.try_cost if ep.try_cost else ep.try_guess * (time.process_time() - t_cell)
+        last = deadline if search_deadline is None else search_deadline  # the tries may be given less than the week
+        roomy = last is None or time.process_time() + search_room * a_try <= last
         if search and number == 0 and scout is not None and reuse is None and roomy:  # other sets of whole weeks, the cheapest kept
             began = time.process_time()
             asked = frozenset(key for key, gm in mode["grid"].items() if gm == "SOFT" and plain[key] != "SOFT")
-            cost, tried, taken = 0.0, {asked}, []
+            cost, tried, taken = ep.try_cost or 0.0, {asked}, []
 
             def short(rs: list, weeks: frozenset) -> frozenset:  # the asked weeks that the plan does not close
                 return frozenset((t, gi) for t, gi in weeks if rs[t - 1].shed[gi] > 1e-6 * max(1.0, float(ep.marks.y_bar[t - 1][gi])))
@@ -1202,7 +1367,7 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
                 now = time.process_time()
                 if weeks in tried:
                     continue
-                if deadline is not None and now + 1.3 * cost > deadline:
+                if last is not None and now + 1.3 * cost > last:
                     break
                 tried.add(weeks)
                 trial = {**mode, "grid": dict(plain)}
@@ -1213,7 +1378,7 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
                 if tweak is not None:
                     tweak(Ct)
                 st = ep.solve(Ct, method=method, basis=sol["basis"], what="search " + kind, big=big_exact,
-                              time_limit=time_limit if deadline is None else max(0.05, min(time_limit, deadline - now)))
+                              time_limit=time_limit if last is None else max(0.05, min(time_limit, last - now)))
                 if st["status"] == "Optimal":
                     at = ep.actions(st["x"])
                     rt, Jt = ep.simulate(at)
@@ -1223,6 +1388,7 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
                         J2, acts2, recs2, C, sol, mode, asked = Jt, at, rt, Ct, st, trial, weeks
                         queue = _other_weeks(scout, asked, short(recs2, asked))
                 cost = max(cost, time.process_time() - now)
+                ep.tries.append(time.process_time() - now)
             out.update(search=(len(tried) - 1, ",".join(taken) or "0"), basis=sol["basis"], marks=set(asked), closed=len(asked),
                        search_cpu=time.process_time() - began)  # the sets' cells, solves and plays together
             if J2 < best[0]:
@@ -1808,7 +1974,8 @@ def _beside(acts: list, recs: list, anchor, price, bonus) -> int:
     total = 0.0
     if anchor is not None and price is not None:
         for (fl, _o, _h), (base, _o2, _h2) in zip(acts, anchor):
-            total += sum(price[s] * abs(fl.get(s, 0.0) - base.get(s, 0.0)) for s in set(fl) | set(base))
+            fget, bget = fl.get, base.get
+            total += sum([price[s] * abs(fget(s, 0.0) - bget(s, 0.0)) for s in set(fl) | set(base)])
     if bonus is not None:
         per_fab, weights = bonus[0], _weeks(bonus[1], len(recs))
         total -= sum(w * float(np.dot(per_fab, rec.lots_started)) for w, rec in zip(weights, recs) if w != 0.0)
