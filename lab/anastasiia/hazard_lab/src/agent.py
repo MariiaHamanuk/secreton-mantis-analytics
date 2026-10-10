@@ -67,6 +67,10 @@ PARAMS = {
     # worth +0.004 on Small without the clock; on Full under the clock a pass that does start takes the time of the
     # hull that follows the exact cell and costs 0.0025, and there the window is the short one
     "passes_short": None,
+    # frontier_lab: with more than one pass, the search over sets of whole weeks leaves this many passes their time
+    # before the week's deadline (a pass taken to cost what the exact solve and the work around it do): under the
+    # clock the search goes first and takes the week to its end, and the later passes do not start (0: as it was)
+    "pass_room": 0.0,
     "hints": True,  # a tie between two regimes is read as the last solution's duals say
     "warm": True,  # the simplex starts from last week's basis
     "switch": 0,  # grid-weeks tried a week for a switch from "sheds" to "runs its fabs" (0: none)
@@ -1017,6 +1021,8 @@ class Agent(_hybrid.Agent):
                     marks, fits = self.pending, fits + f" pending {len(self.pending)}"
             # before the first week's solves are timed, the work after them is taken as half of the work before them
             deadline -= self._reckon("after") if self.took["after"] else 0.5 * (self.looked - self.started)
+            if p["pass_room"] > 0 and self._passes() > 1:  # the later passes keep their time from the search
+                search_deadline = deadline - float(p["pass_room"]) * (self._reckon("exact") + self._reckon("around"))
             pending = bool(p["try_pending"]) and after and marks is not None and bool(self.scout)
             if pending and self.hull_age >= int(p["hull_due"]):  # the hull that follows keeps its time
                 search_deadline = deadline - self._reckon("hull")

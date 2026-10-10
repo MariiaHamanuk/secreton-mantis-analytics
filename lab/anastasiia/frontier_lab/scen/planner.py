@@ -30,15 +30,20 @@ import numpy as np
 class Scen:
     def __init__(self, Agent, config, world, K: int = 8, choose: str = "saa", mean: bool = True, expect: int = 0,
                  margin: float = 0.0, recourse: bool = False, carry: bool = True, solver: str = "simplex",
-                 point_weight: float = 0.0, groups: tuple = (), truth=None) -> None:
+                 point_weight: float = 0.0, lean: bool = False, groups: tuple = (), truth=None) -> None:
         self.world, self.K, self.choose, self.mean, self.expect, self.margin = world, K, choose, mean, expect, margin
         self.recourse, self.carry, self.solver, self.w0 = recourse, carry, solver, float(point_weight)
+        # ``lean``: a scenario's planner solves its exact cell only (no hull after its first week, no search), and the
+        # point plan's first week is judged by the replay alone, with no program solved again
+        self.lean = lean
         self.core = __import__("sys").modules[Agent.__module__]._core  # the lab agent's plan_core
         self.point = Agent(config)
         self.scen = []
         for _ in range(K + (1 if expect else 0)):
             ag = Agent(config)
             ag.p["truth"] = list(groups)
+            if lean:
+                ag.p["hull_every"], ag.p["search"] = 10**6, 0
             self.scen.append(ag)
         self.names = ["point"] + [f"s{j}" for j in range(K)] + (["exp"] if expect else [])
         # "oracle", a measuring tool and no agent: one more planner is told the episode's own network for its window
@@ -176,7 +181,7 @@ class Scen:
 
         K, point = self.K, self.point
         judges = [j for j in range(1, K + 1) if made[j] is not None and made[j][1] is not None]
-        if len(judges) < 2 or made[0] is None:
+        if len(judges) < (1 if self.w0 > 0 else 2) or made[0] is None:
             return actions[0], "point"
         Z = np.asarray(made[judges[0]][0].marks.prohibited[0])
         wire0 = point.model.wire(actions[0], Z)
@@ -196,7 +201,7 @@ class Scen:
             ep, cont, last = made[j]
             _ep, _d, _tweak, bonus, anchor, price, _H = last
             recs, J = ep.simulate(ep.clean([wire0] + list(cont)))
-            start.append(self._again(ep, last, recs, J))
+            start.append(J if self.lean else self._again(ep, last, recs, J))
             mode, ref = ep.regimes(recs)
             C = ep.cell(mode, ref, anchor, price, bonus)
             A, lo, hi = ep.rows(C)
