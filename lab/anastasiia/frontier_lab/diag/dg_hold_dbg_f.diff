@@ -1,0 +1,97 @@
+diff -ru --exclude=__pycache__ outputs/hazard_lab/agents/h3_f/agent.py outputs/hazard_lab/agents/dg_hold_dbg_f/agent.py
+--- outputs/hazard_lab/agents/h3_f/agent.py	2026-10-10 03:33:49
++++ outputs/hazard_lab/agents/dg_hold_dbg_f/agent.py	2026-10-10 18:04:30
+@@ -136,6 +136,16 @@
+     # more, its stock falls under the threshold and the next week is rationed though the terminal holds the gas.
+     # A request above the terminal's stock is clipped for free (0: off)
+     "grid_keep": 0,
++    # frontier_lab diag: fuel that the week's plan throws away at a full terminal this week (on the model: the terminal
++    # ends the week at its storage and disposes of what arrived) is sent through the valve into the grid's own store
++    # instead, as far as that store has room. Where a fuel is in surplus the plan keeps the grid's stock at the least
++    # that burns in full (holding costs it 33 USD a unit a week and the window shows no use for more) and lets the
++    # terminal overflow; a cut of the route that the forecast "as observed" cannot show then finds the grid two or
++    # three weeks of burn short. The valve draws on last week's terminal stock and makes room for this week's
++    # arrivals, so nothing the plan uses is taken (0: off). 2: also, what the plan's first week disposes of at the
++    # grid's own store is taken off that valve: the plan empties a store it sees no use for by pushing fuel into a
++    # full one (Full 444, episode 0, grid_sea, weeks 27-28: 17,800 units a week through the valve into a full store)
++    "top_up": 0,
+     # plan_lab, the week's time. ``hull_every``: weeks between solves with the hull (the weeks between keep the whole
+     # weeks of the carried plan); ``hull_rough``: that solve without the crossover; ``anchor_every``: weeks between
+     # rollouts of the rules alone when there is an ``anchor`` (their plan of the last rollout, moved on, is the anchor
+@@ -496,6 +506,43 @@
+                 self.kept = getattr(self, "kept", 0) + 1
+                 self.notes = (getattr(self, "notes", None) or {}) | {"grid_kept": self.kept}
+ 
++    def _top_up(self, planned: dict) -> None:
++        """frontier_lab diag (``top_up``): what the plan's own first week disposes of at a terminal, sent in place
++        through that terminal's valve into the grid's store, up to the room the store has left at the week's end."""
++        recs = getattr(self, "week_recs", None)
++        if not recs:
++            return
++        inst = self.model.inst
++        if not hasattr(self, "_top"):
++            self._top = []
++            for s in np.flatnonzero(self.valves):
++                e, k, _lane = inst.action_slots[int(s)]
++                tail, head = inst.edges[e].tail, inst.edges[e].head
++                if (tail, k) in inst.slot_index and (head, k) in inst.slot_index:
++                    at_grid = inst.slot_index[(head, k)]
++                    self._top.append((int(s), inst.slot_index[(tail, k)], at_grid, float(inst.stock_slots[at_grid].storage)))
++        disposal = np.asarray(recs[0].disposal, dtype=float)
++        room = {at_grid: storage - float(recs[0].stock[at_grid]) for _s, _at, at_grid, storage in self._top}
++        if not hasattr(self, "top_log"):
++            self.top_log = []
++        for s, at_terminal, at_grid, _storage in self._top:
++            self.top_log.append((len(self.log) + 1, s, float(planned["flows"][s]), float(disposal[at_terminal]), float(disposal[at_grid]),
++                                 float(recs[0].stock[at_terminal]), float(recs[0].stock[at_grid]), float(room[at_grid])))
++            self.notes = (getattr(self, "notes", None) or {}) | {"top_log": self.top_log}
++            if int(self.p["top_up"]) >= 2:
++                cut = min(float(planned["flows"][s]), float(disposal[at_grid]))
++                if cut > 1e-6:
++                    planned["flows"][s] -= cut
++                    self.cut_qty = getattr(self, "cut_qty", 0.0) + cut
++                    self.notes = (getattr(self, "notes", None) or {}) | {"cut_qty": self.cut_qty}
++            extra = min(float(disposal[at_terminal]), room[at_grid])
++            if extra > 1e-6:
++                planned["flows"][s] += extra
++                room[at_grid] -= extra
++                self.topped = getattr(self, "topped", 0) + 1
++                self.topped_qty = getattr(self, "topped_qty", 0.0) + extra
++                self.notes = (getattr(self, "notes", None) or {}) | {"topped": self.topped, "topped_qty": self.topped_qty}
++
+     def _ask_scaled(self, planned: dict, skip: set) -> None:
+         """hazard_lab (``ask_scale``): the requests on every cut first edge the plan fills, multiplied in place by
+         one number per edge (the edges of ``skip`` aside)."""
+@@ -710,6 +757,7 @@
+         flows = np.zeros(self.n_slots)
+         self.chips.fill_chip_flows(observation, flows)  # the rules' chip entries; keeps their memory
+         plan, note = None, ("no model",)
++        self.week_recs = None
+         self.week_solves, self.week_passes, self.week_shares = [], [], None
+         if self.model is not None:
+             seconds = self.seconds
+@@ -741,6 +789,8 @@
+                 self._ask_scaled(planned, raised)
+             if self.p["grid_keep"]:
+                 self._grid_keep(planned)
++            if self.p["top_up"]:
++                self._top_up(planned)
+             flows[self.chip_slots] = planned["flows"][self.chip_slots]
+         elif self.planner is not None:  # the hybrid's program for the chips after the fab, when no plan decides them
+             remember, self.planner._remember = self.planner._remember, (lambda o: None)
+@@ -981,6 +1031,7 @@
+             self.acts = None
+             return None, (J_ref / 1e11, J_ref / 1e11, "rules alone")
+         best = d["acts"] if better else acts_ref
++        self.week_recs = d["recs"] if better else recs_ref  # ``top_up``: the plan's weeks as the model plays them
+         self.acts = best[1:]
+         note = name + (":new" if better else ":kept") + (f" whole {d.get('closed', 0)} of {d.get('rounded', d.get('closed', 0))} {d['hull']}" if "hull" in d else "") + (
+             f" search {d['search'][0]} took {d['search'][1]}" if "search" in d else "") + fits
+diff -ru --exclude=__pycache__ outputs/hazard_lab/agents/h3_f/regime.json outputs/hazard_lab/agents/dg_hold_dbg_f/regime.json
+--- outputs/hazard_lab/agents/h3_f/regime.json	2026-10-10 03:33:49
++++ outputs/hazard_lab/agents/dg_hold_dbg_f/regime.json	2026-10-10 15:22:30
+@@ -1 +1 @@
+-{"share": 0, "solve_seconds": 30, "orders": "plan", "anchor": {"wafer": 5000, "order": 200000}, "passes": 1, "carry_hints": true, "hull": "round", "end_weeks": 1, "solve_share": 1.5, "warm_share": 0.5, "chain_share": 0.5, "tol_retry": 1e-05, "end_left": true, "anchor_free": "overflow", "hull_tol": 0.01, "big_exact": "devex", "fit": 0.0, "carry_debt": false, "episode_share": 0.0, "fit_rules": 0, "fit_fresh": 0, "window_name": true, "fit_horizon": 0, "search": 0, "search_room": 5, "watch": {"weather_closure": 0.5, "port_strike_stoppage": 0.5, "port_strike_slowdown": 0.5}, "watch_ask": 0.3, "ask_scale": 3}
+\ No newline at end of file
++{"share": 0, "solve_seconds": 30, "orders": "plan", "anchor": {"wafer": 5000, "order": 200000}, "passes": 1, "carry_hints": true, "hull": "round", "end_weeks": 1, "solve_share": 1.5, "warm_share": 0.5, "chain_share": 0.5, "tol_retry": 1e-05, "end_left": true, "anchor_free": "overflow", "hull_tol": 0.01, "big_exact": "devex", "fit": 0.0, "carry_debt": false, "episode_share": 0.0, "fit_rules": 0, "fit_fresh": 0, "window_name": true, "fit_horizon": 0, "search": 0, "search_room": 5, "watch": {"weather_closure": 0.5, "port_strike_stoppage": 0.5, "port_strike_slowdown": 0.5}, "watch_ask": 0.3, "ask_scale": 3, "top_up": 2}
+\ No newline at end of file

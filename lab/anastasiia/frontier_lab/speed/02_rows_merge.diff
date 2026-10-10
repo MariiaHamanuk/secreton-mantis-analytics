@@ -1,0 +1,42 @@
+# Exact, and measured nil: the oracle's rows turned column-wise once an episode and a cell's rows merged into them. rows takes 0.010 s a week before and after (Full 444, episodes 3 and 7, both windows), so it is NOT in exact_all.diff.
+# Applies to lab/anastasiia/hazard_lab/src of 10 October 14:52 after 01_solve_handoff.diff: patch -p1 < 02_rows_merge.diff
+--- a/plan_core.py
++++ b/plan_core.py
+@@ -959,14 +959,29 @@
+     def rows(self, C: Cell):
+         """The cell's matrix and row bounds: the oracle's rows (energy and fab energy as equalities) and the extra."""
+         m = self.m
+-        lo = np.concatenate([np.full(m.A_ub.shape[0], -INF), m.b_eq])
+-        hi = np.concatenate([m.b_ub, m.b_eq])
+-        for name, i in self.ubi.items():
+-            if name[0] in ("energy", "fab_energy"):  # all output is used; a lot takes exactly its energy
+-                idx = np.arange(self.T) * self.nub + i
+-                lo[idx] = hi[idx]
+-        ex = sp.csr_matrix((C.v, (C.r, C.c)), shape=(len(C.lo), self.N))
+-        return sp.vstack([self.base, ex], format="csc"), np.concatenate([lo, C.lo]), np.concatenate([hi, C.hi])
++        if getattr(self, "_own", None) is None:  # the same for every cell of the episode
++            lo = np.concatenate([np.full(m.A_ub.shape[0], -INF), m.b_eq])
++            hi = np.concatenate([m.b_ub, m.b_eq])
++            for name, i in self.ubi.items():
++                if name[0] in ("energy", "fab_energy"):  # all output is used; a lot takes exactly its energy
++                    idx = np.arange(self.T) * self.nub + i
++                    lo[idx] = hi[idx]
++            own = self.base.tocsc()  # as stacking the rows and turning them column-wise leaves the oracle's part
++            self._own = (lo, hi, own.indptr, own.indices, own.data, np.repeat(np.arange(self.N), np.diff(own.indptr)))
++        lo, hi, start, index, value, column = self._own
++        nb = self.base.shape[0]
++        ex = sp.csr_matrix((C.v, (C.r, C.c)), shape=(len(C.lo), self.N)).tocsc()
++        # what ``sp.vstack([self.base, ex], format="csc")`` gives, array for array: in every column the oracle's
++        # entries by row, then the cell's by row. Only the cell's entries are sorted and placed here
++        e_start = ex.indptr
++        size = len(value) + len(ex.data)
++        rows, vals = np.empty(size, dtype=index.dtype), np.empty(size)
++        at = np.arange(len(value)) + e_start[column]  # an oracle's entry moves on by the cell's entries of the columns before
++        rows[at], vals[at] = index, value
++        at = np.arange(len(ex.data)) + start[np.repeat(np.arange(self.N), np.diff(e_start)) + 1]
++        rows[at], vals[at] = ex.indices + nb, ex.data
++        A = sp.csc_matrix((vals, rows, start + e_start), shape=(nb + len(C.lo), self.N))
++        return A, np.concatenate([lo, C.lo]), np.concatenate([hi, C.hi])
+ 
+     def residual(self, C: Cell, z: np.ndarray) -> tuple[float, tuple]:
+         """The worst relative violation of the cell by ``z`` and where: is a played trajectory inside its own cell?"""

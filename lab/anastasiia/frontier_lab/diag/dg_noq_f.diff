@@ -1,0 +1,48 @@
+diff -ru --exclude=__pycache__ h3_f/agent.py dg_noq_f/agent.py
+--- h3_f/agent.py	2026-10-10 03:33:49
++++ dg_noq_f/agent.py	2026-10-10 15:18:20
+@@ -136,6 +136,12 @@
+     # more, its stock falls under the threshold and the next week is rationed though the terminal holds the gas.
+     # A request above the terminal's stock is clipped for free (0: off)
+     "grid_keep": 0,
++    # frontier_lab diag: the share of ``end_chip`` a chip is worth when a capped window ends with it in a strait's
++    # queue. A queue is what a strait or the edge after it did not pass, and a chip there at the window's end is
++    # paid like one at a plant: the program fills the queue behind an edge cut to 6 % for the whole episode with raw
++    # chips that never reach a plant (Full 444, episode 12: 8.6 million at the Taiwan strait at the episode's end).
++    # Both the program's objective and the cost of a plan played on the model take it (1: as before)
++    "end_queue": 1.0,
+     # plan_lab, the week's time. ``hull_every``: weeks between solves with the hull (the weeks between keep the whole
+     # weeks of the carried plan); ``hull_rough``: that solve without the crossover; ``anchor_every``: weeks between
+     # rollouts of the rules alone when there is an ``anchor`` (their plan of the last rollout, moved on, is the anchor
+@@ -384,6 +390,11 @@
+         self.end_k = value + float(self.p["end_chip"]) * pi
+         supply = set(inst.supply_nodes)
+         self.end_stock = np.array([0.0 if sl.node in supply else self.end_k[sl.k] for sl in inst.stock_slots])
++        if self.p["end_queue"] < 1.0:  # chips (not fuel: its credit is capped by its pools) waiting at a strait
++            straits = set(inst.chokepoints)
++            for i, sl in enumerate(inst.stock_slots):
++                if sl.node in straits and value[sl.k] == 0.0:
++                    self.end_stock[i] *= float(self.p["end_queue"])
+         self.chip_worth = np.array([pi[inst.nodes[f].fab.product] for f in inst.fabs])  # a lot's chip, by fab
+         # next_lab: USD a whole week of each grid's fabs sells for at their nominal capacity: the scale of ``hull_tilt``
+         self.week_worth = np.array([
+@@ -795,6 +806,11 @@
+         own = p["orders"] == "plan"  # the plan's own orders are played, not the fuel rules'
+         end = (self.end_stock, self.end_k, float(p["end_weeks"]), (left - H) if p["end_left"] else None)
+         ep = _core.Episode(w.inst, w.marks, end=end if capped else None, anchored=bool(p["anchor"]))
++        if capped and p["end_queue"] < 1.0:  # the program's credit for a chip in a queue at the window's end
++            last = (ep.T - 1) * ep.nc
++            for key, j in ep.tm.items():
++                if key[0] == "Q" and key[2] not in ep.rest:
++                    ep.obj[last + j] += (1.0 - float(p["end_queue"])) * self.end_k[key[2]]
+         if _terms is not None:
+             ep.terms, ep.info = _terms.add, {"week": week, "left": left, "window": H}
+         limit = float(p["solve_share"]) * self.budget if p["solve_share"] > 0 else float(p["solve_seconds"])
+diff -ru --exclude=__pycache__ h3_f/regime.json dg_noq_f/regime.json
+--- h3_f/regime.json	2026-10-10 03:33:49
++++ dg_noq_f/regime.json	2026-10-10 15:18:20
+@@ -1 +1 @@
+-{"share": 0, "solve_seconds": 30, "orders": "plan", "anchor": {"wafer": 5000, "order": 200000}, "passes": 1, "carry_hints": true, "hull": "round", "end_weeks": 1, "solve_share": 1.5, "warm_share": 0.5, "chain_share": 0.5, "tol_retry": 1e-05, "end_left": true, "anchor_free": "overflow", "hull_tol": 0.01, "big_exact": "devex", "fit": 0.0, "carry_debt": false, "episode_share": 0.0, "fit_rules": 0, "fit_fresh": 0, "window_name": true, "fit_horizon": 0, "search": 0, "search_room": 5, "watch": {"weather_closure": 0.5, "port_strike_stoppage": 0.5, "port_strike_slowdown": 0.5}, "watch_ask": 0.3, "ask_scale": 3}
+\ No newline at end of file
++{"share": 0, "solve_seconds": 30, "orders": "plan", "anchor": {"wafer": 5000, "order": 200000}, "passes": 1, "carry_hints": true, "hull": "round", "end_weeks": 1, "solve_share": 1.5, "warm_share": 0.5, "chain_share": 0.5, "tol_retry": 1e-05, "end_left": true, "anchor_free": "overflow", "hull_tol": 0.01, "big_exact": "devex", "fit": 0.0, "carry_debt": false, "episode_share": 0.0, "fit_rules": 0, "fit_fresh": 0, "window_name": true, "fit_horizon": 0, "search": 0, "search_room": 5, "watch": {"weather_closure": 0.5, "port_strike_stoppage": 0.5, "port_strike_slowdown": 0.5}, "watch_ask": 0.3, "ask_scale": 3, "end_queue": 0.0}
+\ No newline at end of file

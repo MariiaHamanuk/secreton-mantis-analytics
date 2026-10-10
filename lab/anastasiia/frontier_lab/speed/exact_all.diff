@@ -1,0 +1,123 @@
+# Exact (the same actions to the bit): 01_solve_handoff + 03_anchor_rows in one diff, plan_core.py alone.
+# Without 02_rows_merge: that one is exact too, but saves nothing (rows: 0.010 s a week before and after).
+# Applies to lab/anastasiia/hazard_lab/src as it was on 10 October 14:52 (outputs/speed_lab/t_base): patch -p1 < exact_all.diff
+# The folder outputs/speed_lab/t_x13 holds exactly these sources and is the one the identity checks were run on.
+# It also applies as it is to the sources with the tail port (src of 10 October 16:53; outputs/speed_lab/t_port_x), where the actions were the same beside the ported sources in 30 weeks of Full 444 episodes 3 and 7 with end_reach and chip_room on in a window of 20 weeks, and of episode 3 with default numbers.
+--- a/plan_core.py
++++ b/plan_core.py
+@@ -646,6 +646,15 @@
+                     for fi in range(len(inst.fabs)):
+                         C.cost[self.col("p", t, fi)] = -float(per_fab[fi]) * weights[t - 1]
+         col, has = self.col, self.has
++        paid = None  # the priced slots of the anchor: their rows are written a week at a time, not a slot at a time
++        if self.anchored and anchor is not None and price is not None:
++            if getattr(self, "_slot_cols", None) is None:  # every slot's dispatch column of week 1
++                self._slot_cols = np.array([self.tm[("x", e, k, lane)] for e, k, lane in inst.action_slots], dtype=np.int64)
++            worth = np.array([float(w) for w in price])
++            paid, unpaid = np.flatnonzero(worth > 0.0), np.flatnonzero(~(worth > 0.0))
++            paid_slots, paid_worth, paid_cols = paid.tolist(), worth[paid], self._slot_cols[paid]
++            ones = [1.0, -1.0, 1.0] * len(paid)
++            triple = np.empty((len(paid), 3), dtype=np.int64)
+         lane_cols = []  # the lane's flow and queue columns of week 1, which are in week t as many columns on
+         for c, k, lane in self.lanes:
+             e = inst.lane_through[(lane, c)][1]
+@@ -822,17 +831,18 @@
+                     C.skip(self.S)
+                     C.ub[self.jdev(t, 0) : self.jdev(t, self.S)] = 0.0
+                     continue
+-                sent = anchor[t - 1][0]
+-                for s_, (e, k, lane) in enumerate(inst.action_slots):
+-                    j = self.jdev(t, s_)
+-                    w = float(price[s_])
+-                    if w > 0.0:
+-                        q = float(sent.get(s_, 0.0))
+-                        C.row([(col("x", t, e, k, lane), 1.0), (j, -1.0), (j + 1, 1.0)], q, q)
+-                        C.cost[j] = C.cost[j + 1] = w
+-                    else:
+-                        C.skip()
+-                        C.ub[j] = C.ub[j + 1] = 0.0
++                # a priced slot's row: its dispatch, minus what it sends above the anchor, plus what it sends below,
++                # equal to the anchor's dispatch; an unpriced slot has an empty row and no deviation
++                sent, first, j0 = anchor[t - 1][0], len(C.lo), self.jdev(t, 0)
++                above = j0 + 2 * paid
++                triple[:, 0], triple[:, 1], triple[:, 2] = (t - 1) * self.nc + paid_cols, above, above + 1
++                C.r.extend(np.repeat(first + paid, 3).tolist()), C.c.extend(triple.ravel().tolist()), C.v.extend(ones)
++                lo_w, hi_w = [-INF] * self.S, [INF] * self.S
++                for s_ in paid_slots:
++                    lo_w[s_] = hi_w[s_] = float(sent.get(s_, 0.0))
++                C.lo.extend(lo_w), C.hi.extend(hi_w)
++                C.cost[above] = C.cost[above + 1] = paid_worth
++                C.ub[j0 + 2 * unpaid] = C.ub[j0 + 2 * unpaid + 1] = 0.0
+         for i, pool in enumerate(self.pools):  # the fuel a pool is paid for: no more than it holds, nor than its cap
+             C.ub[self.n2 + i] = pool["cap"]
+             C.row([(self.n2 + i, 1.0)] + [(j, -1.0) for j in pool["cols"]], -INF, 0.0)
+@@ -1031,16 +1041,37 @@
+         A, lo, hi = self.rows(C)
+         n_row, n_col = A.shape
+         inf = hs.kHighsInf
+-        lp = hs.HighsLp()
+-        lp.num_col_, lp.num_row_ = n_col, n_row
+-        lp.col_cost_, lp.col_lower_ = (self.obj if C.cost is None else self.obj + C.cost), C.lb
+-        lp.col_upper_ = np.where(np.isinf(C.ub), inf, C.ub)
+-        lp.row_lower_, lp.row_upper_ = np.where(np.isinf(lo), -inf, lo), np.where(np.isinf(hi), inf, hi)
+-        lp.offset_ = float(self.offset)
+-        lp.a_matrix_.format_ = hs.MatrixFormat.kColwise
+-        lp.a_matrix_.num_col_, lp.a_matrix_.num_row_ = n_col, n_row
+-        lp.a_matrix_.start_, lp.a_matrix_.index_ = A.indptr.astype(np.int32), A.indices.astype(np.int32)
+-        lp.a_matrix_.value_ = A.data.astype(np.float64)
++        # the program as flat arrays. HiGHS takes them as they are (``passModel``'s form with arrays copies each in one
++        # block); filling a ``HighsLp`` field by field converts the matrix entry by entry, 17 ms a program of Full
++        cost = np.ascontiguousarray(self.obj if C.cost is None else self.obj + C.cost, dtype=np.float64)
++        col_lo, col_up = np.ascontiguousarray(C.lb, dtype=np.float64), np.ascontiguousarray(C.ub, dtype=np.float64)
++        if inf != INF:  # HiGHS's infinity is IEEE's own in every build met so far
++            col_up = np.where(np.isinf(col_up), inf, col_up)
++            lo, hi = np.where(np.isinf(lo), -inf, lo), np.where(np.isinf(hi), inf, hi)
++        row_lo, row_up = np.ascontiguousarray(lo, dtype=np.float64), np.ascontiguousarray(hi, dtype=np.float64)
++        a_start, a_index = A.indptr.astype(np.int32, copy=False), A.indices.astype(np.int32, copy=False)
++        a_value = np.ascontiguousarray(A.data, dtype=np.float64)
++        whole = np.zeros(n_col, dtype=np.int32)  # every column continuous
++        model = [None]  # the same program as a ``HighsLp``, made only where the form with arrays is not there
++
++        def hand(h) -> None:
++            if model[0] is None:
++                try:
++                    h.passModel(n_col, n_row, len(a_value), int(hs.MatrixFormat.kColwise), int(hs.ObjSense.kMinimize),
++                                float(self.offset), cost, col_lo, col_up, row_lo, row_up, a_start, a_index, a_value, whole)
++                    return
++                except TypeError:  # an interface without that form
++                    lp = hs.HighsLp()
++                    lp.num_col_, lp.num_row_ = n_col, n_row
++                    lp.col_cost_, lp.col_lower_, lp.col_upper_ = cost, col_lo, col_up
++                    lp.row_lower_, lp.row_upper_ = row_lo, row_up
++                    lp.offset_ = float(self.offset)
++                    lp.a_matrix_.format_ = hs.MatrixFormat.kColwise
++                    lp.a_matrix_.num_col_, lp.a_matrix_.num_row_ = n_col, n_row
++                    lp.a_matrix_.start_, lp.a_matrix_.index_, lp.a_matrix_.value_ = a_start, a_index, a_value
++                    model[0] = lp
++            h.passModel(model[0])
++
+         rough = method == "ipm" and not crossover  # plan_lab: the interior point as it stops, a fifth faster: its x is
+         # feasible and optimal to the solver's tolerance, but there is no basis and the duals are not to be read
+         start = basis if basis is not None and len(basis[0]) == n_col and len(basis[1]) == n_row else None
+@@ -1062,7 +1093,7 @@
+                 h.setOptionValue("ipm_optimality_tolerance", float(ipm_tol))
+             if tol is not None or self.tol is not None:
+                 h.setOptionValue("primal_feasibility_tolerance", float(self.tol if tol is None else tol))
+-            h.passModel(lp)
++            hand(h)
+             if start is not None and method != "ipm":  # the interior point does not read it
+                 codes = _statuses(hs)
+                 b = hs.HighsBasis()
+@@ -1112,9 +1143,10 @@
+             # shorter: reading it out of HiGHS takes 50 ms on a cell of Full
+             keep = self.try_warm or self.exact_limit is not None or self.N * (self.T - 1) <= 1.05 * BIG * self.T
+             got = h.getBasis() if not rough and keep else None
++            x = np.asarray(sol.col_value, dtype=float)  # read once: the solver hands a list over at every reading
+             if C.cost is not None:  # J without the anchor's price and the lots' bonus: what the simulator will charge
+-                out["J"] -= float(C.cost @ np.asarray(sol.col_value, dtype=float))
+-            out.update(x=np.asarray(sol.col_value, dtype=float), col_dual=np.asarray(sol.col_dual),
++                out["J"] -= float(C.cost @ x)
++            out.update(x=x, col_dual=np.asarray(sol.col_dual),
+                        row_dual=np.asarray(sol.row_dual)[self.base.shape[0] :],
+                        basis=None if got is None else (np.array([int(v) for v in got.col_status], dtype=np.int8),
+                                                        np.array([int(v) for v in got.row_status], dtype=np.int8)))

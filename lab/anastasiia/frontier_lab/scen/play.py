@@ -94,6 +94,10 @@ VARIANTS = {
     # no new event): what is left is the program solved once more, in two cells of the same network
     "two1pl": {"K": 1, "choose": "joint", "point_weight": 0.5, "margin": 0.1, "lean": True, "new": False,
                "ends": False},
+    # frontier_lab/mech: what the scenarios add to the passes. The model with three passes under the full form with two
+    # scenarios over the ends of the running events alone
+    "two2bep": {"K": 2, "choose": "joint", "point_weight": 0.5, "margin": 0.1, "new": False,
+                "base": "outputs/hazard_lab/agents/h3p3_s"},
     # a measuring tool, not an agent: the candidates' judge is a planner told the episode's own network
     "ora8": {"K": 8, "choose": "oracle"},
     "ora4": {"K": 4, "choose": "oracle"},

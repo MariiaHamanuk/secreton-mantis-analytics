@@ -175,14 +175,6 @@ PARAMS = {
     # ``end_reach`` and ``chip_room`` act in the short window alone (``fit_horizon``, once the clock has taken it): in
     # the window of 26 weeks they measured nil
     "end_short": False,
-    # tail lab: once the rest of the episode is no longer than this many weeks, the window is the rest of the episode,
-    # whatever ``horizon`` and ``fit_horizon`` say, and no end credit stands for the weeks they would cut off; the
-    # hull asks whole weeks up to the same week of the window as before. A window of 20 weeks is capped up to week 84
-    # of 104 and one of 26 up to week 78: with 26 here the six weeks between plan to the episode's end as the long
-    # window does (windows of 26 to 21 weeks), every other week is the short window's to the cent. To the window of
-    # 20 weeks without it, no clock: Full 111 x32 +0.0014 (+0.0008 to +0.0018), the median and the 95th percentile of
-    # the week's CPU unchanged (0: off)
-    "end_sight": 0,
     # evolve_lab, step 3 (its ``ROOM`` patch): the whole window is kept only while its week has room for ``fit_tries``
     # tries of the search besides, each at the cost of the week's exact solve; in the short window (``fit_horizon``)
     # the search starts when ``short_room`` tries fit (0: ``search_room``, as in the whole window)
@@ -962,8 +954,6 @@ class Agent(_hybrid.Agent):
             self.end_week = end
             H = min(end - week + 1, left)
         hull_until = max(0, int(p["hull_until"]) - (int(p["horizon"]) - horizon if self.short else 0))
-        if p["end_sight"] and H < left <= int(p["end_sight"]):  # tail lab: the episode's end is in sight
-            hull_until, H = hull_until + left - H, left
         network = self._network(observation, week, H)
         watching = network is None and self.watch is not None and bool(self.watch.cuts or self.watch.shut)
         m.show_network = bool(p["watch_rules"]) and watching

@@ -1,0 +1,12 @@
+--- h3p2_s/agent.py	2026-10-10 07:35:24
++++ h3pl3_s/agent.py	2026-10-10 18:25:35
+@@ -1012,7 +1012,8 @@
+             if pending and self.hull_age >= int(p["hull_due"]):  # the hull that follows keeps its time
+                 search_deadline = deadline - self._reckon("hull")
+         d = _core.descend(
+-            ep, acts_ref, iters=int(p["passes"]), hints=bool(p["hints"]), tweak=tweak,
++            # frontier_lab/mech (``passes_late``): the passes after the first only once the window reaches the episode's end
++            ep, acts_ref, iters=int(p["passes"]) if not capped or not p.get("passes_late") else 1, hints=bool(p["hints"]), tweak=tweak,
+             played=(recs_ref, J_ref),
+             basis=ep.shifted(self.basis) if p["warm"] and (p["method"] != "auto" or ep.N <= _core.BIG or p["exact_warm"] > 0) else None,
+             bonus=bonus, deadline=deadline,

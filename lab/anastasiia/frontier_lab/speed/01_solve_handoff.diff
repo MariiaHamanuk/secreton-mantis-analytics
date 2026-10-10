@@ -1,0 +1,74 @@
+# Exact: the program is handed to HiGHS as flat arrays (passModel's form with arrays) and the solution's values are read once; 17 ms -> 1.5 ms a program of Full.
+# Applies to lab/anastasiia/hazard_lab/src: patch -p1 < 01_solve_handoff.diff (after the diffs before it in this folder).
+--- a/plan_core.py
++++ b/plan_core.py
+@@ -1031,16 +1031,37 @@
+         A, lo, hi = self.rows(C)
+         n_row, n_col = A.shape
+         inf = hs.kHighsInf
+-        lp = hs.HighsLp()
+-        lp.num_col_, lp.num_row_ = n_col, n_row
+-        lp.col_cost_, lp.col_lower_ = (self.obj if C.cost is None else self.obj + C.cost), C.lb
+-        lp.col_upper_ = np.where(np.isinf(C.ub), inf, C.ub)
+-        lp.row_lower_, lp.row_upper_ = np.where(np.isinf(lo), -inf, lo), np.where(np.isinf(hi), inf, hi)
+-        lp.offset_ = float(self.offset)
+-        lp.a_matrix_.format_ = hs.MatrixFormat.kColwise
+-        lp.a_matrix_.num_col_, lp.a_matrix_.num_row_ = n_col, n_row
+-        lp.a_matrix_.start_, lp.a_matrix_.index_ = A.indptr.astype(np.int32), A.indices.astype(np.int32)
+-        lp.a_matrix_.value_ = A.data.astype(np.float64)
++        # the program as flat arrays. HiGHS takes them as they are (``passModel``'s form with arrays copies each in one
++        # block); filling a ``HighsLp`` field by field converts the matrix entry by entry, 17 ms a program of Full
++        cost = np.ascontiguousarray(self.obj if C.cost is None else self.obj + C.cost, dtype=np.float64)
++        col_lo, col_up = np.ascontiguousarray(C.lb, dtype=np.float64), np.ascontiguousarray(C.ub, dtype=np.float64)
++        if inf != INF:  # HiGHS's infinity is IEEE's own in every build met so far
++            col_up = np.where(np.isinf(col_up), inf, col_up)
++            lo, hi = np.where(np.isinf(lo), -inf, lo), np.where(np.isinf(hi), inf, hi)
++        row_lo, row_up = np.ascontiguousarray(lo, dtype=np.float64), np.ascontiguousarray(hi, dtype=np.float64)
++        a_start, a_index = A.indptr.astype(np.int32, copy=False), A.indices.astype(np.int32, copy=False)
++        a_value = np.ascontiguousarray(A.data, dtype=np.float64)
++        whole = np.zeros(n_col, dtype=np.int32)  # every column continuous
++        model = [None]  # the same program as a ``HighsLp``, made only where the form with arrays is not there
++
++        def hand(h) -> None:
++            if model[0] is None:
++                try:
++                    h.passModel(n_col, n_row, len(a_value), int(hs.MatrixFormat.kColwise), int(hs.ObjSense.kMinimize),
++                                float(self.offset), cost, col_lo, col_up, row_lo, row_up, a_start, a_index, a_value, whole)
++                    return
++                except TypeError:  # an interface without that form
++                    lp = hs.HighsLp()
++                    lp.num_col_, lp.num_row_ = n_col, n_row
++                    lp.col_cost_, lp.col_lower_, lp.col_upper_ = cost, col_lo, col_up
++                    lp.row_lower_, lp.row_upper_ = row_lo, row_up
++                    lp.offset_ = float(self.offset)
++                    lp.a_matrix_.format_ = hs.MatrixFormat.kColwise
++                    lp.a_matrix_.num_col_, lp.a_matrix_.num_row_ = n_col, n_row
++                    lp.a_matrix_.start_, lp.a_matrix_.index_, lp.a_matrix_.value_ = a_start, a_index, a_value
++                    model[0] = lp
++            h.passModel(model[0])
++
+         rough = method == "ipm" and not crossover  # plan_lab: the interior point as it stops, a fifth faster: its x is
+         # feasible and optimal to the solver's tolerance, but there is no basis and the duals are not to be read
+         start = basis if basis is not None and len(basis[0]) == n_col and len(basis[1]) == n_row else None
+@@ -1062,7 +1083,7 @@
+                 h.setOptionValue("ipm_optimality_tolerance", float(ipm_tol))
+             if tol is not None or self.tol is not None:
+                 h.setOptionValue("primal_feasibility_tolerance", float(self.tol if tol is None else tol))
+-            h.passModel(lp)
++            hand(h)
+             if start is not None and method != "ipm":  # the interior point does not read it
+                 codes = _statuses(hs)
+                 b = hs.HighsBasis()
+@@ -1112,9 +1133,10 @@
+             # shorter: reading it out of HiGHS takes 50 ms on a cell of Full
+             keep = self.try_warm or self.exact_limit is not None or self.N * (self.T - 1) <= 1.05 * BIG * self.T
+             got = h.getBasis() if not rough and keep else None
++            x = np.asarray(sol.col_value, dtype=float)  # read once: the solver hands a list over at every reading
+             if C.cost is not None:  # J without the anchor's price and the lots' bonus: what the simulator will charge
+-                out["J"] -= float(C.cost @ np.asarray(sol.col_value, dtype=float))
+-            out.update(x=np.asarray(sol.col_value, dtype=float), col_dual=np.asarray(sol.col_dual),
++                out["J"] -= float(C.cost @ x)
++            out.update(x=x, col_dual=np.asarray(sol.col_dual),
+                        row_dual=np.asarray(sol.row_dual)[self.base.shape[0] :],
+                        basis=None if got is None else (np.array([int(v) for v in got.col_status], dtype=np.int8),
+                                                        np.array([int(v) for v in got.row_status], dtype=np.int8)))

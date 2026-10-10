@@ -1,0 +1,169 @@
+# NOT exact, off by default (hull_weeks 0), not played: the solve with the hull on the window's first N weeks alone, the exact cell on the whole window.
+# Made on the sources of 10 October 14:52 after 01, 02, 03. DO NOT apply to the sources with the tail port (end_reach): the patch goes in without a complaint, and the hull's episode is then built with the old five-item end credit, without end_reach, beside an exact cell that has it.
+--- a/plan_core.py
++++ b/plan_core.py
+@@ -1209,7 +1209,7 @@
+             tilt: tuple | None = None,
+             big_exact: str = "ipm",
+             model: tuple | None = None, search: int = 0, hull_lean: float = 0.0, search_room: int = 1,
+-            scout0: dict | None = None, search_deadline: float | None = None) -> dict:
++            scout0: dict | None = None, search_deadline: float | None = None, hull_ep=None) -> dict:
+     """The loop from ``acts`` (weekly (flows, overrides, holds)): the best played trajectory and how it was reached.
+ 
+     Each pass reads the regimes of the trajectory the simulator played (a tie as the last solution's duals say, with
+@@ -1244,6 +1244,13 @@
+     first cell did with its play (where a try is dear against the week, on a large network, the search stays out).
+     ``hull_lean``: ``_rounded``'s ``lean``. ``search`` in the result: (sets tried, the moves taken with what each saved in bn USD);
+     ``search_cpu``: the CPU seconds all of it took.
++
++    ``hull_ep`` (a function that gives an ``Episode`` of the first weeks of the same window, its own end credit at
++    its last week): the solve with the hull is made on that shorter program, from the regimes of the same weeks of
++    the start; the whole weeks it asks for are written into the cell of the whole window as before. Only the shares
++    of whole weeks are read from that solve, and it asks them of the window's first weeks alone (``close_until``).
++    Not with ``tweak`` (its bounds are the whole window's columns) and not with ``hull_only`` "tail" (that solution
++    is the week's plan).
+ 
+     Returns a dict: ``acts``, ``recs``, ``J`` (cents, played), ``J0`` (cents, the start as played), ``hist`` (per
+     pass: the cell's claim in USD, the played cost in cents, CPU seconds of the pass), ``basis`` (of the last cell
+@@ -1311,36 +1318,39 @@
+         elif hull and number == 0:
+             plain = dict(mode["grid"])
+             tail = hull_only == "tail"  # plan_lab: this solution is the week's plan, so its first week stays exact
++            # speed lab: the hull on the window's first weeks alone; the regimes of those weeks are the same numbers
++            eh = hull_ep() if hull_ep is not None and tweak is None and not tail else ep
+             for key, gm in plain.items():
+-                if gm == "OFF" and (close_until is None or key[0] <= close_until) and not (tail and key[0] == 1):
++                if (gm == "OFF" and (close_until is None or key[0] <= close_until) and key[0] <= eh.T
++                        and not (tail and key[0] == 1)):  # fmt: skip
+                     mode["grid"][key] = "HULL"
+-            C = ep.cell(mode, ref, anchor, price, bonus)
++            C = eh.cell(mode, ref, anchor, price, bonus)
+             if tweak is not None:
+                 tweak(C)
+             # plan_lab: only this solution's x is read (the shares to round), so it may be the rough one
+             # ``hull_tol``: nor need it be solved to the end: the interior point stops at this optimality tolerance
+             loose = hull_tol if hull_tol and not tail else None
+-            _tilt(ep, C, tilt)  # next_lab: the earlier week of the hull cell is worth more
++            _tilt(eh, C, tilt)  # next_lab: the earlier week of the hull cell is worth more
+             # frontier_lab (``hull_big``): on a large program the hull's cell by the simplex, cold, in place of the
+             # interior point: its optimal basis is then where the week's exact cell starts (``exact_limit``), the
+             # same program with other bounds and a few other rows
+-            wide = ep.solve(C, method=method, basis=out["basis"], time_limit=time_limit,
++            wide = eh.solve(C, method=method, basis=out["basis"] if eh is ep else None, time_limit=time_limit,
+                             crossover=tail or not (hull_rough or loose), what="hull", ipm_tol=loose,
+                             big=ep.hull_big or "ipm")
+             mode["grid"] = dict(plain)
+             out["hull"] = wide["status"]
+             if record and wide["status"] == "Optimal":  # the shares the hull asked for, and what stood before them:
+                 # read before the rounding writes its weeks into ``mode``, as a model in its place would read it
+-                out["shares"] = {key: float(wide["x"][ep.jrho(*key)]) / rmax for key, rmax in C.hull.items()}
++                out["shares"] = {key: float(wide["x"][eh.jrho(*key)]) / rmax for key, rmax in C.hull.items()}
+                 out["share_features"] = share_features(ep, recs, mode, ref, list(C.hull), (hint or {}).get("value"))
+             if wide["status"] == "Optimal":
+                 # the short weeks the hull covered and the share of a whole week it asked of each
+-                scout = {key: float(wide["x"][ep.jrho(*key)]) / rmax for key, rmax in C.hull.items()}
++                scout = {key: float(wide["x"][eh.jrho(*key)]) / rmax for key, rmax in C.hull.items()}
+                 out["scout"] = scout
+                 if not search:
+                     scout = None
+-                closed = _rounded(ep, C, wide["x"], mode, write="MID" if hull == "hard" else "SOFT", lean=hull_lean)
+-                if wide["basis"] is not None:
++                closed = _rounded(eh, C, wide["x"], mode, write="MID" if hull == "hard" else "SOFT", lean=hull_lean)
++                if wide["basis"] is not None and eh is ep:  # a shorter program's basis is no start for the whole one
+                     out["basis"] = wide["basis"]
+             out["rounded"] = closed
+             # plan_lab: the weeks asked to be whole, for the cells of the weeks to come (``marks``)
+--- a/agent.py
++++ b/agent.py
+@@ -200,6 +200,13 @@
+     # in between; 1: every week)
+     "hull_every": 1,
+     "hull_phase": 0,  # the weeks of the solve with the hull: (week - 1) % hull_every == hull_phase
++    # speed lab: the solve with the hull is made on the window's first so many weeks alone (its own end credit at
++    # their last week), the exact cell on the whole window as before. Only the shares of whole weeks are read from
++    # the hull's solution, and they are asked of the first ``horizon`` minus ``hull_until`` weeks (14), so the
++    # program of 26 weeks is solved to tell the first 14 apart. 20: the hull the model's short window has
++    # (``fit_horizon``), 0.45 s of CPU on Full against 0.67 s. Only with ``orders`` "plan" and without ``hull_only``
++    # "tail"; no effect in a window that is not longer than this (0: the whole window, as the model)
++    "hull_weeks": 0,
+     "hull_rough": False,
+     # the interior point's optimality tolerance in the solve with the hull, which then runs without the crossover too
+     # (0: HiGHS's own, 1e-8): only the shares of whole weeks are read from that solution, and they are rounded
+@@ -925,6 +932,27 @@
+         if p["fit"] > 0:  # no run of the solver starts with less than this left of its limit
+             ep.least = max(0.04 * self.budget, 0.5 * min(self.took["hull"][-8:] + self.took["exact"][-8:], default=0.0))
+         self.week_solves = ep.solves
++        hull_ep, N = None, int(p["hull_weeks"])
++        if 0 < N < H and own and p["hull_only"] != "tail":  # speed lab: the hull on the window's first weeks alone
++            made = []
++
++            def hull_ep():  # made when a solve with the hull starts, once a week
++                if not made:
++                    counted = (self.watched, getattr(self, "notes", None))  # the watch's counters are the week's window's
++                    wh = m.window(observation, N, self._network(observation, week, N), pending=bool(p["pending"]), patch=patch)
++                    self.watched, self.notes = counted
++                    end_h = (self.end_stock, self.end_k, float(p["end_weeks"]), (left - N) if p["end_left"] else None,
++                             p["chip_room"])
++                    eh = _core.Episode(wh.inst, wh.marks, end=end_h if p["end_fuel"] or p["end_chip"] else None,
++                                       anchored=bool(p["anchor"]))
++                    if _terms is not None:
++                        eh.terms, eh.info = _terms.add, {"week": week, "left": left, "window": N}
++                    eh.solves = ep.solves  # one list of the week's runs of the solver: the notes and the clock read it
++                    for name_ in ("warm_limit", "tol_retry", "tol", "rough_tol", "least", "hull_big", "devex_scale"):
++                        setattr(eh, name_, getattr(ep, name_))
++                    made.append(eh)
++                return made[0]
++
+         ref, name, ruled = None, "", None
+         if self.acts is not None:
+             carried = list(self.acts)
+@@ -995,6 +1023,7 @@
+         if p["lot_bonus"] > 0 or p["lot_tilt"] > 0:
+             weeks = np.arange(H)
+             bonus = (self.chip_worth, float(p["lot_bonus"]) * (weeks < H - 14) + float(p["lot_tilt"]) * (1.0 - weeks / H))
++        until = H - hull_until if hull_ep is None else min(H - hull_until, N)  # the last week asked to be whole
+         fits = ""  # ``fit``: what the clock chose for this week
+         deadline, fit = self.deadline, p["fit"] > 0 and self.deadline is not None
+         pending, search_deadline = False, None
+@@ -1034,7 +1063,7 @@
+             min_gain=max(1e6, p["min_gain"] * abs(J_ref)), anchor=ruled if price is not None else None, price=price,
+             time_limit=limit, method=p["method"],
+             hint=_core.moved(self.hint) if p["carry_hints"] and name == "carried" else None,
+-            close=float(p["close"]), close_until=H - hull_until, close_rationed=bool(p["close_rationed"]),
++            close=float(p["close"]), close_until=until, close_rationed=bool(p["close_rationed"]),
+             hull=p["hull"] if hull_week else False, hull_rough=bool(p["hull_rough"]),
+             hull_tol=float(p["hull_tol"]) if p["hull_tol"] > 0 else None,
+             tilt=(float(p["hull_tilt"]) * self.week_worth, float(p["tilt_weeks"])) if p["hull_tilt"] > 0 else None,
+@@ -1044,7 +1073,7 @@
+             model=(self.share_model, left - H) if p["hull"] == "model" else None,
+             search=int(p["search"]) if hull_week or pending else 0, hull_lean=float(p["hull_lean"]),
+             search_room=int((p["short_room"] if self.short else 0) or p["search_room"]),
+-            scout0=self.scout if pending else None, search_deadline=search_deadline,
++            scout0=self.scout if pending else None, search_deadline=search_deadline, hull_ep=hull_ep,
+         )
+         self.week_passes = list(d["hist"])
+         self.searched = float(d.get("search_cpu", 0.0))  # CPU seconds of the search over sets of whole weeks
+@@ -1070,9 +1099,9 @@
+                     ep, d["acts"], iters=1, hints=bool(p["hints"]), tweak=tweak, played=(d["recs"], d["J"]),
+                     bonus=bonus, deadline=deadline, min_gain=max(1e6, p["min_gain"] * abs(J_ref)),
+                     anchor=ruled if price is not None else None, price=price, time_limit=limit, method=p["method"],
+-                    hint=d.get("hint"), close_until=H - hull_until, hull=p["hull"], hull_rough=bool(p["hull_rough"]),
++                    hint=d.get("hint"), close_until=until, hull=p["hull"], hull_rough=bool(p["hull_rough"]),
+                     hull_tol=float(p["hull_tol"]) if p["hull_tol"] > 0 else None, hull_only=True,
+-                    chain_deadline=self.chain_deadline, big_exact=str(p["big_exact"]),
++                    chain_deadline=self.chain_deadline, big_exact=str(p["big_exact"]), hull_ep=hull_ep,
+                 )
+                 if d2.get("hull") == "Optimal":
+                     self.hull_age, self.pending = 0, set(d2.get("marks", ()))
+@@ -1089,9 +1118,9 @@
+                 basis=d.get("basis") if p["warm"] and (p["method"] != "auto" or ep.N <= _core.BIG) else None,
+                 bonus=bonus, deadline=deadline, min_gain=max(1e6, p["min_gain"] * abs(J_ref)),
+                 anchor=ruled if price is not None else None, price=price, time_limit=limit, method=p["method"],
+-                hint=d.get("hint"), close_until=H - hull_until, hull=p["hull"], hull_rough=bool(p["hull_rough"]),
++                hint=d.get("hint"), close_until=until, hull=p["hull"], hull_rough=bool(p["hull_rough"]),
+                 hull_tol=float(p["hull_tol"]) if p["hull_tol"] > 0 else None, chain_deadline=self.chain_deadline,
+-                big_exact=str(p["big_exact"]),
++                big_exact=str(p["big_exact"]), hull_ep=hull_ep,
+             )
+             self.week_passes += list(d2["hist"])
+             if d2["J_compared"] >= d["J_compared"] - 1e6:

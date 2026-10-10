@@ -1,0 +1,50 @@
+# Exact: the anchor's rows of a cell (4,524 of the about 6,400 rows a cell writes, in the programs of Full 444 episode 3) are written a week at a time, not a slot at a time.
+# Applies to lab/anastasiia/hazard_lab/src of 10 October 14:52 after 01_solve_handoff.diff (with or without 02): patch -p1 < 03_anchor_rows.diff
+--- a/plan_core.py
++++ b/plan_core.py
+@@ -646,6 +646,15 @@
+                     for fi in range(len(inst.fabs)):
+                         C.cost[self.col("p", t, fi)] = -float(per_fab[fi]) * weights[t - 1]
+         col, has = self.col, self.has
++        paid = None  # the priced slots of the anchor: their rows are written a week at a time, not a slot at a time
++        if self.anchored and anchor is not None and price is not None:
++            if getattr(self, "_slot_cols", None) is None:  # every slot's dispatch column of week 1
++                self._slot_cols = np.array([self.tm[("x", e, k, lane)] for e, k, lane in inst.action_slots], dtype=np.int64)
++            worth = np.array([float(w) for w in price])
++            paid, unpaid = np.flatnonzero(worth > 0.0), np.flatnonzero(~(worth > 0.0))
++            paid_slots, paid_worth, paid_cols = paid.tolist(), worth[paid], self._slot_cols[paid]
++            ones = [1.0, -1.0, 1.0] * len(paid)
++            triple = np.empty((len(paid), 3), dtype=np.int64)
+         lane_cols = []  # the lane's flow and queue columns of week 1, which are in week t as many columns on
+         for c, k, lane in self.lanes:
+             e = inst.lane_through[(lane, c)][1]
+@@ -822,17 +831,18 @@
+                     C.skip(self.S)
+                     C.ub[self.jdev(t, 0) : self.jdev(t, self.S)] = 0.0
+                     continue
+-                sent = anchor[t - 1][0]
+-                for s_, (e, k, lane) in enumerate(inst.action_slots):
+-                    j = self.jdev(t, s_)
+-                    w = float(price[s_])
+-                    if w > 0.0:
+-                        q = float(sent.get(s_, 0.0))
+-                        C.row([(col("x", t, e, k, lane), 1.0), (j, -1.0), (j + 1, 1.0)], q, q)
+-                        C.cost[j] = C.cost[j + 1] = w
+-                    else:
+-                        C.skip()
+-                        C.ub[j] = C.ub[j + 1] = 0.0
++                # a priced slot's row: its dispatch, minus what it sends above the anchor, plus what it sends below,
++                # equal to the anchor's dispatch; an unpriced slot has an empty row and no deviation
++                sent, first, j0 = anchor[t - 1][0], len(C.lo), self.jdev(t, 0)
++                above = j0 + 2 * paid
++                triple[:, 0], triple[:, 1], triple[:, 2] = (t - 1) * self.nc + paid_cols, above, above + 1
++                C.r.extend(np.repeat(first + paid, 3).tolist()), C.c.extend(triple.ravel().tolist()), C.v.extend(ones)
++                lo_w, hi_w = [-INF] * self.S, [INF] * self.S
++                for s_ in paid_slots:
++                    lo_w[s_] = hi_w[s_] = float(sent.get(s_, 0.0))
++                C.lo.extend(lo_w), C.hi.extend(hi_w)
++                C.cost[above] = C.cost[above + 1] = paid_worth
++                C.ub[j0 + 2 * unpaid] = C.ub[j0 + 2 * unpaid + 1] = 0.0
+         for i, pool in enumerate(self.pools):  # the fuel a pool is paid for: no more than it holds, nor than its cap
+             C.ub[self.n2 + i] = pool["cap"]
+             C.row([(self.n2 + i, 1.0)] + [(j, -1.0) for j in pool["cols"]], -INF, 0.0)

@@ -1,0 +1,245 @@
+--- a/agent.py
++++ b/agent.py
+@@ -260,6 +260,20 @@
+     # HiGHS's solver: "simplex", "ipm", or "auto": the simplex from last week's basis on a small program (Small),
+     # the interior-point method on a large one (Full), where the simplex's time is anywhere between 0.6 and 18 s
+     "method": "auto",
++    # tail lab: the end credit of a capped window knows where the episode ends. ``end_reach``: a chip in the chain at
++    # the window's end (a lot in process, a raw or a packaged chip in a store, on the way or being packaged) is paid
++    # ``end_chip`` of its penalty only if the shortest way from where it is gets it sold before the episode ends
++    # (``plan_core.Episode._leads``): a lot started with fourteen weeks to go is the last a leading chip is sold of.
++    # ``end_room`` ({"weeks": w, "floor": f}): the chips of a plant are paid up to what its exits carry in the weeks of
++    # the episode past the window (and in ``w`` weeks at most), ``f`` of the value above (frontier_lab's
++    # ``chip_room``, which had ``w`` 6: with a large ``w`` only the episode's end and a plant with no exit bind)
++    "end_reach": False,
++    "end_room": None,
++    # tail lab: once the rest of the episode is no longer than this many weeks, the window is the rest of the episode,
++    # whatever ``horizon`` says, and no end credit stands for the weeks it would cut off. A window of 20 weeks is
++    # capped up to week 84 of 104 and one of 26 up to week 78: with 26 here the six weeks between plan to the
++    # episode's end as the long window does, and the hull asks whole weeks up to the same week as before (0: off)
++    "end_sight": 0,
+ }
+ if (HERE / "regime.json").is_file():
+     PARAMS |= json.loads((HERE / "regime.json").read_text())
+@@ -787,6 +801,8 @@
+         horizon = int(p["fit_horizon"]) if self.short else int(p["horizon"])
+         H = left if not horizon else min(horizon, left)
+         hull_until = max(0, int(p["hull_until"]) - (int(p["horizon"]) - horizon if self.short else 0))
++        if p["end_sight"] and H < left <= int(p["end_sight"]):  # tail lab: the episode's end is in sight
++            hull_until, H = hull_until + left - H, left
+         network = self._network(observation, week, H)
+         watching = network is None and self.watch is not None and bool(self.watch.cuts or self.watch.shut)
+         m.show_network = bool(p["watch_rules"]) and watching
+@@ -794,6 +810,8 @@
+         capped = H < left and bool(p["end_fuel"] or p["end_chip"])
+         own = p["orders"] == "plan"  # the plan's own orders are played, not the fuel rules'
+         end = (self.end_stock, self.end_k, float(p["end_weeks"]), (left - H) if p["end_left"] else None)
++        if p["end_reach"] or p["end_room"]:  # tail lab
++            end = (*end, {"reach": bool(p["end_reach"]), "room": p["end_room"], "after": left - H})
+         ep = _core.Episode(w.inst, w.marks, end=end if capped else None, anchored=bool(p["anchor"]))
+         if _terms is not None:
+             ep.terms, ep.info = _terms.add, {"week": week, "left": left, "window": H}
+--- a/plan_core.py
++++ b/plan_core.py
+@@ -134,6 +134,16 @@
+         self.n2 = self.N  # where the anchor's columns end
+         # a capped end credit for fuel (``end`` with a third item, weeks): one more column a (grid, fuel) and a fuel
+         self.pools, self.owner, self.rest = self._pools(end) if end is not None and len(end) > 2 and end[2] else ([], {}, {})
++        # tail lab: the end credit of a capped window knows where the episode ends (``end`` with a fifth item, a dict).
++        # "reach": a chip in the chain at the window's end is paid only if the shortest way from where it is gets it
++        # sold in the "after" weeks of the episode past the window (``_leads``). "room": the chips of a plant are paid
++        # up to what its exits carry in those weeks (``_chip_pools``)
++        self.reach, self.chip_pool = None, {}
++        opts = end[4] if end is not None and len(end) > 4 and end[4] else {}
++        if opts.get("reach"):
++            self.reach = (*self._leads(), float(opts["after"]))
++        if opts.get("room"):
++            self._chip_pools(end, opts["room"], float(opts["after"]))
+         self.N += len(self.pools)
+         self.i0 = np.asarray(initial_stock(inst), dtype=float)
+         self.offset = -math.fsum(m.meta["salvage_const"])  # the credit of what is still out at the end
+@@ -223,12 +233,131 @@
+                 pools[i]["cols"].extend(t * nc + j for t in range(max(0, T - edge.tau), T))
+         return pools, owner, rest
+ 
++    def _leads(self) -> tuple[dict, dict]:
++        """tail lab: weeks from where a unit is to its sale by the shortest way, by (node, commodity): from a stock as
++        a week ends, and from an arrival in a week. As the simulator moves things: a stock is dispatched the week
++        after and arrives an edge's lead later; a fab and a plant start on what arrives the same week and their
++        output is in stock a process time later; a strait may pass an arrival on the same week; a market sells an
++        arrival the same week. A (node, commodity) with no way to a sale is left out."""
++        inst = self.inst
++        chk = set(inst.chokepoints)
++        made = {(f, inst.nodes[f].fab.input): (inst.nodes[f].fab.tau, inst.nodes[f].fab.product) for f in inst.fabs}
++        for o in inst.osats:
++            for raw, packed in inst.nodes[o].osat.packages.items():
++                made[(o, raw)] = (inst.nodes[o].osat.tau, packed)
++        stock, arrive = {}, {}
++        for d in inst.demands:
++            stock[(d.node, d.k)], arrive[(d.node, d.k)] = 1.0, 0.0
++        markets = set(arrive)
++        keys = {(inst.edges[e].tail, k) for e in range(len(inst.edges)) for k in inst.edges[e].K} | set(made)
++        for _ in range(len(inst.nodes)):  # the shortest ways settle in at most as many rounds as there are nodes
++            changed = False
++            for n, k in keys:
++                if (n, k) in markets:
++                    continue
++                if (n, k) in made:
++                    tau, out = made[(n, k)]
++                    a = tau + stock.get((n, out), INF)
++                    s_ = 1.0 + a
++                else:
++                    a = min((inst.edges[e].tau + arrive.get((inst.edges[e].head, k), INF)
++                             for e in inst.out_edges[n] if k in inst.edges[e].K), default=INF)
++                    s_ = 1.0 + a
++                    if n not in chk:  # it enters the stock and leaves the week after
++                        a = s_
++                if a < arrive.get((n, k), INF) or s_ < stock.get((n, k), INF):
++                    arrive[(n, k)], stock[(n, k)], changed = min(a, arrive.get((n, k), INF)), min(s_, stock.get((n, k), INF)), True
++            if not changed:
++                break
++        return ({key: v for key, v in stock.items() if v < INF}, {key: v for key, v in arrive.items() if v < INF})
++
++    def _reaches(self, past: float, node: int, k: int, arriving: bool = False) -> float:
++        """tail lab: 1 when a unit of ``k`` that is in the stock of ``node`` (``arriving``: that arrives there)
++        ``past`` weeks after the window's last can be sold before the episode ends, else 0 (1 without "reach")."""
++        if self.reach is None:
++            return 1.0
++        lead = self.reach[1 if arriving else 0].get((node, k))
++        return 1.0 if lead is not None and past + lead <= self.reach[2] else 0.0
++
++    def _chip_pools(self, end: tuple, room: dict, after: float) -> None:
++        """tail lab (frontier_lab's ``chip_room``, here with the episode's end): the capped end credit for the chips
++        of a plant, one pool a (plant, packaged chip).
++
++        A pool is what a plant holds of a chip at the window's end: the packaged chips in its store, the raw ones in
++        its store and on the way to it, and what it is packaging. It is worth the chip's end value up to what the
++        plant's exits carry, as the window's last week has them (a prohibited exit and an exit into a market that
++        does not want the chip carry nothing), in ``weeks`` weeks and no more than in the weeks of the episode past
++        the window; above that, ``floor`` of the value. ``top_scale`` and ``top_weeks``: when the episode ends within
++        ``top_weeks`` weeks of the window's end, a pool pays ``top_scale`` times the end value: nothing made after
++        the window can then be sold, so what the exits can still carry of the pool is sold, at the whole penalty.
++        """
++        inst, T, nc = self.inst, self.T, self.nc
++        end_k, weeks, floor = end[1], float(room.get("weeks", 1e9)), float(room.get("floor", 0.0))
++        boost = float(room.get("top_scale", 1.0)) if after <= float(room.get("top_weeks", 0)) else 1.0
++        u, Z = np.asarray(self.marks.u[T - 1], dtype=float), np.asarray(self.marks.prohibited[T - 1])
++        sinks = {d.node for d in inst.demands}
++        wanted = {(d.node, d.k) for di, d in enumerate(inst.demands) if float(self.marks.demand[T - 1][di]) > 0}
++        for o in inst.osats:
++            for raw, packed in sorted(inst.nodes[o].osat.packages.items()):
++                if end_k[packed] <= 0:
++                    continue
++                carry = sum(float(u[e]) for e in inst.out_edges[o]
++                            if packed in inst.edges[e].K and not Z[e, packed]
++                            and (inst.edges[e].head not in sinks or (inst.edges[e].head, packed) in wanted))  # fmt: skip
++                self.chip_pool[(o, raw)] = self.chip_pool[(o, packed)] = len(self.pools)
++                self.pools.append({"k": packed, "value": (boost - floor) * float(end_k[packed]), "floor": floor,
++                                   "cap": min(weeks, after) * carry, "cols": []})  # fmt: skip
++        for key, j in self.tm.items():  # only what can still be sold is in a pool (``_reaches``)
++            if key[0] == "I":
++                sl = inst.stock_slots[key[1]]
++                if (sl.node, sl.k) in self.chip_pool and self._reaches(0, sl.node, sl.k):
++                    self.pools[self.chip_pool[(sl.node, sl.k)]]["cols"].append((T - 1) * nc + j)
++            elif key[0] == "x" and (inst.edges[key[1]].head, key[2]) in self.chip_pool:
++                head, tau = inst.edges[key[1]].head, inst.edges[key[1]].tau
++                cols = self.pools[self.chip_pool[(head, key[2])]]["cols"]
++                cols.extend(t * nc + j for t in range(max(0, T - tau), T) if self._reaches(t + 1 + tau - T, head, key[2], True))
++            elif key[0] == "xi" and (inst.osats[key[1]], key[2]) in self.chip_pool:
++                o, tau = inst.osats[key[1]], inst.nodes[inst.osats[key[1]]].osat.tau
++                cols = self.pools[self.chip_pool[(o, key[2])]]["cols"]
++                cols.extend(t * nc + j for t in range(max(0, T - tau), T) if self._reaches(t + 1 + tau - T, o, key[2]))
++
++    def _plain(self, node: int, k: int) -> float:
++        """The share of its end value a chip at ``node`` is paid outside its pool (1: it has no pool)."""
++        i = self.chip_pool.get((node, k))
++        return 1.0 if i is None else self.pools[i]["floor"]
++
+     def _end_columns(self) -> np.ndarray:
+         """The end credit per column of the program (fuel with a capped credit is paid through its pools)."""
+         inst, nc, T = self.inst, self.nc, self.T
+         end_stock, end_k = self.end[0], self.end[1]
+         credit = np.zeros(self.n0)
+         last = (T - 1) * nc
++        if self.reach is not None or self.chip_pool:  # tail lab: by where the unit is and what is left of the episode
++            for key, j in self.tm.items():
++                if key[0] == "I":
++                    sl = inst.stock_slots[key[1]]
++                    if sl.k not in self.rest:
++                        credit[last + j] = end_stock[key[1]] * self._plain(sl.node, sl.k) * self._reaches(0, sl.node, sl.k)
++                elif key[0] == "Q":
++                    if key[2] not in self.rest:
++                        credit[last + j] = end_k[key[2]] * self._reaches(0, key[1], key[2])
++                elif key[0] == "x":  # dispatched in the window, arriving after it
++                    if key[2] in self.rest:
++                        continue
++                    head, tau = inst.edges[key[1]].head, inst.edges[key[1]].tau
++                    for t in range(max(0, T - tau), T):
++                        credit[t * nc + j] = end_k[key[2]] * self._plain(head, key[2]) * self._reaches(t + 1 + tau - T, head, key[2], True)
++                elif key[0] == "p":  # lots still in process
++                    f = inst.fabs[key[1]]
++                    fab = inst.nodes[f].fab
++                    for t in range(max(0, T - fab.tau), T):
++                        credit[t * nc + j] = end_k[fab.product] * self._reaches(t + 1 + fab.tau - T, f, fab.product)
++                elif key[0] == "xi":
++                    o = inst.osats[key[1]]
++                    tau = inst.nodes[o].osat.tau
++                    for t in range(max(0, T - tau), T):
++                        credit[t * nc + j] = end_k[key[2]] * self._plain(o, key[2]) * self._reaches(t + 1 + tau - T, o, key[2])
++            return credit
+         for key, j in self.tm.items():
+             if key[0] == "I":
+                 if inst.stock_slots[key[1]].k not in self.rest:
+@@ -250,11 +379,51 @@
+                     credit[t * nc + j] = end_k[key[2]]
+         return credit
+ 
++    def _held(self, state) -> float:
++        """tail lab: what ``state`` still holds at the end of a window with ``end`` and "reach" or the chips' pools,
++        USD: as ``cost`` counts it without them, but a unit that cannot be sold before the episode ends is paid
++        nothing, and a chip of a plant's pool is paid ``floor`` of its value and the pool the rest, up to its cap."""
++        inst, T = self.inst, self.T
++        end_stock, end_k = self.end[0], self.end[1]
++        stock = np.asarray(state.stock, dtype=float)
++        held, value, supply = np.zeros(len(self.pools)), 0.0, set(inst.supply_nodes)
++        for sl_i, sl in enumerate(inst.stock_slots):
++            if sl.k in self.rest:
++                if sl.node not in supply:
++                    held[self.owner.get((sl.node, sl.k), self.rest[sl.k])] += stock[sl_i]
++            elif end_stock[sl_i] and stock[sl_i] and self._reaches(0, sl.node, sl.k):
++                value += float(end_stock[sl_i] * stock[sl_i]) * self._plain(sl.node, sl.k)
++                if (sl.node, sl.k) in self.chip_pool:
++                    held[self.chip_pool[(sl.node, sl.k)]] += stock[sl_i]
++        for sh in state.pipeline:
++            head = inst.edges[sh.edge].head
++            if sh.k in self.rest:
++                held[self.owner.get((head, sh.k), self.rest[sh.k])] += float(sh.qty)
++            elif end_k[sh.k] and self._reaches(sh.arrival_week - T, head, sh.k, True):
++                value += end_k[sh.k] * sh.qty * self._plain(head, sh.k)
++                if (head, sh.k) in self.chip_pool:
++                    held[self.chip_pool[(head, sh.k)]] += float(sh.qty)
++        for fi, book in state.fab_wip.items():
++            f = inst.fabs[fi]
++            fab = inst.nodes[f].fab
++            value += end_k[fab.product] * sum(q for start, q in book.items() if self._reaches(start + fab.tau - T, f, fab.product))
++        for oi, book in state.osat_wip.items():
++            o = inst.osats[oi]
++            for out, lots in book.items():
++                for k, q in lots.items():
++                    if self._reaches(out - T, o, k):
++                        value += end_k[k] * q * self._plain(o, k)
++                        if (o, k) in self.chip_pool:
++                            held[self.chip_pool[(o, k)]] += q
++        return value + sum(pool["value"] * min(float(h), pool["cap"]) for pool, h in zip(self.pools, held))
++
+     def cost(self, recs: list, state) -> int:
+         """The cost in cents of the weeks ``recs`` that end in ``state``: the weeks' costs minus the terminal salvage
+         and, in a window with ``end``, minus what the state still holds."""
+         value = pkg("dynamics.sim").terminal_salvage(self.inst, state)
+-        if self.end is not None:
++        if self.end is not None and (self.reach is not None or self.chip_pool):  # tail lab
++            value += self._held(state)
++        elif self.end is not None:
+             inst = self.inst
+             end_stock, end_k = self.end[0], self.end[1]
+             stock = np.asarray(state.stock, dtype=float)
