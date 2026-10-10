@@ -63,6 +63,10 @@ PARAMS = {
     "anchor": {},
     "rules_every": 4,  # weeks between rollouts of the rules alone beside the carried plan (0: only without a plan)
     "passes": 1,  # passes of the program a week (regimes, solve, play)
+    # frontier_lab: the passes of a week in the short window (``fit_horizon``; None: ``passes``). Three passes are
+    # worth +0.004 on Small without the clock; on Full under the clock a pass that does start takes the time of the
+    # hull that follows the exact cell and costs 0.0025, and there the window is the short one
+    "passes_short": None,
     "hints": True,  # a tie between two regimes is read as the last solution's duals say
     "warm": True,  # the simplex starts from last week's basis
     "switch": 0,  # grid-weeks tried a week for a switch from "sheds" to "runs its fabs" (0: none)
@@ -756,6 +760,11 @@ class Agent(_hybrid.Agent):
         last = self.took[kind][-8:]
         return float(self.p["fit"]) * float(np.percentile(last, 75)) if last else 0.0
 
+    def _passes(self) -> int:
+        """Passes of the week's program: ``passes``, or ``passes_short`` in the short window when that is set."""
+        short = self.p["passes_short"]
+        return int(self.p["passes"] if short is None or not self.short else short)
+
     def _a_try(self) -> float | None:
         """CPU seconds a try of the search is likely to take, as ``_reckon`` reckons (None before the first try)."""
         last = self.tried[-8:]
@@ -1012,7 +1021,7 @@ class Agent(_hybrid.Agent):
             if pending and self.hull_age >= int(p["hull_due"]):  # the hull that follows keeps its time
                 search_deadline = deadline - self._reckon("hull")
         d = _core.descend(
-            ep, acts_ref, iters=int(p["passes"]), hints=bool(p["hints"]), tweak=tweak,
+            ep, acts_ref, iters=self._passes(), hints=bool(p["hints"]), tweak=tweak,
             played=(recs_ref, J_ref),
             basis=ep.shifted(self.basis) if p["warm"] and (p["method"] != "auto" or ep.N <= _core.BIG or p["exact_warm"] > 0) else None,
             bonus=bonus, deadline=deadline,
@@ -1070,7 +1079,7 @@ class Agent(_hybrid.Agent):
                 break
             self.rounds += 1
             d2 = _core.descend(
-                ep, d["acts"], iters=int(p["passes"]), hints=bool(p["hints"]), tweak=tweak, played=(d["recs"], d["J"]),
+                ep, d["acts"], iters=self._passes(), hints=bool(p["hints"]), tweak=tweak, played=(d["recs"], d["J"]),
                 basis=d.get("basis") if p["warm"] and (p["method"] != "auto" or ep.N <= _core.BIG) else None,
                 bonus=bonus, deadline=deadline, min_gain=max(1e6, p["min_gain"] * abs(J_ref)),
                 anchor=ruled if price is not None else None, price=price, time_limit=limit, method=p["method"],
