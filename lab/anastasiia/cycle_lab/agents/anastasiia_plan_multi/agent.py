@@ -302,6 +302,19 @@ PARAMS = {
     # no carried marks, or when last week's plan left a week it had asked for short - the commitment was not
     # honoured - and at the latest every ``trigger`` weeks. 0: the calendar rule of ``hull_every`` stands
     "trigger": 0,
+    # cycle_lab: apply the carried marks, the sparser hull and the wider search **only on the big network**.
+    # Measured, paired to ``anastasiia_plan_hazard``: carrying the marks with the hull every other week and the
+    # search widened to 12 tries from a room of 3 gives +0.0030 (-0.0003..+0.0078) on Full 444 x8 at a cheaper week
+    # (median 1.15 s against 1.63), and -0.0025 (-0.0053..+0.0000) on Small 111 x32. The asymmetry has a reason:
+    # on Full the marks are 11 to 20 a week and agree with last week's only 26 % of the time, while on Small their
+    # median is 0, so there is nothing to carry; and on Full the clock binds at 83 % of the budget while on Small
+    # the search already ran. So the right form is a **threshold on the network**, not a constant - the one family
+    # in this model whose three measured cases are all plus (``search_room`` 5, the window 26 to 20, ``watch_ask``
+    # 0.3). With this on, Small is the base to the cent and only Full changes
+    "big_only": False,
+    # what Small keeps when ``big_only`` is on: the base model's own values, so Small is untouched
+    "search_base": 8,
+    "room_base": 5,
 }
 if (HERE / "regime.json").is_file():
     PARAMS |= json.loads((HERE / "regime.json").read_text())
@@ -842,11 +855,13 @@ class Agent(_hybrid.Agent):
         # plan_lab: the week of the solve with the hull, and the whole weeks an earlier one asked for, moved on by a week.
         # Without a carried plan there is nothing to stand in for the week's plan, so that week solves the usual way
         phase = 1 if p["hull_only"] else int(p["hull_phase"])
-        hull_week = bool(p["hull"]) and (week - 1) % max(1, int(p["hull_every"])) == phase % max(1, int(p["hull_every"]))
+        big = ep.N > _core.BIG  # cycle_lab: the big network, the same test the agent uses for the solver's method
+        every = max(1, int(p["hull_every"])) if (big or not p["big_only"]) else 1
+        hull_week = bool(p["hull"]) and (week - 1) % every == phase % every
         if p["hull_only"] and name != "carried":
             hull_week = False
         marks = None
-        if p["hull_only"] or p["carry_marks"] or int(p["trigger"]) > 0:
+        if p["hull_only"] or (p["carry_marks"] and (big or not p["big_only"])) or int(p["trigger"]) > 0:
             self.marks = {(t - 1, gi) for (t, gi) in getattr(self, "marks", set()) if t > 1}
             marks = None if hull_week else self.marks
         if int(p["trigger"]) > 0 and bool(p["hull"]) and not p["hull_only"]:
@@ -899,7 +914,9 @@ class Agent(_hybrid.Agent):
             hull_only=p["hull_only"] if hull_week else False, marks=marks, chain_deadline=self.chain_deadline,
             record=bool(p["record_shares"]),
             model=(self.share_model, left - H) if p["hull"] == "model" else None,
-            search=int(p["search"]) if hull_week else 0, hull_lean=float(p["hull_lean"]), search_room=int(p["search_room"]),
+            search=(int(p["search"]) if (big or not p["big_only"]) else int(p["search_base"] or p["search"])) if hull_week else 0,
+            hull_lean=float(p["hull_lean"]),
+            search_room=int(p["search_room"]) if (big or not p["big_only"]) else int(p["room_base"] or p["search_room"]),
         )
         self.week_passes = list(d["hist"])
         self.searched = float(d.get("search_cpu", 0.0))  # CPU seconds of the search over sets of whole weeks
