@@ -89,6 +89,7 @@ PARAMS = {
     # a grid in a spell of low output: None (the forecast keeps it low), "blend" (the expected output by the spell's
     # age) or "step" (over from the week it more likely than not is): ``grid_recovery.json``, the rollout lab's table
     "grids": None,
+    "grid_q": 0.5,  # with "step": the chance of being gone from which a spell of low output is planned as over
     # a lab's test only: fields of the forecast replaced by the scenario's own, when the harness hands the scenario
     # over (``tell_truth``): names of ``TRUTH``'s groups ("grids", "edges", "straits", "prohibitions", "everything")
     "truth": [],
@@ -174,6 +175,17 @@ PARAMS = {
     # week, so last week's basis without that week is where the simplex is already nearly done (``exact_warm``),
     # and only the first of these weeks pays for a cold solve; it solves its exact cell first (1: off)
     "hold_end": 1,
+    # frontier_lab: on a large program the hull's cell is solved by the dual simplex ("devex") instead of the interior
+    # point, and with ``exact_warm`` the exact cell of the same week starts from the hull's optimal basis: one cold
+    # solve a week in place of two ("": the interior point, as the model)
+    "hull_big": "",
+    # frontier_lab: HiGHS's scaling in the dual simplex of a large program's cells (``simplex_scale_strategy``; 0: no
+    # scaling, a quarter fewer iterations on the cells of Full; None: the solver's own choice, as the model)
+    "devex_scale": None,
+    # frontier_lab: a pessimistic forecast, the plainest hedge against cuts that have not started: from week
+    # ``from`` of the window on (0: this week) every fuel edge that is not cut now is planned at ``1 - by`` of
+    # its capacity ({"from": 3, "by": 0.1}; None: off). The forecast alone changes: the requests are the plan's
+    "derate": None,
     # plan_lab, the week's time. ``hull_every``: weeks between solves with the hull (the weeks between keep the whole
     # weeks of the carried plan); ``hull_rough``: that solve without the crossover; ``anchor_every``: weeks between
     # rollouts of the rules alone when there is an ``anchor`` (their plan of the last rollout, moved on, is the anchor
@@ -361,6 +373,7 @@ class Agent(_hybrid.Agent):
             if self.p["grids"] in ("blend", "step"):
                 table = json.loads((HERE / "grid_recovery.json").read_text())
                 self.model = _model.Model(config, self.planner, table, self.p["grids"])
+                self.model.grid_q = float(self.p["grid_q"])
             else:
                 self.model = _model.Model(config, self.planner)
         self.acts = None  # last week's plan from its second week on: (flows, overrides, holds) per week
@@ -612,6 +625,25 @@ class Agent(_hybrid.Agent):
         self.notes = (getattr(self, "notes", None) or {}) | {"asked": self.asked}
         return set(back["edges"])
 
+    def _derated(self, then):
+        """frontier_lab (``derate``): a patch of the forecast that plans every fuel edge now at its nominal capacity
+        at a share of it from a week of the window on, after the patch ``then`` (the watch's) if there is one."""
+        m, start, keep = self.model, int(self.p["derate"]["from"]), 1.0 - float(self.p["derate"]["by"])
+        if not hasattr(self, "_fuel_edges"):
+            fuels = {k for g in m.inst.grids for k in m.inst.nodes[g].grid.fuels}
+            self._fuel_edges = np.array([e for e, edge in enumerate(m.inst.edges) if fuels & set(edge.K)], dtype=int)
+            self._u0 = np.array([np.inf if edge.u0 is None else edge.u0 for edge in m.inst.edges], dtype=float)
+
+        def patch(arrays: dict, H: int) -> None:
+            if then is not None:
+                then(arrays, H)
+            u = arrays["u"]
+            calm = self._fuel_edges[np.isfinite(self._u0[self._fuel_edges])
+                                    & (u[0, self._fuel_edges] >= 0.999 * self._u0[self._fuel_edges])]
+            u[start:, calm] *= keep
+
+        return patch
+
     def _seen(self, arrays: dict, H: int) -> None:
         """hazard_lab: the ends of the short cuts the agent watches, written into the forecast ``arrays`` in place."""
         if self.watch is None or not (self.watch.cuts or self.watch.shut):
@@ -809,7 +841,10 @@ class Agent(_hybrid.Agent):
             solves = {"hull": sum(s["cpu"] for s in self.week_solves if s["what"] == "hull"),
                       "exact": sum(s["cpu"] for s in self.week_solves if s["what"] in exact)}
             first = next((s for s in self.week_solves if s["what"] == "exact"), None)
-            warmed = first is not None and first["attempt"] == "warm" and first["status"] == "Optimal"
+            # only with ``exact_warm``: without it the clock counts every exact cell as the model does (on Small each
+            # of them starts from the hull's basis, and booking them apart would leave "exact" empty)
+            warmed = (self.p["exact_warm"] > 0 and first is not None and first["attempt"] == "warm"
+                      and first["status"] == "Optimal")
             for kind, took in solves.items():  # a week of two rounds counts as two
                 if took > 0:
                     name = "rough" if kind == "exact" and self.rough else "warm" if kind == "exact" and warmed else kind
@@ -849,7 +884,10 @@ class Agent(_hybrid.Agent):
         network = self._network(observation, week, H)
         watching = network is None and self.watch is not None and bool(self.watch.cuts or self.watch.shut)
         m.show_network = bool(p["watch_rules"]) and watching
-        w = m.window(observation, H, network, pending=bool(p["pending"]), patch=self._seen if watching else None)
+        patch = self._seen if watching else None
+        if p["derate"] and network is None:
+            patch = self._derated(patch)
+        w = m.window(observation, H, network, pending=bool(p["pending"]), patch=patch)
         capped = H < left and bool(p["end_fuel"] or p["end_chip"])
         own = p["orders"] == "plan"  # the plan's own orders are played, not the fuel rules'
         end = (self.end_stock, self.end_k, float(p["end_weeks"]), (left - H) if p["end_left"] else None, p["chip_room"])
@@ -865,6 +903,8 @@ class Agent(_hybrid.Agent):
             ep.try_limit = float(p["try_share"]) * self.budget
         if p["exact_warm"] > 0:
             ep.exact_limit = float(p["exact_warm"]) * self.budget
+        ep.hull_big = str(p["hull_big"]) or None
+        ep.devex_scale = None if p["devex_scale"] is None else int(p["devex_scale"])
         self.week_tries = ep.tries
         ep.tol_retry = float(p["tol_retry"]) if p["tol_retry"] > 0 else None
         ep.tol = float(p["tol_retry"]) if self.loose else float(p["tol"]) if p["tol"] > 0 else None

@@ -182,6 +182,8 @@ class Episode:
         self.try_guess = 1.0  # before a try was measured: this share of what the week's first cell took
         self.try_limit: float | None = None
         self.exact_limit: float | None = None  # seconds a large program's exact cell may take from last week's basis
+        self.hull_big: str | None = None  # frontier_lab: how a large program's hull cell is solved ("devex"; None: "ipm")
+        self.devex_scale: int | None = None  # frontier_lab: ``simplex_scale_strategy`` of a large program's simplex
         self.tries: list = []
         self.solves: list[dict] = []
         # evolve_lab: more terms of a cell's objective, ``terms(episode, mode, ref)`` -> USD per column or None
@@ -1051,6 +1053,8 @@ class Episode:
             if devex:
                 h.setOptionValue("simplex_strategy", 1)
                 h.setOptionValue("simplex_dual_edge_weight_strategy", 1)
+                if self.devex_scale is not None:  # frontier_lab: HiGHS's scaling of a large program (0: none)
+                    h.setOptionValue("simplex_scale_strategy", int(self.devex_scale))
             h.setOptionValue("time_limit", float(limit))
             if rough:
                 h.setOptionValue("run_crossover", "off")
@@ -1270,8 +1274,12 @@ def descend(ep: "Episode", acts: list, iters: int = 60, min_gain: float = 1e6, p
             # ``hull_tol``: nor need it be solved to the end: the interior point stops at this optimality tolerance
             loose = hull_tol if hull_tol and not tail else None
             _tilt(ep, C, tilt)  # next_lab: the earlier week of the hull cell is worth more
+            # frontier_lab (``hull_big``): on a large program the hull's cell by the simplex, cold, in place of the
+            # interior point: its optimal basis is then where the week's exact cell starts (``exact_limit``), the
+            # same program with other bounds and a few other rows
             wide = ep.solve(C, method=method, basis=out["basis"], time_limit=time_limit,
-                            crossover=tail or not (hull_rough or loose), what="hull", ipm_tol=loose)
+                            crossover=tail or not (hull_rough or loose), what="hull", ipm_tol=loose,
+                            big=ep.hull_big or "ipm")
             mode["grid"] = dict(plain)
             out["hull"] = wide["status"]
             if record and wide["status"] == "Optimal":  # the shares the hull asked for, and what stood before them:

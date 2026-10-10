@@ -98,7 +98,9 @@ def main(name: str, preset: str = "model", terms: dict | None = None, rules: dic
     for key, value in numbers.items():
         regime[key] = _words(json.loads(value) if isinstance(value, str) and value[:1] in "[{\"" else value)
     (out / "regime.json").write_text(json.dumps(regime))
-    if terms:
+    if terms and list(_words(terms).items()) == [("model", {})]:  # the model's terms alone: its own file as it is
+        shutil.copy(MODEL_TERMS, out / "terms.py")
+    elif terms:
         parts = {}
         for part, values in _words(terms).items():
             shutil.copy(MODEL_TERMS if part == "model" else HERE / "terms" / f"{part}.py", out / f"terms_{part}.py")

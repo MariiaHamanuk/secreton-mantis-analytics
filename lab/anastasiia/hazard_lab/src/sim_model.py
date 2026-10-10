@@ -51,6 +51,7 @@ class Model:
     def __init__(self, config, planner, grids: dict | None = None, grid_rule: str = "blend"):
         self.planner = planner
         self.grids, self.grid_rule = grids, grid_rule  # the spells' table (None: a spell stays) and how to read it
+        self.grid_q = 0.5  # "step": a spell is planned over from the first week it is gone with this chance at least
         # hazard_lab: ``flat`` also shows the edges' capacities and the straits as the window has them for the coming
         # week, so that rules playing the window's later weeks read the forecast, not this week's observation
         self.show_network = False
@@ -118,7 +119,7 @@ class Model:
             if len(back) < weeks:  # beyond the table: as its last week
                 back = np.r_[back, np.full(weeks - len(back), back[-1])]
             if self.grid_rule != "blend":
-                back = (back >= 0.5).astype(float)
+                back = (back >= self.grid_q).astype(float)
             out[:, g] = now[g] + back * (calm[g] - now[g])
         shown = np.vstack([now, out[:-1]])  # what a week's observation shows: the output as the week before left it
         return {"G_bar": out, "G_bar_now": shown}
