@@ -3,7 +3,8 @@
     uv run python lab/nazar/mpc/full_run.py lab/nazar/agents/nazar_rules_lpraw_v2 --task=full --episodes=400 --batch=8
 
 Each batch is ``batch`` consecutive episodes of the root, played by the agent and by the base agent on the same episodes
-(``cpu_budget`` on: a week over the task's CPU budget is played by the naive rule, as the server does). After each batch:
+(``cpu_budget`` on by default: a week over the task's CPU budget is played by the naive rule, as the server does;
+``--cpu_budget=False`` for a model without a clock, whose score does not depend on the machine's speed). After each batch:
 the episodes done, the cumulative score of both, their paired difference and the weeks the scorer gave to naive. The rows
 are appended to ``outputs/full_run/<date_time>/rows.jsonl``; ``--resume=<that folder>`` continues a stopped run.
 References of episodes not in the cache are computed on first use (about a minute of CPU each on Full).
@@ -39,6 +40,7 @@ def main(
     batch: int = 8,
     n_jobs: int = 8,
     resume: str | None = None,
+    cpu_budget: bool = True,
 ) -> None:
     from sbf_starter import scoring
     from sbf_starter.agents import resolve
@@ -66,7 +68,7 @@ def main(
         t0 = time.perf_counter()
         es = scoring.episode_set(task, ids, entropy=entropy, n_jobs=n_jobs, verbose=False)
         for who in ("agent", "base"):
-            s = es.score(folders[who], n_jobs=n_jobs, cpu_budget=True)
+            s = es.score(folders[who], n_jobs=n_jobs, cpu_budget=cpu_budget)
             naive[who] += int(s.fallback_weeks or 0)
             with log.open("a") as f:
                 for r in s.rows:
